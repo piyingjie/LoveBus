@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/add_phone_bg"
+    android:theme="@style/FullAppTheme"
     tools:context="com.lovebus.activity.StartPictureActivity">
 
 </android.support.constraint.ConstraintLayout>
