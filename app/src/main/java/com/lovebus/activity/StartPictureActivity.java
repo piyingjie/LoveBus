@@ -17,6 +17,7 @@ public class StartPictureActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_picture);
+        /*通过sharedpreferences保存第一次的消息*/
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
         if(sharedPreferences.getBoolean("first_start",true)==true)
         {
