@@ -2,7 +2,6 @@ package com.lovebus.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
