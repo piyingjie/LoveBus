@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--这个文件是-->
+<!--这个文件是基础的搜索框-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,7 +8,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@color/search_white">
+        <ImageButton
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            />
         <FrameLayout
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -30,7 +35,7 @@
             android:textSize="16sp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="返回" />
+            android:text="搜索" />
     </LinearLayout>
     
 </LinearLayout>
