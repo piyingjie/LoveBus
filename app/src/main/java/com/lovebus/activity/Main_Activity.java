@@ -1,7 +1,13 @@
 package com.lovebus.activity;
 
+import android.content.DialogInterface;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
+
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
@@ -9,13 +15,19 @@ import com.amap.api.maps2d.model.MyLocationStyle;
 
 import bus.android.com.lovebus.R;
 
-public class Main_Activity extends AppCompatActivity {
+public class Main_Activity extends AppCompatActivity implements View.OnClickListener {
     MapView mMapView = null;
+    private DrawerLayout drawerLayout;
+    private ImageButton leftMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         showMap(savedInstanceState);
+        drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
+        leftMenu=(ImageButton)findViewById(R.id.leftMenu);
+        leftMenu.setOnClickListener(this);
+
     }
 
     @Override
@@ -74,5 +86,16 @@ public class Main_Activity extends AppCompatActivity {
         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);
         //连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.leftMenu:
+                drawerLayout.openDrawer(GravityCompat.START);
+                break;
+             default:
+        }
+        return;
     }
 }
