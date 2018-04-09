@@ -17,8 +17,11 @@ public class StartPictureActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_picture);
+
         /*通过sharedpreferences保存第一次的消息*/
+
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+
         if(sharedPreferences.getBoolean("first_start",true)==true)
         {
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -29,6 +32,7 @@ public class StartPictureActivity extends AppCompatActivity {
         else {
             first_start=false;
         }
+
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -45,5 +49,4 @@ public class StartPictureActivity extends AppCompatActivity {
         };
         timer.schedule(timerTask, 2000);
     }
-
 }
