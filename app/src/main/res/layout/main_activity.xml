@@ -32,12 +32,5 @@
             android:layout_height="wrap_content">
         </com.lovebus.view.BottomMenu>
     </LinearLayout>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:text="陈浩傻儿子"
-        android:textSize="30sp"
-        android:background="#FFF"/>
 
 </android.support.v4.widget.DrawerLayout>
