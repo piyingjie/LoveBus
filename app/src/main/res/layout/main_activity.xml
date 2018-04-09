@@ -8,14 +8,14 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <com.amap.api.maps2d.MapView
             android:id="@+id/map"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
     </FrameLayout>
     <com.lovebus.view.SearchLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
     </com.lovebus.view.SearchLayout>
 </android.support.constraint.ConstraintLayout>

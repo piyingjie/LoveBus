@@ -8,30 +8,27 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/search_white">
+        android:orientation="horizontal">
         <ImageButton
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             />
         <FrameLayout
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
             <EditText
-                android:layout_gravity="center_vertical"
-                android:layout_margin="10dp"
-                android:drawablePadding="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:textSize="16sp"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
+                android:background="@drawable/edit_bg"
                 android:hint="请输入目的地或者公交线路"/>
         </FrameLayout>
 
         <Button
-            android:layout_width="60dp"
+            android:layout_width="48dp"
             android:textSize="16sp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
