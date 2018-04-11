@@ -7,10 +7,13 @@
     android:background="@drawable/first"
     android:theme="@style/FullAppTheme"
     tools:context="com.lovebus.activity.StartPictureActivity">
+
     <Button
+        android:id="@+id/start_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/next"
-        android:textSize="12sp"/>
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
