@@ -111,7 +111,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
-                    /*左侧菜单点击事件*/
+                    /*左侧菜单点击事件在下方添加*/
                     case R.id.item1:
                         Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
                         break;
