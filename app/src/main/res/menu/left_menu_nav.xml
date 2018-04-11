@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/item1"
+            android:title="离线地图"/>
+        <item
+            android:id="@+id/item2"
+            android:title="常用地址"/>
+        <item
+            android:id="@+id/item3"
+            android:title="我的收藏"/>
+        <item
+            android:id="@+id/item4"
+            android:title="提醒设置"/>
+        <item
+            android:id="@+id/item5"
+            android:title="通知"/>
+    </group>
+
+    <item android:title="系统与安全">
+        <menu>
+            <item
+                android:id="@+id/itme6"
+                android:title="系统设置"/>
+            <item
+            android:id="@+id/itme7"
+            android:title="隐私与安全"/>
+            <item
+                android:id="@+id/itme8"
+                android:title="第三方绑定管理"/>
+        </menu>
+    </item>
+</menu>

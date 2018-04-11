@@ -5,13 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_centerHorizontal="true"
+    android:background="@color/search_white"
     android:orientation="horizontal">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <ImageButton
+        <ImageView
             android:id="@+id/leftMenu"
+            android:src="@drawable/account_menu"
             android:layout_width="48dp"
             android:layout_height="48dp"
             />
@@ -29,12 +31,11 @@
                 android:hint="请输入目的地或者公交线路"/>
         </FrameLayout>
 
-        <Button
+        <ImageView
             android:layout_width="48dp"
-            android:textSize="16sp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_gravity="center_vertical"
-            android:text="搜索" />
+            android:src="@drawable/search" />
     </LinearLayout>
     
 </RelativeLayout>
