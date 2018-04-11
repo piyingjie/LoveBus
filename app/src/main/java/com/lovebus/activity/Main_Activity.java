@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amap.api.maps2d.AMap;
@@ -22,7 +23,7 @@ import bus.android.com.lovebus.R;
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener {
     MapView mMapView = null;
     private DrawerLayout drawerLayout;
-    private ImageButton leftMenu;
+    private ImageView leftMenu;
     NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     /*初始化活动*/
     private void init(){
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
-        leftMenu=(ImageButton)findViewById(R.id.leftMenu);
+        leftMenu=(ImageView)findViewById(R.id.leftMenu);
         leftMenu.setOnClickListener(this);
         navigationView= (NavigationView) findViewById(R.id.leftView_1);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
