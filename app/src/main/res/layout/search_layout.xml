@@ -28,7 +28,7 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:background="@drawable/edit_bg"
-                android:hint="请输入目的地或者公交线路"/>
+                android:hint="@string/search_hint"/>
         </FrameLayout>
 
         <ImageView
