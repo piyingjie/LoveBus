@@ -1,6 +1,8 @@
 package com.lovebus.activity;
 
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -22,6 +24,7 @@ import com.amap.api.maps2d.model.MyLocationStyle;
 import com.lovebus.function.Okhttp;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import bus.android.com.lovebus.R;
 import okhttp3.Call;
