@@ -126,23 +126,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     /*左侧菜单点击事件在下方添加*/
                     case R.id.item1:
                         Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
-                        Okhttp.getOkHttpRequest("http://ftp6223484.host547.zhujiwu.me/Web/test.php", new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(Main_Activity.this, "请检查网络连接是否顺畅", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                String data = response.body().string();
-                                Log.d("Test",data);
-                            }
-                        });
                         break;
                     default:
                 }
