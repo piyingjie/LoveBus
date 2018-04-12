@@ -11,7 +11,7 @@ public class Okhttp {
     public final static int READ_TIMEOUT=100;
     public final static int WRITE_TIMEOUT=60;
     /**接受消息，参数是服务器地址*/
-    public  static void sendOkHttpRequest(String address, okhttp3.Callback callback){
+    public  static void getOkHttpRequest(String address, okhttp3.Callback callback){
 
         OkHttpClient client= new OkHttpClient.Builder()
                 .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)//设置读取超时时间
