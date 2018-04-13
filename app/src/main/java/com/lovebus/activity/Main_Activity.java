@@ -1,8 +1,5 @@
 package com.lovebus.activity;
 
-import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -10,10 +7,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -21,20 +16,14 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.MyLocationStyle;
-import com.lovebus.function.Okhttp;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import bus.android.com.lovebus.R;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener {
     MapView mMapView = null;
     private DrawerLayout drawerLayout;
     private ImageView leftMenu;
+    private ImageView search;
     NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +101,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             case R.id.leftMenu:
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
+            case R.id.search:
+
              default:
         }
         return;
@@ -120,7 +111,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private void init(){
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         leftMenu=(ImageView)findViewById(R.id.leftMenu);
+        search=(ImageView) findViewById(R.id.search);
         leftMenu.setOnClickListener(this);
+        search.setOnClickListener(this);
         navigationView= (NavigationView) findViewById(R.id.leftView_1);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
