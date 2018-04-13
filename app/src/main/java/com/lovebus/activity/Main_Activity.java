@@ -20,9 +20,16 @@ import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.MyLocationStyle;
+import com.lovebus.entity.Location;
 import com.lovebus.function.MyLog;
+import com.lovebus.function.Okhttp;
+
+import java.io.IOException;
 
 import bus.android.com.lovebus.R;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener {
     MapView mMapView = null;
@@ -32,6 +39,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     NavigationView navigationView;
     private AMapLocationClient locationClient = null;
     private AMapLocationClientOption locationOption = null;
+    Location locationMsg=new Location(0,0,null,null,null,null,null,null,null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +141,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     case R.id.item1:
                         Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
                         break;
+                    case R.id.item2:
+                        Toast.makeText(Main_Activity.this,"item2",Toast.LENGTH_SHORT).show();
+                        break;
                     default:
                 }
                 return false;
@@ -178,7 +189,18 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 StringBuffer sb = new StringBuffer();
                 //errCode等于0代表定位成功，其他的为定位失败，具体的可以参照官网定位错误码说明
                 if(location.getErrorCode() == 0){
-                    MyLog.d("Test",location.getAddress());
+                    locationMsg.setLatitude(location.getLatitude());
+                    locationMsg.setLongitude(location.getLongitude());
+                    locationMsg.setAddress(location.getAddress());
+                    locationMsg.setCountry(location.getCountry());
+                    locationMsg.setProvince(location.getProvince());
+                    locationMsg.setCity(location.getCity());
+                    locationMsg.setDistrict(location.getDistrict());
+                    locationMsg.setStreet(location.getStreet());
+                    locationMsg.setPoiName(location.getPoiName());
+                    MyLog.d("Test",locationMsg.getAddress());
+                    MyLog.d("Test",locationMsg.getCountry());
+                    stopLocation();
                 } else {
                     //定位失败
                     sb.append("定位失败" + "\n");
