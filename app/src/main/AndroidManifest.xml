@@ -23,7 +23,6 @@
         </activity>
         <activity android:name="com.lovebus.activity.FirstLoginActivity"
                   android:theme="@style/AppTheme"/>
-        <activity android:name="com.lovebus.activity.SelectCityActivity" />
         <activity android:name="com.lovebus.activity.OffLineMapActivity" />
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
         <activity android:name="com.lovebus.activity.UserCollectionActivity" />

@@ -26,8 +26,6 @@ import bus.android.com.lovebus.R;
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener {
     MapView mMapView = null;
     private DrawerLayout drawerLayout;
-    private ImageView leftMenu;
-    private ImageView search;
     NavigationView navigationView;
 
     Location locationMsg=new Location(0,0,null,null,null,null,null,null,null);
@@ -105,27 +103,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.leftMenu:
-                drawerLayout.openDrawer(GravityCompat.START);
-                break;
-            case R.id.search:
-                Locate.init(Main_Activity.this);
-                Locate.getCurrentLocation(new Locate.MyLocationListener() {
-                    @Override
-                    public void result(AMapLocation location) {
-                        locationMsg.setLatitude(location.getLatitude());
-                        locationMsg.setLongitude(location.getLongitude());
-                        locationMsg.setAddress(location.getAddress());
-                        locationMsg.setCountry(location.getCountry());
-                        locationMsg.setProvince(location.getProvince());
-                        locationMsg.setCity(location.getCity());
-                        locationMsg.setDistrict(location.getDistrict());
-                        locationMsg.setStreet(location.getStreet());
-                        locationMsg.setPoiName(location.getPoiName());
-                        MyLog.d("Test",locationMsg.getAddress());
-                    }
-                });
-                break;
              default:
         }
         return;
@@ -133,10 +110,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     /*初始化活动*/
     private void init(){
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
-        leftMenu=(ImageView)findViewById(R.id.leftMenu);
-        search=(ImageView) findViewById(R.id.search);
-        leftMenu.setOnClickListener(this);
-        search.setOnClickListener(this);
         navigationView= (NavigationView) findViewById(R.id.leftView_1);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -152,6 +125,27 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     default:
                 }
                 return false;
+            }
+        });
+    }
+    /*定位功能调用*/
+    private void locate_main(){
+        /*初始化定位*/
+        Locate.init(Main_Activity.this);
+        /*定位调用*/
+        Locate.getCurrentLocation(new Locate.MyLocationListener() {
+            @Override
+            public void result(AMapLocation location) {
+                locationMsg.setLatitude(location.getLatitude());
+                locationMsg.setLongitude(location.getLongitude());
+                locationMsg.setAddress(location.getAddress());
+                locationMsg.setCountry(location.getCountry());
+                locationMsg.setProvince(location.getProvince());
+                locationMsg.setCity(location.getCity());
+                locationMsg.setDistrict(location.getDistrict());
+                locationMsg.setStreet(location.getStreet());
+                locationMsg.setPoiName(location.getPoiName());
+                MyLog.d("Test",locationMsg.getAddress());
             }
         });
     }
