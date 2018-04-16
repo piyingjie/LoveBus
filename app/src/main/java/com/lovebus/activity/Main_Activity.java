@@ -3,12 +3,14 @@ package com.lovebus.activity;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
@@ -26,6 +28,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     MapView mMapView = null;
     private DrawerLayout drawerLayout;
     NavigationView navigationView;
+    ImageView leftMenu;
 
     Location locationMsg=new Location(0,0,null,null,null,null,null,null,null);
     @Override
@@ -102,6 +105,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()){
+            case R.id.leftMenu:
+                drawerLayout.openDrawer(GravityCompat.START);
+                break;
              default:
         }
         return;
@@ -110,6 +116,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private void init(){
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         navigationView= (NavigationView) findViewById(R.id.leftView_1);
+        leftMenu =(ImageView) findViewById(R.id.leftMenu);
+        leftMenu.setOnClickListener(this);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
