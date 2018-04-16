@@ -13,7 +13,7 @@
             android:name="com.amap.api.v2.apikey"
             android:value="eaec24b5099be716aadb4ce8833edee4"/>
         <activity android:name="com.lovebus.activity.Main_Activity"
-                  android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme"/>
         <activity android:name="com.lovebus.activity.StartPictureActivity"
                   android:theme="@style/FullAppTheme">
             <intent-filter>
@@ -25,11 +25,7 @@
                   android:theme="@style/AppTheme"/>
         <activity android:name="com.lovebus.activity.OffLineMapActivity" />
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
-        <activity android:name="com.lovebus.activity.UserCollectionActivity" />
-        <activity android:name="com.lovebus.activity.RemindSettingsActivity" />
         <activity android:name="com.lovebus.activity.NoticeActivity" />
-        <activity android:name="com.lovebus.activity.SystemSettingsActivity" />
-        <activity android:name="com.lovebus.activity.PrivacyAndSafetyActivity" />
         <activity android:name="com.lovebus.activity.ThirdPartyBindActivity"/>
 
 
