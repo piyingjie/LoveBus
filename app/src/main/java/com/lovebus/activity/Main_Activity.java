@@ -1,5 +1,6 @@
 package com.lovebus.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -125,9 +126,31 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     /*左侧菜单点击事件在下方添加*/
                     case R.id.item1:
                         Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
+
+
+                        /*
+
+                        登录功能的跳转
+                         */
+                        Intent intent_login = new Intent(Main_Activity.this, LoginActivity.class);
+                        startActivity(intent_login);
+
+
+
+
+
+
+
                         break;
                     case R.id.item2:
                         Toast.makeText(Main_Activity.this,"item2",Toast.LENGTH_SHORT).show();
+                        /*
+
+                        注册功能的跳转
+                         */
+                        Intent intent_reg = new Intent(Main_Activity.this, RegisterActivity.class);
+                        startActivity(intent_reg);
+
                         break;
                     default:
                 }
