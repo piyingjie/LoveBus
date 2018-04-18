@@ -32,11 +32,11 @@ public class StartPictureActivity extends AppCompatActivity implements View.OnCl
 
         sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
 
-        if(sharedPreferences.getBoolean("first_start",true)==true)
+        if(sharedPreferences.getBoolean("first_start",true))
         {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("first_start", false);
-            editor.commit();
+            editor.apply();
             first_start=true;
         }
         else {
@@ -81,10 +81,9 @@ public class StartPictureActivity extends AppCompatActivity implements View.OnCl
                 break;
             default:
         }
-        return;
     }
     private void jump(){
-        if(first_start==false) {
+        if(!first_start) {
             startActivity(new Intent(StartPictureActivity.this, Main_Activity.class));
             finish();//关闭启动界面
         }

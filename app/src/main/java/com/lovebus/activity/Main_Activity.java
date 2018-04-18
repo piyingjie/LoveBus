@@ -275,14 +275,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     } else if (suggestionCities != null
                             && suggestionCities.size() > 0) {
                         showSuggestCity(suggestionCities);
-                    } else {
                     }
                 }
-            } else {
-
             }
-        } else {
-
         }
 
     }
@@ -314,8 +309,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     R.layout.route_inputs, listString);
             searchText.setAdapter(aAdapter);
             aAdapter.notifyDataSetChanged();
-        } else {
         }
     }
-
 }
