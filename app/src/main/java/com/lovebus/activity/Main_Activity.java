@@ -41,6 +41,8 @@ import java.util.List;
 
 import bus.android.com.lovebus.R;
 
+import static com.lovebus.function.LoveBusUtil.IsEmptyOrNullString;
+
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
     MapView mMapView = null;
     private DrawerLayout drawerLayout;
@@ -159,6 +161,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             aMap = mMapView.getMap();
             setUpMap();
         }
+        locate_main();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -208,6 +211,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     protected void doSearchQuery() {
         currentPage = 0;
         query = new PoiSearch.Query(keyWord, "", locationMsg.getCity());// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
+        MyLog.d("Test",locationMsg.getCity());
         query.setPageSize(10);// 设置每页最多返回多少条poiitem
         query.setPageNum(currentPage);// 设置查第一页
         query.setCityLimit(true);
@@ -235,16 +239,14 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String newText = s.toString().trim();
-        if (!IsEmptyOrNullString(newText)) {
+        if (!LoveBusUtil.IsEmptyOrNullString(newText)) {
             InputtipsQuery inputquery = new InputtipsQuery(newText, locationMsg.getCity());
             Inputtips inputTips = new Inputtips(Main_Activity.this, inputquery);
             inputTips.setInputtipsListener(this);
             inputTips.requestInputtipsAsyn();
         }
     }
-    public  boolean IsEmptyOrNullString(String s) {
-        return (s == null) || (s.trim().length() == 0);
-    }
+
     /**
      * POI信息查询回调方法
      */
@@ -265,26 +267,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         poiOverlay.removeFromMap();
                         poiOverlay.addToMap();
                         poiOverlay.zoomToSpan();
-                    } else if (suggestionCities != null
-                            && suggestionCities.size() > 0) {
-                        showSuggestCity(suggestionCities);
                     }
                 }
             }
         }
+    }
 
-    }
-    /**
-     * poi没有搜索到数据，返回一些推荐城市的信息
-     */
-    private void showSuggestCity(List<SuggestionCity> cities) {
-        String infomation = "推荐城市\n";
-        for (int i = 0; i < cities.size(); i++) {
-            infomation += "城市名称:" + cities.get(i).getCityName() + "城市区号:"
-                    + cities.get(i).getCityCode() + "城市编码:"
-                    + cities.get(i).getAdCode() + "\n";
-        }
-    }
     @Override
     public void onPoiItemSearched(PoiItem item, int rCode) {
         // TODO Auto-generated method stub
