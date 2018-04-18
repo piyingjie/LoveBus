@@ -1,7 +1,8 @@
 package com.lovebus.function;
 
+import android.content.Context;
 import android.util.Log;
-
+import android.widget.Toast;
 public class MyLog {
     public static final boolean DEBUG=true;
     public static void d(String tag,String text){
@@ -33,5 +34,8 @@ public class MyLog {
         if(DEBUG){
             Log.wtf(tag,text);
         }
+    }
+    public static void  Toast(Context context,String str){
+        Toast.makeText(context,str,Toast.LENGTH_SHORT).show();
     }
 }
