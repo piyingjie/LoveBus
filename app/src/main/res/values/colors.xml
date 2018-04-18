@@ -5,4 +5,5 @@
     <color name="colorAccent">#FF4081</color>
     <color name="search_white">#FCFCFC</color>
     <color name="blue">#5a78ca</color>
+    <color name="text">#000000</color>
 </resources>

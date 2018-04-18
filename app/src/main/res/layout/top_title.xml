@@ -15,18 +15,26 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             />
-        <FrameLayout
-            android:layout_weight="1"
+        <AutoCompleteTextView
+            android:id="@+id/keyWord"
             android:layout_width="0dp"
-            android:layout_height="match_parent">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="16sp"
-                android:imeOptions="actionSearch"
-                android:inputType="text"
-                android:background="@drawable/edit_bg"
-                android:hint="请输入目的地或者公交线路"/>
-        </FrameLayout>
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:completionThreshold="1"
+            android:dropDownVerticalOffset="1.0dip"
+            android:hint="@string/search_hint"
+            android:paddingStart="37.0dip"
+            android:paddingEnd="37.0dip"
+            android:imeOptions="actionDone"
+            android:inputType="text|textAutoComplete"
+            android:maxLength="20"
+            android:textColor="#000000"
+            android:textSize="16.0sp" />
+        <ImageView
+            android:id="@+id/search"
+            android:src="@drawable/search"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            />
     </LinearLayout>
 </RelativeLayout>
