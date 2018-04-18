@@ -1,12 +1,7 @@
 package com.lovebus.activity;
-
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -26,7 +20,6 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.SupportMapFragment;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.maps2d.overlay.PoiOverlay;
