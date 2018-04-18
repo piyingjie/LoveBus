@@ -1,8 +1,12 @@
 package com.lovebus.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -67,7 +71,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         showMap(savedInstanceState);
         init();
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -313,8 +316,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             aAdapter.notifyDataSetChanged();
         } else {
         }
-
-
     }
 
 }
