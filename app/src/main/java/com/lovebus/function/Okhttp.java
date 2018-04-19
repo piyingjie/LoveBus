@@ -24,7 +24,7 @@ public class Okhttp {
         Request request= new Request.Builder().url(address).build();
         client.newCall(request).enqueue(callback);
     }
-    /**发送消息，参数是消息和服务器地址*/
+    /*发送消息，参数是消息和服务器地址,键值对*/
     public static void postOkHttpRequest(String address, RequestBody requestBody, okhttp3.Callback callback,Map<String, String> map)
     {
         FormBody.Builder builder = new FormBody.Builder();
@@ -45,7 +45,7 @@ public class Okhttp {
         Request request= new Request.Builder().url(address).post(requestBody).build();
         client.newCall(request).enqueue(callback);
     }
-
+    /*发送消息，参数是消息和服务器地址,json数据*/
     public static void postJson(String address, okhttp3.Callback callback, String jsonStr)
     {
         OkHttpClient client= new OkHttpClient.Builder()
