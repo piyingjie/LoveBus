@@ -49,7 +49,7 @@ public class Locate {
                     location=mLocation;
                     listener.result(mLocation);
                 }else {
-                    MyLog.d("Tese","获取定位失败");
+                    MyLog.d("Test","获取定位失败");
                 }
             }
         });

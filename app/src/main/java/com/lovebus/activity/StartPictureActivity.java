@@ -18,7 +18,6 @@ import java.util.TimerTask;
 import bus.android.com.lovebus.R;
 
 public class StartPictureActivity extends AppCompatActivity implements View.OnClickListener{
-    private SharedPreferences sharedPreferences;
     private boolean first_start;
     private Timer timer;
     Button next;
@@ -30,7 +29,7 @@ public class StartPictureActivity extends AppCompatActivity implements View.OnCl
         next.setOnClickListener(this);
         /*通过sharedpreferences保存第一次的消息*/
 
-        sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
+         SharedPreferences sharedPreferences = getSharedPreferences("setting", MODE_PRIVATE);
 
         if(sharedPreferences.getBoolean("first_start",true))
         {

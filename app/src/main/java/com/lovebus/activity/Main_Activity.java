@@ -18,8 +18,10 @@ import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.AMapOptions;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
+import com.amap.api.maps2d.UiSettings;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.maps2d.overlay.PoiOverlay;
@@ -41,8 +43,6 @@ import java.util.List;
 
 import bus.android.com.lovebus.R;
 
-import static com.lovebus.function.LoveBusUtil.IsEmptyOrNullString;
-
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
     MapView mMapView = null;
     private DrawerLayout drawerLayout;
@@ -52,6 +52,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private AMap aMap;
     private AutoCompleteTextView searchText;// 输入搜索关键字
     private String keyWord = "";// 要输入的poi搜索关键字
+    private String localCity;
     private EditText editCity;// 要输入的城市名字或者城市区号
     private PoiResult poiResult; // poi返回的结果
     private int currentPage = 0;// 当前页面，从0开始计数
@@ -107,6 +108,16 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             aMap = mMapView.getMap();
         }
         aMap.moveCamera(CameraUpdateFactory.zoomTo(30));
+        UiSettings mUiSettings;//定义一个UiSettings对象
+        mUiSettings = aMap.getUiSettings();//实例化UiSettings类对象
+        /*指北针*/
+        mUiSettings.setCompassEnabled(true);
+        /*比例尺*/
+        mUiSettings.setScaleControlsEnabled(true);
+        /*缩放按钮位置*/
+        mUiSettings.setZoomPosition(AMapOptions.ZOOM_POSITION_RIGHT_CENTER);
+        /*回到当前位置按钮*/
+        mUiSettings.setMyLocationButtonEnabled(true);
         //开始的缩放比例
         MyLocationStyle myLocationStyle;
         myLocationStyle = new MyLocationStyle();
@@ -141,13 +152,11 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
                     return;
                 } else {
-                    locate_main();
                     doSearchQuery();
                 }
                 break;
              default:
         }
-        return;
     }
     /*初始化活动*/
     private void init(){
@@ -197,56 +206,56 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 locationMsg.setStreet(location.getStreet());
                 locationMsg.setPoiName(location.getPoiName());
                 MyLog.d("Test",locationMsg.getAddress());
+                localCity=locationMsg.getCity();
             }
         });
     }
-    /**
-     * 设置页面监听
-     */
+
+     /* 设置页面监听*/
     private void setUpMap() {
         searchText = (AutoCompleteTextView) findViewById(R.id.keyWord);
         searchText.addTextChangedListener(this);// 添加文本输入框监听事件
         aMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
     }
+
     protected void doSearchQuery() {
         currentPage = 0;
-        query = new PoiSearch.Query(keyWord, "", locationMsg.getCity());// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
+        query = new PoiSearch.Query(keyWord, "", localCity);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
         MyLog.d("Test",locationMsg.getCity());
         query.setPageSize(10);// 设置每页最多返回多少条poiitem
         query.setPageNum(currentPage);// 设置查第一页
         query.setCityLimit(true);
-
         poiSearch = new PoiSearch(this, query);
         poiSearch.setOnPoiSearchListener(this);
         poiSearch.searchPOIAsyn();
     }
+
+
+
+    /*poi搜索的回调*/
     @Override
     public boolean onMarkerClick(Marker marker) {
         marker.showInfoWindow();
         return false;
     }
-
     @Override
     public void afterTextChanged(Editable s) {
-
     }
-
     @Override
-    public void beforeTextChanged(CharSequence s, int start, int count,
-                                  int after) {
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
     }
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String newText = s.toString().trim();
         if (!LoveBusUtil.IsEmptyOrNullString(newText)) {
-            InputtipsQuery inputquery = new InputtipsQuery(newText, locationMsg.getCity());
+            InputtipsQuery inputquery = new InputtipsQuery(newText, localCity);
+            MyLog.d("Test",localCity+"-1"+locationMsg.getCity());
             Inputtips inputTips = new Inputtips(Main_Activity.this, inputquery);
             inputTips.setInputtipsListener(this);
             inputTips.requestInputtipsAsyn();
         }
     }
-
     /**
      * POI信息查询回调方法
      */
@@ -268,11 +277,14 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         poiOverlay.addToMap();
                         poiOverlay.zoomToSpan();
                     }
+                    else if (suggestionCities != null
+                            && suggestionCities.size() > 0) {
+                        showSuggestCity(suggestionCities);
+                    }
                 }
             }
         }
     }
-
     @Override
     public void onPoiItemSearched(PoiItem item, int rCode) {
         // TODO Auto-generated method stub
@@ -291,5 +303,15 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             searchText.setAdapter(aAdapter);
             aAdapter.notifyDataSetChanged();
         }
+    }
+     /*poi没有搜索到数据，返回一些推荐城市的信息*/
+    private void showSuggestCity(List<SuggestionCity> cities) {
+        String infomation = "推荐城市\n";
+        for (int i = 0; i < cities.size(); i++) {
+            infomation += "城市名称:" + cities.get(i).getCityName() + "城市区号:"
+                    + cities.get(i).getCityCode() + "城市编码:"
+                    + cities.get(i).getAdCode() + "\n";
+        }
+        Toast.makeText(Main_Activity.this,infomation,Toast.LENGTH_SHORT).show();
     }
 }
