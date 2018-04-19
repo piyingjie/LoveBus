@@ -33,7 +33,6 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:layout_gravity="start"
-        app:headerLayout="@layout/header_nav"
         app:menu="@menu/left_menu_nav">
 
     </android.support.design.widget.NavigationView>

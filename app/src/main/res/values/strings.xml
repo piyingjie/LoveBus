@@ -3,4 +3,9 @@
     <string name="next">跳过</string>
     <string name="login">登陆</string>
     <string name="search_hint">请输入关键词</string>
+    <string name="account_string">账号</string>
+    <string name="password_string">密码</string>
+    <string name="forget_password_string">忘记密码？</string>
+    <string name="login_1_text">还没有账号？</string>
+    <string name="login_2_text">立即注册</string>
 </resources>
