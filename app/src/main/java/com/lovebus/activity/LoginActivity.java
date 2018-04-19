@@ -8,9 +8,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.lovebus.function.MyLog;
+import com.lovebus.function.Okhttp;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 import bus.android.com.lovebus.R;
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
@@ -51,7 +58,26 @@ public class LoginActivity extends AppCompatActivity {
 
     /* 登录函数 */
     public void logIn(){
-        RequestBody requestBody = new FormBody.Builder().add("account", account).build();
+        RequestBody requestBody = new FormBody.Builder().add("account", account).add("password",password).build();
+        Okhttp.postOkHttpRequest("http://lovebus.top/demo/login.php", requestBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                /**这里写出错后的日志记录*/
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(LoginActivity.this, "请检查网络连接是否顺畅", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                /* 这个部分是子线程，和主线程通信很麻烦；另外里面不能直接进行UI操作，需要使用runOnUiThread（）*/
+                String data=response.body().string();
+                MyLog.d("Login",data);
+            }
+        });
     }
 
 
@@ -82,5 +108,22 @@ public class LoginActivity extends AppCompatActivity {
     /* 注册点击事件 */
     public void registerText(View view){
         startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+    }
+    /* json数据转换 */
+    private void parseJSONWithJSONObject(String response) {
+        /**这个部分是json的解析部分*/
+        try {
+            /**response可能需要接下来的一步改变编码*/
+            if(response != null && response.startsWith("\ufeff"))
+            {
+                response =  response.substring(1);
+            }
+            JSONArray jArray = new JSONArray(response);
+            for (int i = 0; i < jArray.length(); i++) {
+                JSONObject json_data = jArray.getJSONObject(i);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
