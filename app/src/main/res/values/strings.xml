@@ -8,4 +8,5 @@
     <string name="forget_password_string">忘记密码？</string>
     <string name="login_1_text">还没有账号？</string>
     <string name="login_2_text">立即注册</string>
+    <string name="title_activity_register">RegisterActivity</string>
 </resources>

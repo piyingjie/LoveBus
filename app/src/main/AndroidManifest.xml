@@ -60,8 +60,14 @@
 
         <service android:name="com.amap.api.location.APSService" />
 
-        <activity android:name="com.lovebus.activity.LoginActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name="com.lovebus.activity.LoginActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.lovebus.activity.RegisterActivity"
+            android:label="@string/title_activity_register"
+            android:theme="@style/AppTheme" />
+        <activity android:name="com.lovebus.activity.PasswordFindActivity"></activity>
     </application>
 
 </manifest>
