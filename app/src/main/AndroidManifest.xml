@@ -65,7 +65,6 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name="com.lovebus.activity.RegisterActivity"
-            android:label="@string/title_activity_register"
             android:theme="@style/AppTheme" />
         <activity android:name="com.lovebus.activity.PasswordFindActivity"></activity>
     </application>
