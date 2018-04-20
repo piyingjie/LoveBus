@@ -11,7 +11,7 @@
         >
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="a5b59785f861a2077013bde4785a6faf"/>
+            android:value="eaec24b5099be716aadb4ce8833edee4"/>
         <activity android:name="com.lovebus.activity.Main_Activity"
             android:theme="@style/AppTheme"/>
         <activity android:name="com.lovebus.activity.StartPictureActivity"
@@ -25,12 +25,8 @@
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
         <activity android:name="com.lovebus.activity.NoticeActivity" />
         <activity android:name="com.lovebus.activity.ThirdPartyBindActivity"/>
-        <activity android:name="com.lovebus.activity.CitySelectAcitivity"/>
-
-
-
+        <activity android:name="com.lovebus.activity.CitySelectActivity"/>
         <service android:name="com.amap.api.location.APSService"/>
-
         <activity
             android:name="com.lovebus.activity.LoginActivity"
             android:theme="@style/AppTheme" />

@@ -190,7 +190,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         break;
                     case R.id.city_change:
                         Toast.makeText(Main_Activity.this,"item2",Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(Main_Activity.this,CitySelectAcitivity.class));
+                        startActivity(new Intent(Main_Activity.this,CitySelectActivity.class));
                         break;
                     default:
                 }
