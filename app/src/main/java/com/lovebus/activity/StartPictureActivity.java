@@ -6,12 +6,12 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import android.view.View;
 
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 
@@ -31,7 +31,7 @@ public class StartPictureActivity extends AppCompatActivity implements View.OnCl
 
 
     private Timer timer;
-
+    Button next;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +91,6 @@ public class StartPictureActivity extends AppCompatActivity implements View.OnCl
                 break;
             default:
         }
-        return;
     }
     private void jump(){
         if(!first_start) {

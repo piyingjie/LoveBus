@@ -13,6 +13,7 @@
         android:layout_height="70sp" />
 
     <TextView
+        android:id="@+id/login"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/imageView"
         android:layout_width="wrap_content"

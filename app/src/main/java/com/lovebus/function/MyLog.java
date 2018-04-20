@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 public class MyLog {
     public static final boolean DEBUG=true;
+    public static final boolean TOAST=true;
     public static void d(String tag,String text){
         if(DEBUG){
             Log.d(tag,text);
@@ -36,6 +37,8 @@ public class MyLog {
         }
     }
     public static void  Toast(Context context,String str){
-        Toast.makeText(context,str,Toast.LENGTH_SHORT).show();
+        if(TOAST){
+             Toast.makeText(context,str,Toast.LENGTH_SHORT).show();
+        }
     }
 }

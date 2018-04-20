@@ -15,12 +15,15 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.maps2d.AMap;
+import com.amap.api.maps2d.AMapOptions;
 import com.amap.api.maps2d.CameraUpdateFactory;
 import com.amap.api.maps2d.MapView;
+import com.amap.api.maps2d.UiSettings;
 import com.amap.api.maps2d.model.Marker;
 import com.amap.api.maps2d.model.MyLocationStyle;
 import com.amap.api.maps2d.overlay.PoiOverlay;
@@ -45,13 +48,13 @@ import bus.android.com.lovebus.R;
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
     MapView mMapView = null;
     private DrawerLayout drawerLayout;
-    NavigationView navigationView;
     ImageView leftMenu;
     ImageView search;
+    TextView login;
     private AMap aMap;
     private AutoCompleteTextView searchText;// 输入搜索关键字
     private String keyWord = "";// 要输入的poi搜索关键字
-    String localCity;
+    private String localCity;
     private EditText editCity;// 要输入的城市名字或者城市区号
     private PoiResult poiResult; // poi返回的结果
     private int currentPage = 0;// 当前页面，从0开始计数
@@ -107,6 +110,16 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             aMap = mMapView.getMap();
         }
         aMap.moveCamera(CameraUpdateFactory.zoomTo(30));
+        UiSettings mUiSettings;//定义一个UiSettings对象
+        mUiSettings = aMap.getUiSettings();//实例化UiSettings类对象
+        /*指北针*/
+        mUiSettings.setCompassEnabled(true);
+        /*比例尺*/
+        mUiSettings.setScaleControlsEnabled(true);
+        /*缩放按钮位置*/
+        mUiSettings.setZoomPosition(AMapOptions.ZOOM_POSITION_RIGHT_CENTER);
+        /*回到当前位置按钮*/
+        mUiSettings.setMyLocationButtonEnabled(true);
         //开始的缩放比例
         MyLocationStyle myLocationStyle;
         myLocationStyle = new MyLocationStyle();
@@ -144,17 +157,24 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     doSearchQuery();
                 }
                 break;
+            case R.id.login:
+                Intent intent=new Intent(Main_Activity.this,LoginActivity.class);
+                startActivity(intent);
+                break;
              default:
         }
     }
     /*初始化活动*/
     private void init(){
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
-        navigationView= (NavigationView) findViewById(R.id.leftView_1);
+        NavigationView navigationView= (NavigationView) findViewById(R.id.leftView_1);
         leftMenu =(ImageView) findViewById(R.id.leftMenu);
         search=(ImageView) findViewById(R.id.search);
+        View user_header=navigationView.inflateHeaderView(R.layout.header_nav);
+        login=(TextView)user_header.findViewById(R.id.login);
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
+        login.setOnClickListener(this);
         if (aMap == null) {
             aMap = mMapView.getMap();
             setUpMap();
@@ -201,9 +221,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
-
-
 
      /* 设置页面监听*/
     private void setUpMap() {
