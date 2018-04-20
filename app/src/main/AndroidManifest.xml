@@ -11,7 +11,7 @@
         >
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="eaec24b5099be716aadb4ce8833edee4"/>
+            android:value="a5b59785f861a2077013bde4785a6faf"/>
         <activity android:name="com.lovebus.activity.Main_Activity"
             android:theme="@style/AppTheme"/>
         <activity android:name="com.lovebus.activity.StartPictureActivity"
@@ -21,8 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.lovebus.activity.FirstLoginActivity"
-                  android:theme="@style/AppTheme"/>
         <activity android:name="com.lovebus.activity.OffLineMapActivity" />
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
         <activity android:name="com.lovebus.activity.NoticeActivity" />
@@ -32,6 +30,14 @@
 
 
         <service android:name="com.amap.api.location.APSService"/>
+
+        <activity
+            android:name="com.lovebus.activity.LoginActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="com.lovebus.activity.RegisterActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name="com.lovebus.activity.PasswordFindActivity"></activity>
 
     </application>
     <!--用于进行网络定位-->
@@ -55,4 +61,8 @@
     <!--用于申请获取蓝牙信息进行室内定位-->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 </manifest>
