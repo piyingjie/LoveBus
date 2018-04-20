@@ -228,8 +228,6 @@ public class CitySelectActivity extends AppCompatActivity{
 
         /**
          * 为ListView填充数据
-         *
-         * @return
          */
         private List<SortModel> filledData(List<CityInfoBean> cityList) {
             List<SortModel> mSortList = new ArrayList<SortModel>();
@@ -313,26 +311,14 @@ public class CitySelectActivity extends AppCompatActivity{
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     cityName = ((SortModel) adapter.getItem(position)).getName();
-                    if(cityName.equals(null)){
-                        MyLog.d("CITY","-1");
-                    }
-                    else {
-                        MyLog.d("CITY",cityName+"-1");
-                        editor = sharedPreferences.edit();
-                        //sharedPreferences.getString("currentCity",cityName);
-                        editor.putString("cCity",cityName);
-                        editor.commit();
-                        MyLog.d("CITY","test"+"-"+sharedPreferences.getString("cCity",cityName));
-                        mCurrentCity.setText(sharedPreferences.getString("cCity",cityName));}
-                    //                    }
-                    //                    //mCurrentCity.setText(cityName);
+                    MyLog.d("CITY",cityName+"-1");
+                    editor = sharedPreferences.edit();
+                    //sharedPreferences.getString("currentCity",cityName);
+                    editor.putString("cCity",cityName);
+                    editor.apply();
+                    MyLog.d("CITY","test"+"-"+sharedPreferences.getString("cCity",cityName));
+                    mCurrentCity.setText(sharedPreferences.getString("cCity",cityName));
                     startActivity(new Intent(CitySelectActivity.this, Main_Activity.class));
-                    /*cityInfoBean = CityInfoBean.findCity(cityListInfo, cityName);
-                    Intent intent = new Intent();
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("cityinfo", cityInfoBean);
-                    intent.putExtras(bundle);
-                    setResult(RESULT_OK, intent);*/
                     finish();
                 }
             });
@@ -359,8 +345,7 @@ public class CitySelectActivity extends AppCompatActivity{
 
         /**
          * 根据输入框中的值来过滤数据并更新ListView
-         *
-         * @param filterStr
+
          */
         private void filterData(String filterStr) {
             List<SortModel> filterDateList = new ArrayList<SortModel>();
