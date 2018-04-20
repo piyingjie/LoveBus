@@ -1,15 +1,29 @@
 package com.lovebus.activity;
 
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import android.widget.TextView;
+
+
+
+
 
 import bus.android.com.lovebus.R;
 
 public class FirstLoginActivity extends AppCompatActivity {
 
+    TextView positionCity;
+    TextView chooseCity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_login);
+
+
     }
+
+
+
 }

@@ -1,4 +1,5 @@
 package com.lovebus.activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -167,8 +168,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     case R.id.item1:
                         Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.item2:
+                    case R.id.city_change:
                         Toast.makeText(Main_Activity.this,"item2",Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(Main_Activity.this,CitySelectAcitivity.class));
                         break;
                     default:
                 }
@@ -195,6 +197,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 locationMsg.setPoiName(location.getPoiName());
                 MyLog.d("Test",locationMsg.getAddress());
                 localCity=locationMsg.getCity();
+
             }
         });
     }
