@@ -96,6 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 else{
                     MyLog.d("RES",data);
+                    parseJSONWithJSONObject(data);
                 }
             }
         });
@@ -108,39 +109,40 @@ public class RegisterActivity extends AppCompatActivity {
             {
                 response =  response.substring(1);
             }
-            String id;
+            String success;
             JSONArray jArray = new JSONArray(response);
             for (int i = 0; i < jArray.length(); i++) {
                 JSONObject json_data = jArray.getJSONObject(i);
-                id=json_data.getString("id");
-                MyLog.d("REG",id);
-                toast(id);
+                success=json_data.getString("success");
+                MyLog.d("REG",success);
+                toast(success);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    /**点击注册按钮之后的提醒*/
     private void toast(final String response){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(response.equals("0")){
-                    Toast.makeText(RegisterActivity.this,"注册成功",Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-                else if(response.equals("-1")){
-                    Toast.makeText(RegisterActivity.this,"手机号已被使用",Toast.LENGTH_SHORT).show();
-                }
-                else if(response.equals("-2")){
-                    Toast.makeText(RegisterActivity.this,"账号已被使用",Toast.LENGTH_SHORT).show();
-                }
-                else if(response.equals("-3")){
-                    Toast.makeText(RegisterActivity.this,"网络连接失败",Toast.LENGTH_SHORT).show();
-                }
-
+                 switch (response){
+                     case "-3":
+                         MyLog.Toast_re(RegisterActivity.this,"用户名已存在");
+                         break;
+                     case "-2":
+                         MyLog.Toast_re(RegisterActivity.this,"手机号已注册");
+                         break;
+                     case "-1":
+                         MyLog.Toast_re(RegisterActivity.this,"网络连接错误");
+                         break;
+                     case "1":
+                         MyLog.Toast_re(RegisterActivity.this,"注册成功");
+                         break;
+                 }
             }
         });
-    }/**点击注册按钮之后的提醒*/
+    }
     /* 登录点击事件 */
     public void signInText(View view){
         finish();

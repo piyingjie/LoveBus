@@ -77,4 +77,7 @@ public class MyLog {
              Toast.makeText(context,str,Toast.LENGTH_SHORT).show();
         }
     }
+    public static void  Toast_re(Context context,String str){
+        Toast.makeText(context,str,Toast.LENGTH_SHORT).show();
+    }
 }
