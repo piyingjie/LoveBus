@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
     /* 登录函数 */
     public void logIn(){
         RequestBody requestBody = new FormBody.Builder().add("account", account).add("password",password).build();
-        Okhttp.postOkHttpRequest("http://lovebus.top/demo/login.php", requestBody, new Callback() {
+        Okhttp.postOkHttpRequest("http://lovebus.top/lovebus/login.php", requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 /**这里写出错后的日志记录*/
@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                 /* 这个部分是子线程，和主线程通信很麻烦；另外里面不能直接进行UI操作，需要使用runOnUiThread（）*/
                 String data=response.body().string();
                 MyLog.d("Login",data);
+                MyLog.d("Login","789");
             }
         });
     }

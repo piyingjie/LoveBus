@@ -1,5 +1,7 @@
 package com.lovebus.activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -39,11 +41,16 @@ import com.lovebus.entity.Location;
 import com.lovebus.function.Locate;
 import com.lovebus.function.LoveBusUtil;
 import com.lovebus.function.MyLog;
+import com.lovebus.function.Okhttp;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import bus.android.com.lovebus.R;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
     MapView mMapView = null;
@@ -51,6 +58,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     ImageView leftMenu;
     ImageView search;
     TextView login;
+    de.hdodenhof.circleimageview.CircleImageView user_head_image;
     private AMap aMap;
     private AutoCompleteTextView searchText;// 输入搜索关键字
     private String keyWord = "";// 要输入的poi搜索关键字
@@ -172,6 +180,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         search=(ImageView) findViewById(R.id.search);
         View user_header=navigationView.inflateHeaderView(R.layout.header_nav);
         login=(TextView)user_header.findViewById(R.id.login);
+        user_head_image=(de.hdodenhof.circleimageview.CircleImageView)user_header.findViewById(R.id.userImageView);
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
         login.setOnClickListener(this);
@@ -298,7 +307,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
     @Override
     public void onPoiItemSearched(PoiItem item, int rCode) {
-        // TODO Auto-generated method stub
 
     }
     @Override

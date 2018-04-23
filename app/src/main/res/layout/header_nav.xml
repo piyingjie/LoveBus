@@ -7,7 +7,7 @@
     android:background="@color/blue">
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_centerHorizontal="true"
-        android:id="@+id/imageView"
+        android:id="@+id/userImageView"
         android:src="@drawable/account"
         android:layout_width="70sp"
         android:layout_height="70sp" />
@@ -15,7 +15,7 @@
     <TextView
         android:id="@+id/login"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/imageView"
+        android:layout_below="@id/userImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/login"
