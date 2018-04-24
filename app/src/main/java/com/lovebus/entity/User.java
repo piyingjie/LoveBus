@@ -2,16 +2,22 @@ package com.lovebus.entity;
 
 import android.widget.Button;
 
+import java.io.Serializable;
+
 import bus.android.com.lovebus.R;
 
-public class User {
+public class User implements Serializable{
+    private static final long serialVersionUID=548624851698452674L;
+
+    private boolean is_login;
     private String account;
     private String phone;
     private String password;
     private String nickname;
     private String city;
     private String head_image;
-    public User(String account, String phone, String password, String nickname, String city, String head_image) {
+    public User(boolean is_login,String account, String phone, String password, String nickname, String city, String head_image) {
+        this.is_login=is_login;
         this.account = account;
         this.phone = phone;
         this.password = password;
@@ -67,4 +73,11 @@ public class User {
         this.head_image = head_image;
     }
 
+    public boolean isIs_login() {
+        return is_login;
+    }
+
+    public void setIs_login(boolean is_login) {
+        this.is_login = is_login;
+    }
 }
