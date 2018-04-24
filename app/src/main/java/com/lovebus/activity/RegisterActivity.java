@@ -110,13 +110,10 @@ public class RegisterActivity extends AppCompatActivity {
                 response =  response.substring(1);
             }
             String success;
-            JSONArray jArray = new JSONArray(response);
-            for (int i = 0; i < jArray.length(); i++) {
-                JSONObject json_data = jArray.getJSONObject(i);
-                success=json_data.getString("success");
-                MyLog.d("REG",success);
-                toast(success);
-            }
+            JSONObject json_data = new JSONObject(response);
+            success=json_data.getString("success");
+            MyLog.d("REG",success);
+            toast(success);
         } catch (Exception e) {
             e.printStackTrace();
         }

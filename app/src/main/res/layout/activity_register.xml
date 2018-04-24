@@ -64,6 +64,7 @@
             android:maxLength="11"
             android:hint="@string/register_phone"
             android:textSize="14dp"
+            android:inputType="phone"
             android:textColorHint="#75ACD0"
             android:imeOptions="actionNext"/>
     </LinearLayout>
