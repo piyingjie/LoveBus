@@ -1,5 +1,6 @@
 package com.lovebus.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,8 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.lovebus.entity.User;
 import com.lovebus.function.MyLog;
 import com.lovebus.function.Okhttp;
+import com.lovebus.function.SharedPreferences_tools;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
     String nickname;
     String register_password;
     String register_password_confirm;
+    User user=new User(false,null,null,null,null,null,null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
                          break;
                      case "1":
                          MyLog.Toast_re(RegisterActivity.this,"注册成功");
+                         register_success();
                          break;
                  }
             }
@@ -142,6 +147,18 @@ public class RegisterActivity extends AppCompatActivity {
     }
     /* 登录点击事件 */
     public void signInText(View view){
+        finish();
+    }
+    private void register_success(){
+        user.setAccount(account);
+        user.setIs_login(true);
+        user.setHead_image(null);
+        user.setCity(null);
+        user.setPhone(phone);
+        user.setNickname(nickname);
+        user.setPassword(register_password);
+        SharedPreferences_tools.save("User","info",RegisterActivity.this,user);
+        startActivity(new Intent(RegisterActivity.this, Main_Activity.class));
         finish();
     }
 }
