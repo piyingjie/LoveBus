@@ -8,7 +8,7 @@ public class MyLog {
     public static final boolean TOAST=true;
     public static void d(String tag,String text){
         if(DEBUG){
-            if(!text.equals(null))
+            if(text!=null)
             {
                 Log.d(tag,text);
             }
@@ -19,7 +19,7 @@ public class MyLog {
     }
     public static void v(String tag,String text){
         if(DEBUG){
-            if(!text.equals(null))
+            if(text!=null)
             {
                 Log.v(tag,text);
             }
@@ -30,7 +30,7 @@ public class MyLog {
     }
     public static void i(String tag,String text){
         if(DEBUG){
-            if(!text.equals(null))
+            if(text!=null)
             {
                 Log.i(tag,text);
             }
@@ -41,7 +41,7 @@ public class MyLog {
     }
     public static void w(String tag,String text){
         if(DEBUG){
-            if(!text.equals(null))
+            if(text!=null)
             {
                 Log.w(tag,text);
             }
@@ -52,7 +52,7 @@ public class MyLog {
     }
     public static void e(String tag,String text){
         if(DEBUG){
-            if(!text.equals(null))
+            if(text!=null)
             {
                 Log.e(tag,text);
             }
@@ -63,7 +63,7 @@ public class MyLog {
     }
     public static void wtf(String tag,String text){
         if(DEBUG){
-            if(!text.equals(null))
+            if(text!=null)
             {
                 Log.wtf(tag,text);
             }

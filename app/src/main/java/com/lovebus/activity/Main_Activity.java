@@ -38,10 +38,12 @@ import com.amap.api.services.help.Tip;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.lovebus.entity.Location;
+import com.lovebus.entity.User;
 import com.lovebus.function.Locate;
 import com.lovebus.function.LoveBusUtil;
 import com.lovebus.function.MyLog;
 import com.lovebus.function.Okhttp;
+import com.lovebus.function.SharedPreferences_tools;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,6 +61,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     ImageView search;
     TextView login;
     de.hdodenhof.circleimageview.CircleImageView user_head_image;
+    User user=new User(false,null,null,null,null,null,null);
     private AMap aMap;
     private AutoCompleteTextView searchText;// 输入搜索关键字
     private String keyWord = "";// 要输入的poi搜索关键字
@@ -184,6 +187,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
         login.setOnClickListener(this);
+        if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
+            user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
+        }
+        MyLog.d("LOAD",user.getAccount());
         if (aMap == null) {
             aMap = mMapView.getMap();
             setUpMap();
