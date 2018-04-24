@@ -1,24 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="150sp"
-    android:padding="10dp"
-    android:orientation="vertical"
+    android:layout_height="120sp"
+    android:padding="10sp"
+    android:orientation="horizontal"
     android:background="@color/blue">
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_centerHorizontal="true"
-        android:id="@+id/userImageView"
+        android:id="@+id/userHeadImage"
         android:src="@drawable/account"
-        android:layout_width="70sp"
-        android:layout_height="70sp" />
+        android:layout_width="100sp"
+        android:layout_height="100sp" />
 
-    <TextView
-        android:id="@+id/login"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/userImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/login"
-        android:textSize="24sp"
-       />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/userHeadImage">
+
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/user_set_name"
+            android:textSize="20sp"
+            android:text="@string/user_f_login" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/user_set_name">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:text="@string/user_city"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/user_set_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="40dp"
+                android:text="@string/user_city_set"
+                android:textSize="12sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
 </RelativeLayout>
