@@ -140,7 +140,8 @@ public class LoginActivity extends AppCompatActivity {
                 user.setNickname(json_data.getString("nickname"));
                 user.setPhone(json_data.getString("phonenumber"));
                 user.setCity(json_data.getString("city"));
-                user.setHead_image(json_data.getString("head"));
+                user.setHead_image(json_data.getString("head").replaceAll("\\\\",""));
+                MyLog.d("HEAD",user.getHead_image());
             }
         } catch (Exception e) {
             e.printStackTrace();
