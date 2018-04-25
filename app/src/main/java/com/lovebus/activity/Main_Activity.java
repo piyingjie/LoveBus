@@ -1,5 +1,6 @@
 package com.lovebus.activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -61,11 +62,16 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private PoiSearch.Query query;// Poi查询条件类
     private PoiSearch poiSearch;// POI搜索
 
+    private SharedPreferences sp;//获取当前城市
+
     Location locationMsg=new Location(0,0,null,null,null,null,null,null,null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
+        sp= getSharedPreferences("currentCity",MODE_PRIVATE);
+
         showMap(savedInstanceState);
         init();
     }
@@ -190,7 +196,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         break;
                     case R.id.city_change:
                         Toast.makeText(Main_Activity.this,"item2",Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(Main_Activity.this,CitySelectAcitivity.class));
+                        startActivity(new Intent(Main_Activity.this,CitySelectActivity.class));
                         break;
                     default:
                 }
@@ -216,7 +222,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 locationMsg.setStreet(location.getStreet());
                 locationMsg.setPoiName(location.getPoiName());
                 MyLog.d("Test",locationMsg.getAddress());
-                localCity=locationMsg.getCity();
+                if (sp.getBoolean("first_start",true)){
+                    localCity=locationMsg.getCity();
+                }else {
+                    localCity=sp.getString("cCity","");
+                }
+                MyLog.d("yang",localCity);
+                MyLog.d("yang","sb");
 
             }
         });

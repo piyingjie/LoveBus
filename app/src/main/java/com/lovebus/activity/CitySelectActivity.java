@@ -34,7 +34,7 @@ import java.util.List;
 
 import bus.android.com.lovebus.R;
 
-public class CitySelectAcitivity extends AppCompatActivity{
+public class CitySelectActivity extends AppCompatActivity{
 
 
 
@@ -151,7 +151,7 @@ public class CitySelectAcitivity extends AppCompatActivity{
 */
     private void initCityLocation() {
         /*初始化定位*/
-        Locate.init(CitySelectAcitivity.this);
+        Locate.init(CitySelectActivity.this);
 
         /*定位调用*/
         Locate.getCurrentLocation(new Locate.MyLocationListener() {
@@ -171,12 +171,13 @@ public class CitySelectAcitivity extends AppCompatActivity{
                 mCurrentCity = (TextView) findViewById(R.id.currentCity);
                 mLocalCity = (TextView) findViewById(R.id.localCity);
                 MyLog.d("Test",cityLocation);
-                /*editor.putString("sCurrentCity",cityLocation);
-                editor.apply();
 
-                mCurrentCity.setText(sharedPreferences.getString("sCurrentCity",cityLocation));*/
                 if(first_start){
-                    mCurrentCity.setText(cityLocation);
+                    editor = sharedPreferences.edit();
+                    editor.putString("cCity",cityLocation);
+                    editor.apply();
+
+                    mCurrentCity.setText(sharedPreferences.getString("cCity",""));
                 }
                 mLocalCity.setText(cityLocation);
             }
@@ -198,12 +199,12 @@ public class CitySelectAcitivity extends AppCompatActivity{
             imgBack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(CitySelectAcitivity.this, Main_Activity.class));
+                    startActivity(new Intent(CitySelectActivity.this, Main_Activity.class));
                     finish();
                 }
             });
             if (!first_start){
-                mCurrentCity.setText(sharedPreferences.getString("cCity",cityName));
+                mCurrentCity.setText(sharedPreferences.getString("cCity",""));
             }
             //MyLog.d("Test",cityLocation);
             //mCityTextSearch.setText(cityLocation);
@@ -288,7 +289,7 @@ public class CitySelectAcitivity extends AppCompatActivity{
 
         private void initList() {
             sourceDateList = new ArrayList<SortModel>();
-            adapter = new SortAdapter(CitySelectAcitivity.this, sourceDateList);
+            adapter = new SortAdapter(CitySelectActivity.this, sourceDateList);
             sortListView.setAdapter(adapter);
 
             //实例化汉字转拼音类
@@ -326,7 +327,7 @@ public class CitySelectAcitivity extends AppCompatActivity{
                         mCurrentCity.setText(sharedPreferences.getString("cCity",cityName));}
                     //                    }
                     //                    //mCurrentCity.setText(cityName);
-                    startActivity(new Intent(CitySelectAcitivity.this, Main_Activity.class));
+                    startActivity(new Intent(CitySelectActivity.this, Main_Activity.class));
                     /*cityInfoBean = CityInfoBean.findCity(cityListInfo, cityName);
                     Intent intent = new Intent();
                     Bundle bundle = new Bundle();
@@ -370,14 +371,29 @@ public class CitySelectAcitivity extends AppCompatActivity{
             }
             else {
                 filterDateList.clear();
+               /* for (int i=0;i<sourceDateList.size();i++){
+                    SortModel sortModel = null;
+                    sortModel.setName(sourceDateList.get(i).getName());
+                    String name = sortModel.getName();
+                    if (name.equals(filterStr) || characterParser.getSelling(name).startsWith(filterStr)){
+                        filterDateList.add(sortModel);
+                    }
+                    }*/
+
+
                 for (SortModel sortModel : sourceDateList) {
                     String name = sortModel.getName();
                     if (name.contains(filterStr) || characterParser.getSelling(name).startsWith(filterStr)) {
                         filterDateList.add(sortModel);
+                        MyLog.d("yang", name);
+//                        int index=name.indexOf(filterStr);
+//                        filterDateList.set(index,sortModel);
+
+
                     }
                 }
-            }
 
+            }
             // 根据a-z进行排序
             Collections.sort(filterDateList, pinyinComparator);
             adapter.updateListView(filterDateList);

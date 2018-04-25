@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,8 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-
-import com.lljjcoder.style.citylist.CityListSelectActivity;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -98,7 +95,7 @@ public class StartPictureActivity extends AppCompatActivity implements View.OnCl
             finish();//关闭启动界面
         }
         else {
-            startActivity(new Intent(StartPictureActivity.this, CitySelectAcitivity.class));
+            startActivity(new Intent(StartPictureActivity.this, CitySelectActivity.class));
             finish();//关闭启动界面
         }
     }

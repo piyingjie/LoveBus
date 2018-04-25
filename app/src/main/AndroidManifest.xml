@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="bus.android.com.lovebus">
+    <!-- QQ登录授权所需权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +28,7 @@
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
         <activity android:name="com.lovebus.activity.NoticeActivity" />
         <activity android:name="com.lovebus.activity.ThirdPartyBindActivity"/>
-        <activity android:name="com.lovebus.activity.CitySelectAcitivity"/>
+        <activity android:name="com.lovebus.activity.CitySelectActivity"/>
 
 
 
@@ -38,6 +41,22 @@
             android:name="com.lovebus.activity.RegisterActivity"
             android:theme="@style/AppTheme" />
         <activity android:name="com.lovebus.activity.PasswordFindActivity"></activity>
+
+        <!-- 注册SDKActivity -->
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="tencent1106786595" /> <!-- 开放平台获取的APPID -->
+            </intent-filter>
+        </activity>
+        <activity android:name="com.tencent.connect.common.AssistActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:screenOrientation="portrait"/>
 
     </application>
     <!--用于进行网络定位-->
