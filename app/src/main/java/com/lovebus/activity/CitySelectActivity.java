@@ -371,29 +371,14 @@ public class CitySelectActivity extends AppCompatActivity{
             }
             else {
                 filterDateList.clear();
-               /* for (int i=0;i<sourceDateList.size();i++){
-                    SortModel sortModel = null;
-                    sortModel.setName(sourceDateList.get(i).getName());
-                    String name = sortModel.getName();
-                    if (name.equals(filterStr) || characterParser.getSelling(name).startsWith(filterStr)){
-                        filterDateList.add(sortModel);
-                    }
-                    }*/
-
-
                 for (SortModel sortModel : sourceDateList) {
                     String name = sortModel.getName();
                     if (name.contains(filterStr) || characterParser.getSelling(name).startsWith(filterStr)) {
                         filterDateList.add(sortModel);
-                        MyLog.d("yang", name);
-//                        int index=name.indexOf(filterStr);
-//                        filterDateList.set(index,sortModel);
-
-
                     }
                 }
-
             }
+
             // 根据a-z进行排序
             Collections.sort(filterDateList, pinyinComparator);
             adapter.updateListView(filterDateList);

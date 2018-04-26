@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.lovebus.entity.User;
 import com.lovebus.function.MyLog;
 import com.lovebus.function.Okhttp;
 import com.tencent.connect.UserInfo;
@@ -17,6 +18,7 @@ import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
+import com.lovebus.function.SharedPreferences_tools;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,6 +45,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText account_edit = null, passwordEdit = null;//帐号和密码编辑框
     Button signInBtn = null;//登录按钮
     String account, password;//帐号和密码功能
+    String status;
+    User user=new User(false,null,null,null,null,null,null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
     /* 登录函数 */
     public void logIn(){
         RequestBody requestBody = new FormBody.Builder().add("account", account).add("password",password).build();
-        Okhttp.postOkHttpRequest("http://lovebus.top/demo/login.php", requestBody, new Callback() {
+        Okhttp.postOkHttpRequest("http://lovebus.top/lovebus/login.php", requestBody, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 /**这里写出错后的日志记录*/
@@ -171,6 +175,13 @@ public class LoginActivity extends AppCompatActivity {
                 /* 这个部分是子线程，和主线程通信很麻烦；另外里面不能直接进行UI操作，需要使用runOnUiThread（）*/
                 String data=response.body().string();
                 MyLog.d("Login",data);
+                parseJSONWithJSONObject(data);
+                if (status.equals("1")){
+                    toast_login_1();
+                }
+                else {
+                    toast_login_2();
+                }
             }
         });
     }
@@ -182,6 +193,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                SharedPreferences_tools.save("User","info",LoginActivity.this,user);
+                finish();
             }
         });
     }
@@ -213,9 +226,17 @@ public class LoginActivity extends AppCompatActivity {
             {
                 response =  response.substring(1);
             }
-            JSONArray jArray = new JSONArray(response);
-            for (int i = 0; i < jArray.length(); i++) {
-                JSONObject json_data = jArray.getJSONObject(i);
+            JSONObject json_data = new JSONObject(response);
+            status=json_data.getString("status");
+            if(status.equals("1")){
+                user.setAccount(account);
+                user.setPassword(password);
+                user.setIs_login(true);
+                user.setNickname(json_data.getString("nickname"));
+                user.setPhone(json_data.getString("phonenumber"));
+                user.setCity(json_data.getString("city"));
+                user.setHead_image(json_data.getString("head").replaceAll("\\\\",""));
+                MyLog.d("HEAD",user.getHead_image());
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -10,9 +10,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 
 public class Okhttp {
-    public final static int CONNECT_TIMEOUT =60;
-    public final static int READ_TIMEOUT=100;
-    public final static int WRITE_TIMEOUT=60;
+    private final static int CONNECT_TIMEOUT =60;
+    private final static int READ_TIMEOUT=100;
+    private final static int WRITE_TIMEOUT=60;
     /**接受消息，参数是服务器地址*/
     public  static void getOkHttpRequest(String address, okhttp3.Callback callback){
 

@@ -29,9 +29,6 @@
         <activity android:name="com.lovebus.activity.NoticeActivity" />
         <activity android:name="com.lovebus.activity.ThirdPartyBindActivity"/>
         <activity android:name="com.lovebus.activity.CitySelectActivity"/>
-
-
-
         <service android:name="com.amap.api.location.APSService"/>
 
         <activity

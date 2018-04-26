@@ -1,6 +1,8 @@
 package com.lovebus.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -37,21 +39,31 @@ import com.amap.api.services.help.Tip;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 import com.lovebus.entity.Location;
+import com.lovebus.entity.User;
 import com.lovebus.function.Locate;
 import com.lovebus.function.LoveBusUtil;
 import com.lovebus.function.MyLog;
+import com.lovebus.function.Okhttp;
+import com.lovebus.function.SharedPreferences_tools;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import bus.android.com.lovebus.R;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
     MapView mMapView = null;
     private DrawerLayout drawerLayout;
     ImageView leftMenu;
     ImageView search;
-    TextView login;
+    de.hdodenhof.circleimageview.CircleImageView user_head_image;
+    TextView username;
+    TextView userSetCity;
+    User user=new User(false,null,null,null,null,null,null);
     private AMap aMap;
     private AutoCompleteTextView searchText;// 输入搜索关键字
     private String keyWord = "";// 要输入的poi搜索关键字
@@ -64,6 +76,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
     private SharedPreferences sp;//获取当前城市
 
+    private SharedPreferences login_sp;
+    private SharedPreferences.Editor editor;
+    private boolean first_login;//获取登录状态
+
+
+
     Location locationMsg=new Location(0,0,null,null,null,null,null,null,null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +89,16 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.main_activity);
 
         sp= getSharedPreferences("currentCity",MODE_PRIVATE);
+        login_sp = getSharedPreferences("first_login",MODE_PRIVATE);
+
+        if (login_sp.getBoolean("first_login", true)) {
+            editor = login_sp.edit();
+            editor.putBoolean("first_login",false);
+            editor.apply();
+            first_login=true;
+        }else {
+            first_login=false;
+        }
 
         showMap(savedInstanceState);
         init();
@@ -88,6 +116,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         super.onResume();
         //在activity执行onResume时执行mMapView.onResume ()，重新绘制加载地图
         mMapView.onResume();
+        if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
+            user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
+        }
+        updateUserInfo();
     }
 
     @Override
@@ -103,6 +135,84 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，保存地图当前的状态
         mMapView.onSaveInstanceState(outState);
     }
+
+    /*初始化活动*/
+    private void init(){
+        drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
+        NavigationView navigationView= (NavigationView) findViewById(R.id.leftView_1);
+        leftMenu =(ImageView) findViewById(R.id.leftMenu);
+        search=(ImageView) findViewById(R.id.search);
+        View user_header=navigationView.inflateHeaderView(R.layout.header_nav);
+        user_head_image=(de.hdodenhof.circleimageview.CircleImageView)user_header.findViewById(R.id.userHeadImage);
+        username=(TextView) user_header.findViewById(R.id.user_set_name);
+        userSetCity=(TextView)user_header.findViewById(R.id.user_set_city);
+        leftMenu.setOnClickListener(this);
+        search.setOnClickListener(this);
+        user_head_image.setOnClickListener(this);
+        if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
+            user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
+        }
+
+        updateUserInfo();
+        MyLog.d("LOAD",user.getAccount());
+        if (aMap == null) {
+            aMap = mMapView.getMap();
+            setUpMap();
+        }
+        locate_main();
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    /*左侧菜单点击事件在下方添加*/
+                    case R.id.item1:
+                        Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.city_change:
+                        Toast.makeText(Main_Activity.this,"item2",Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(Main_Activity.this,CitySelectActivity.class));
+                        break;
+                    default:
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.leftMenu:
+                drawerLayout.openDrawer(GravityCompat.START);
+                break;
+            case R.id.search:
+                onclick_search();
+                break;
+            case R.id.userHeadImage:
+                onclick_userHeadImage();
+                break;
+            default:
+        }
+    }
+    /*点击事件的一些函数*/
+    private void onclick_search(){
+        keyWord = LoveBusUtil.checkEditText(searchText);
+        if ("".equals(keyWord)) {
+            Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            doSearchQuery();
+        }
+    }
+    private void onclick_userHeadImage(){
+        if(!user.isIs_login())
+        {
+            Intent intent=new Intent(Main_Activity.this,LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
+
 
     //地图显示
     private void showMap(Bundle savedInstanceState){
@@ -148,62 +258,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.leftMenu:
-                drawerLayout.openDrawer(GravityCompat.START);
-                break;
-            case R.id.search:
-                keyWord = LoveBusUtil.checkEditText(searchText);
-                if ("".equals(keyWord)) {
-                    Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
-                    return;
-                } else {
-                    doSearchQuery();
-                }
-                break;
-            case R.id.login:
-                Intent intent=new Intent(Main_Activity.this,LoginActivity.class);
-                startActivity(intent);
-                break;
-             default:
-        }
-    }
-    /*初始化活动*/
-    private void init(){
-        drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
-        NavigationView navigationView= (NavigationView) findViewById(R.id.leftView_1);
-        leftMenu =(ImageView) findViewById(R.id.leftMenu);
-        search=(ImageView) findViewById(R.id.search);
-        View user_header=navigationView.inflateHeaderView(R.layout.header_nav);
-        login=(TextView)user_header.findViewById(R.id.login);
-        leftMenu.setOnClickListener(this);
-        search.setOnClickListener(this);
-        login.setOnClickListener(this);
-        if (aMap == null) {
-            aMap = mMapView.getMap();
-            setUpMap();
-        }
-        locate_main();
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
-                    /*左侧菜单点击事件在下方添加*/
-                    case R.id.item1:
-                        Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.city_change:
-                        Toast.makeText(Main_Activity.this,"item2",Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(Main_Activity.this,CitySelectActivity.class));
-                        break;
-                    default:
-                }
-                return false;
-            }
-        });
-    }
     /*定位功能调用*/
     private void locate_main(){
         /*初始化定位*/
@@ -241,6 +295,32 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         aMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
     }
 
+
+    private void updateUserInfo(){
+
+        if(user.getCity()!=null&&(!user.getCity().equals("null")))
+        {
+            if(first_login){
+
+                userSetCity.setText(user.getCity());
+            }else {
+                localCity=sp.getString("cCity","");
+                userSetCity.setText(localCity);
+            }
+        }else {
+            localCity=sp.getString("cCity","");
+            MyLog.d("yang",localCity);
+            userSetCity.setText(localCity);
+        }
+        if (user.getNickname()!=null&&(!user.getNickname().equals("null"))){
+            username.setText(user.getNickname());
+        }else {
+            username.setText("爱公交游客用户");
+        }
+    }
+
+
+    /* poi搜索*/
     protected void doSearchQuery() {
         currentPage = 0;
         query = new PoiSearch.Query(keyWord, "", localCity);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
@@ -252,9 +332,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         poiSearch.setOnPoiSearchListener(this);
         poiSearch.searchPOIAsyn();
     }
-
-
-
     /*poi搜索的回调*/
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -265,9 +342,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     public void afterTextChanged(Editable s) {
     }
     @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String newText = s.toString().trim();
@@ -279,9 +354,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             inputTips.requestInputtipsAsyn();
         }
     }
-    /**
-     * POI信息查询回调方法
-     */
+    /*POI信息查询回调方法*/
     @Override
     public void onPoiSearched(PoiResult result, int rCode) {
         if (rCode == AMapException.CODE_AMAP_SUCCESS) {
@@ -309,10 +382,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
     @Override
-    public void onPoiItemSearched(PoiItem item, int rCode) {
-        // TODO Auto-generated method stub
-
-    }
+    public void onPoiItemSearched(PoiItem item, int rCode) { }
     @Override
     public void onGetInputtips(List<Tip> tipList, int rCode) {
         if (rCode == AMapException.CODE_AMAP_SUCCESS) {// 正确返回
