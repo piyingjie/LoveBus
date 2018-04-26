@@ -1,10 +1,22 @@
 package com.lovebus.activity;
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -45,6 +57,7 @@ import com.lovebus.function.MyLog;
 import com.lovebus.function.Okhttp;
 import com.lovebus.function.SharedPreferences_tools;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +65,7 @@ import java.util.List;
 import bus.android.com.lovebus.R;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
@@ -187,6 +201,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             Intent intent=new Intent(Main_Activity.this,LoginActivity.class);
             startActivity(intent);
         }
+        else {
+            getAlbumPhoto(Main_Activity.this);
+        }
     }
 
 
@@ -279,6 +296,125 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }else {
             username.setText("爱公交游客用户");
         }
+    }
+
+
+    /*打开相册获取图片*/
+    public void getAlbumPhoto(Activity activity){
+        if(ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            MyLog.d("PHO","申请权限");
+            ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        }
+        else{
+            MyLog.d("PHO","打开相册");
+            openAlbum(2);
+        }
+    }
+    private void openAlbum(int CHOOSE_PHOTO){
+        Intent intent= new Intent("android.intent.action.GET_CONTENT");
+        intent.setType("image/*");
+        startActivityForResult(intent,CHOOSE_PHOTO);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 1:
+                if(grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    openAlbum(2);
+                }
+                else {
+                    Toast.makeText(this,"你拒绝权限",Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 2:
+                if(resultCode==RESULT_OK){
+                    if(Build.VERSION.SDK_INT>=19){
+                        handleImageOnKitkat(data);
+                    }
+                }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    @TargetApi(19)
+    private void handleImageOnKitkat(Intent data){
+        String imagePath=null;
+        Uri uri=data.getData();
+        if(DocumentsContract.isDocumentUri(this,uri)){
+            String docId=DocumentsContract.getDocumentId(uri);
+            if("com.android.providers.media.documents".equals(uri.getAuthority())){
+                String id=docId.split(":")[1];
+                String selection= MediaStore.Images.Media._ID+"="+id;
+                imagePath=getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,selection);
+            }
+            else if("com.android.providers.downloads.documents".equals(uri.getAuthority())){
+                Uri contentUri= ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),Long.valueOf(docId));
+                imagePath=getImagePath(contentUri,null);
+            }
+        }
+        else if("content".equalsIgnoreCase(uri.getScheme())){
+            imagePath=getImagePath(uri,null);
+        }
+        else if("file".equalsIgnoreCase(uri.getScheme())){
+            imagePath=uri.getPath();
+        }
+        displayImage(imagePath);
+    }
+    private String getImagePath(Uri uri,String seleciton){
+        String path=null;
+        Cursor cursor=getContentResolver().query(uri,null,seleciton,null,null);
+        if(cursor!=null){
+            if(cursor.moveToFirst()){
+                path=cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+            }
+            cursor.close();
+        }
+        return path;
+    }
+    private void displayImage(String imagePath){
+        if(imagePath!=null){
+            Bitmap photo= compressImageFromFile(imagePath);
+            MediaType MEDIA_TYPE=MediaType.parse("image/*");
+            File image=new File("/sdcard/UserHeader.jpg");
+            user_head_image.setImageBitmap(photo);
+        }
+        else{
+            Toast.makeText(this,"获取图片失败",Toast.LENGTH_SHORT).show();
+        }
+    }
+    /**压缩图片*/
+    private Bitmap compressImageFromFile(String srcPath) {
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        newOpts.inJustDecodeBounds = true;//只读边,不读内容
+        Bitmap bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
+
+        newOpts.inJustDecodeBounds = false;
+        int w = newOpts.outWidth;
+        int h = newOpts.outHeight;
+        float hh = 800f;//
+        float ww = 480f;//
+        int be = 1;
+        if (w > h && w > ww) {
+            be = (int) (newOpts.outWidth / ww);
+        } else if (w < h && h > hh) {
+            be = (int) (newOpts.outHeight / hh);
+        }
+        if (be <= 0)
+            be = 1;
+        newOpts.inSampleSize = be;//设置采样率
+
+        newOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;//该模式是默认的,可不设
+        newOpts.inPurgeable = true;// 同时设置才会有效
+        newOpts.inInputShareable = true;//。当系统内存不够时候图片自动被回收
+
+        bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
+        return bitmap;
     }
 
 
