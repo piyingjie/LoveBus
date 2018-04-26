@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
 import com.lljjcoder.style.citylist.bean.CityInfoBean;
@@ -25,14 +26,25 @@ import com.lljjcoder.style.citylist.utils.CityListLoader;
 import com.lljjcoder.style.citylist.widget.CleanableEditView;
 import com.lljjcoder.utils.PinYinUtils;
 import com.lovebus.entity.Location;
+import com.lovebus.entity.User;
 import com.lovebus.function.Locate;
 import com.lovebus.function.MyLog;
+import com.lovebus.function.Okhttp;
+import com.lovebus.function.SharedPreferences_tools;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import bus.android.com.lovebus.R;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class CitySelectActivity extends AppCompatActivity{
 
@@ -65,7 +77,11 @@ public class CitySelectActivity extends AppCompatActivity{
 
         private SharedPreferences.Editor editor;
 
+    private SharedPreferences login_sp;//获取登录状态
+
         private boolean first_start;
+
+        private boolean first_login;
 
         private String cityName;
 
@@ -85,6 +101,10 @@ public class CitySelectActivity extends AppCompatActivity{
 
         private CityInfoBean cityInfoBean = new CityInfoBean();
 
+        String account;//帐号功能
+
+        String status;
+
 
         //startActivityForResult flag
         public static final int CITY_SELECT_RESULT_FRAG = 0x0000032;
@@ -95,6 +115,7 @@ public class CitySelectActivity extends AppCompatActivity{
 
         Location locationMsg=new Location(0,0,null,null,null,null,null,null,null);
 
+    User user=new User(false,null,null,null,null,null,null);
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -103,17 +124,35 @@ public class CitySelectActivity extends AppCompatActivity{
 
             sharedPreferences = getSharedPreferences("currentCity", MODE_PRIVATE);
 
-        if(sharedPreferences.getBoolean("first_start",true))
-        {
-            editor = sharedPreferences.edit();
-            editor.putBoolean("first_start", false);
-            editor.apply();
-            first_start=true;
-        }
-        else {
-            first_start=false;
-        }
+            login_sp = getSharedPreferences("first_login",MODE_PRIVATE);
 
+
+            if(sharedPreferences.getBoolean("first_start",true)) {
+                editor = sharedPreferences.edit();
+                editor.putBoolean("first_start", false);
+                editor.apply();
+                first_start=true;
+            }
+            else {
+                first_start=false;
+            }
+            if (login_sp.getBoolean("first_login", true)) {
+                editor = login_sp.edit();
+                editor.putBoolean("first_login",false);
+                editor.apply();
+                first_login=true;
+            }else {
+                first_login=false;
+            }
+        /*if(SharedPreferences_tools.load("User","info",CitySelectActivity.this)!=null){
+                editor=login_sp.edit();
+                editor.putBoolean("first_login",true);
+                editor.apply();
+                first_login=true;
+
+        }else {
+                first_login=false;
+        }*/
             //init();
 
 
@@ -173,6 +212,7 @@ public class CitySelectActivity extends AppCompatActivity{
                 MyLog.d("Test",cityLocation);
 
                 if(first_start){
+                    //这里把cityLocation保存sharedPreference后防止后边初始化取值为空
                     editor = sharedPreferences.edit();
                     editor.putString("cCity",cityLocation);
                     editor.apply();
@@ -204,14 +244,90 @@ public class CitySelectActivity extends AppCompatActivity{
                 }
             });
             if (!first_start){
-                mCurrentCity.setText(sharedPreferences.getString("cCity",""));
+                if (first_login){
+                    //if(SharedPreferences_tools.load("User","info",CitySelectActivity.this)!=null){
+                        checkAccount();
+
+                    //}
+                }
+                else {
+                    mCurrentCity.setText(sharedPreferences.getString("cCity",""));
+                }
+                //checkAccount();
+                //mCurrentCity.setText(sharedPreferences.getString("cCity",""));
             }
             //MyLog.d("Test",cityLocation);
             //mCityTextSearch.setText(cityLocation);
 
         }
 
-        private void setCityData(List<CityInfoBean> cityList) {
+    private void toast_changeCity_2() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(CitySelectActivity.this,"密码错误或用户名不存在",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void toast_changeCity_1() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(CitySelectActivity.this,"切换成功",Toast.LENGTH_SHORT).show();
+                SharedPreferences_tools.save("User","info",CitySelectActivity.this,user);
+                //MyLog.d("Login",user.getCity());
+                mCurrentCity.setText(user.getCity());
+                //finish();
+            }
+        });
+    }
+
+    private void checkAccount(){
+        //if(SharedPreferences_tools.load("User","info",CitySelectActivity.this)!=null){
+            user=(User)SharedPreferences_tools.load("User","info",CitySelectActivity.this);
+            account=user.getAccount();
+            MyLog.d("min",sharedPreferences.getString("cCity",""));
+
+            RequestBody requestBody = new FormBody.Builder().add("account", account)
+                    .add("city",sharedPreferences.getString("cCity","")).build();
+            Okhttp.postOkHttpRequest("http://lovebus.top/lovebus/addcity.php", requestBody, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    /**这里写出错后的日志记录*/
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(CitySelectActivity.this, "请检查网络连接是否顺畅", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    /* 这个部分是子线程，和主线程通信很麻烦；另外里面不能直接进行UI操作，需要使用runOnUiThread（）*/
+                    String data=response.body().string();
+                    MyLog.d("Login",data);
+                    parseJSONWithJSONObject(data);
+                    if (status.equals("1")){
+                        toast_changeCity_1();
+                        //mCurrentCity.setText(user.getCity());
+                    }
+                    else {
+                        toast_changeCity_2();
+                    }
+                }
+            });
+            //mCurrentCity.setText(user.getCity());
+       /* }
+        else {
+            Toast.makeText(CitySelectActivity.this,"欢迎您",Toast.LENGTH_SHORT).show();
+            //mCurrentCity.setText(sharedPreferences.getString("cCity",""));
+        }*/
+        //mCurrentCity.setText(sharedPreferences.getString("cCity",""));
+    }
+
+    private void setCityData(List<CityInfoBean> cityList) {
             cityListInfo = cityList;
             if (cityListInfo == null) {
                 return;
@@ -323,8 +439,15 @@ public class CitySelectActivity extends AppCompatActivity{
                         //sharedPreferences.getString("currentCity",cityName);
                         editor.putString("cCity",cityName);
                         editor.commit();
+                        if(SharedPreferences_tools.load("User","info",CitySelectActivity.this)!=null){
+                            checkAccount();
+                        }
+                        else {
+                            mCurrentCity.setText(sharedPreferences.getString("cCity",cityName));
+                        }
                         MyLog.d("CITY","test"+"-"+sharedPreferences.getString("cCity",cityName));
-                        mCurrentCity.setText(sharedPreferences.getString("cCity",cityName));}
+                        //mCurrentCity.setText(sharedPreferences.getString("cCity",cityName));
+                    }
                     //                    }
                     //                    //mCurrentCity.setText(cityName);
                     startActivity(new Intent(CitySelectActivity.this, Main_Activity.class));
@@ -383,6 +506,32 @@ public class CitySelectActivity extends AppCompatActivity{
             Collections.sort(filterDateList, pinyinComparator);
             adapter.updateListView(filterDateList);
         }
+    private void parseJSONWithJSONObject(String response) {
+        /**这个部分是json的解析部分*/
+        try {
+            /**response可能需要接下来的一步改变编码*/
+            if(response != null && response.startsWith("\ufeff"))
+            {
+                response =  response.substring(1);
+            }
+            JSONObject json_data = new JSONObject(response);
+            status=json_data.getString("status");
+            MyLog.d("Login",status);
+            if(status.equals("1")){
+                //user.setAccount(account);
+               /* user.setPassword(password);
+                user.setIs_login(true);
+                user.setNickname(json_data.getString("nickname"));
+                user.setPhone(json_data.getString("phonenumber"));*/
+                user.setCity(json_data.getString("city"));
+                //user.setHead_image(json_data.getString("head").replaceAll("\\\\",""));
+                //MyLog.d("HEAD",user.getHead_image());
+                MyLog.d("Login",user.getCity());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     }
 

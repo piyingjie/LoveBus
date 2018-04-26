@@ -1,6 +1,7 @@
 package com.lovebus.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +42,9 @@ public class LoginActivity extends AppCompatActivity {
     private BaseUiListener mIUiListener;
     private UserInfo mUserInfo;
 
+    private SharedPreferences login_sp;//获取登录状态
+    private SharedPreferences.Editor editor;
+
 
     EditText account_edit = null, passwordEdit = null;//帐号和密码编辑框
     Button signInBtn = null;//登录按钮
@@ -58,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
         account_edit = (EditText)findViewById(R.id.account);
         passwordEdit = (EditText)findViewById(R.id.password);
         signInBtn = (Button)findViewById(R.id.signInBtn);
+
+        login_sp = getSharedPreferences("first_login",MODE_PRIVATE);
 
         //登录按钮点击事件
         signInBtn.setOnClickListener(new View.OnClickListener(){
@@ -194,6 +200,9 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                 Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                 SharedPreferences_tools.save("User","info",LoginActivity.this,user);
+                editor = login_sp.edit();
+                editor.putBoolean("first_login",true);
+                editor.apply();
                 finish();
             }
         });
