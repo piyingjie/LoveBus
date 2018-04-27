@@ -31,8 +31,8 @@ public class LoveBusUtil {
         newOpts.inJustDecodeBounds = false;
         int w = newOpts.outWidth;
         int h = newOpts.outHeight;
-        float hh = 800f;//
-        float ww = 480f;//
+        float hh = 400f;//
+        float ww = 240f;//
         int be = 1;
         if (w > h && w > ww) {
             be = (int) (newOpts.outWidth / ww);
@@ -43,7 +43,7 @@ public class LoveBusUtil {
             be = 1;
         newOpts.inSampleSize = be;//设置采样率
 
-        newOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;//该模式是默认的,可不设
+        newOpts.inPreferredConfig = Bitmap.Config.RGB_565;//该模式是默认的,可不设
         newOpts.inPurgeable = true;// 同时设置才会有效
         newOpts.inInputShareable = true;//。当系统内存不够时候图片自动被回收
 

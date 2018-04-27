@@ -2,6 +2,9 @@ package com.lovebus.function;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.util.Base64;
 
 import com.lovebus.entity.User;
@@ -20,12 +23,10 @@ public class SharedPreferences_tools {
         sharedPreferences=context.getSharedPreferences(str, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         ByteArrayOutputStream save = new ByteArrayOutputStream();
-        /*MyLog.d("SHAT",user.getAccount());*/
         try {
             ObjectOutputStream oos = new ObjectOutputStream(save);
             oos.writeObject(object);
             String base64Object = Base64.encodeToString(save.toByteArray(), Base64.DEFAULT);
-            MyLog.d("SHAT",base64Object);
             editor.putString(key,base64Object);
             editor.apply();
             oos.close();
@@ -41,7 +42,6 @@ public class SharedPreferences_tools {
         if(objectString.equals("")){
             return null;
         }
-        MyLog.d("SHAT",objectString);
         byte[] base64Object = Base64.decode(objectString, Base64.DEFAULT);
         ByteArrayInputStream bais = new ByteArrayInputStream(base64Object);
         try {
@@ -54,5 +54,28 @@ public class SharedPreferences_tools {
             e.printStackTrace();
         }
         return object;
+    }
+
+    public static void saveImage(Context context, Bitmap bitmap,String preferenceName,String key) {
+        SharedPreferences sharedPreferences=context.getSharedPreferences(preferenceName,MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        if(bitmap==null){
+            MyLog.d("HEAD","bitmap为空");
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 50, baos);
+        String imageBase64 = new String(Base64.encodeToString(baos.toByteArray(),Base64.DEFAULT));
+        editor.putString(key,imageBase64 );
+        editor.apply();
+    }
+    public static Bitmap getImage(Context context, String preferenceName, String key) {
+        SharedPreferences sharedPreferences=context.getSharedPreferences(preferenceName,MODE_PRIVATE);
+        String imageString=sharedPreferences.getString(key, "");
+        if(imageString.equals("")){
+            return null;
+        }
+        byte[] byteArray=Base64.decode(imageString, Base64.DEFAULT);
+        ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(byteArray);
+        return BitmapFactory.decodeStream(byteArrayInputStream);
     }
 }

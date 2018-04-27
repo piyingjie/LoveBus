@@ -154,7 +154,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
         updateUserInfo();
-        MyLog.d("LOAD",user.getAccount());
         if (aMap == null) {
             aMap = mMapView.getMap();
             setUpMap();
@@ -199,7 +198,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         keyWord = LoveBusUtil.checkEditText(searchText);
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
-            return;
         } else {
             doSearchQuery();
         }
@@ -305,8 +303,55 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }else {
             username.setText("爱公交游客用户");
         }
+        if(user.getHead_image()!=null&&!user.getHead_image().equals("null")){
+            Bitmap bitmap=SharedPreferences_tools.getImage(Main_Activity.this,"UserHead","image");
+            if(bitmap==null){
+                updateImage();
+            }
+            else {
+                user_head_image.setImageBitmap(bitmap);
+                bitmap.recycle();
+                bitmap=null;
+            }
+        }
+        else {
+            user_head_image.setImageResource(R.drawable.account);
+        }
     }
 
+    /*从服务器上获取头像*/
+    private void updateImage(){
+        Okhttp.getOkHttpRequest("http://lovebus.top/lovebus/head/" + user.getAccount() + ".jpg", new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(Main_Activity.this, "请检查网络连接是否顺畅,从服务器获取头像失败", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                byte[] Picture_bt = response.body().bytes();
+                final Bitmap getHeader = BitmapFactory.decodeByteArray(Picture_bt, 0, Picture_bt.length);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(getHeader==null){
+                            Toast.makeText(Main_Activity.this, "请检查网络连接是否顺畅,从服务器获取头像失败", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            user_head_image.setImageBitmap(getHeader);
+                            SharedPreferences_tools.saveImage(Main_Activity.this,getHeader,"UserHead","image");
+                            getHeader.recycle();
+                        }
+                    }
+                });
+            }
+        });
+    }
 
     /*打开相册获取图片*/
     public void getAlbumPhoto(Activity activity){
@@ -419,6 +464,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                 Toast.makeText(Main_Activity.this, "头像修改成功", Toast.LENGTH_SHORT).show();
                                 File image=new File(Environment.getExternalStorageDirectory().getPath()+"/UserHeader.jpg");
                                 image.delete();
+                                SharedPreferences_tools.saveImage(Main_Activity.this,photo,"UserHead","image");
+                                user.setHead_image("http://lovebus.top/lovebus/head"+user.getAccount());
+                                SharedPreferences_tools.save("User","info",Main_Activity.this,user);
                                 photo.recycle();
                                 photo=null;
                             }
@@ -442,8 +490,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(this,"获取图片失败",Toast.LENGTH_SHORT).show();
         }
     }
-
-    /**上传头像后数据解析*/
+    /*上传头像后数据解析*/
     private void parseJSONWithJSONObject_head(String response) {
         /**这个部分是json的解析部分*/
         try {
@@ -458,6 +505,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
     }
+
+
 
 
     /* poi搜索*/
