@@ -17,4 +17,5 @@
     <string name="user_f_login">爱公交游客用户</string>
     <string name="user_city">当前设定城市:</string>
     <string name="user_city_set">北京</string>
+    <string name="city_change">切换地址</string>
 </resources>

@@ -8,7 +8,7 @@
             android:title="离线地图"/>
         <item
             android:id="@+id/city_change"
-            android:title="切换地址"/>
+            android:title="@string/city_change"/>
         <item
             android:id="@+id/item3"
             android:title="我的收藏"/>
@@ -20,7 +20,7 @@
             android:title="通知"/>
     </group>
 
-    <item android:title="系统与安全">
+    <item android:title="账号与安全">
         <menu>
             <item
                 android:id="@+id/itme6"

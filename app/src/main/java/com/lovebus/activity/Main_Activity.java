@@ -310,8 +310,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
             else {
                 user_head_image.setImageBitmap(bitmap);
-                bitmap.recycle();
-                bitmap=null;
             }
         }
         else {
