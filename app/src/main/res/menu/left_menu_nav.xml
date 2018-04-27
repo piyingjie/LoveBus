@@ -31,6 +31,9 @@
             <item
                 android:id="@+id/itme8"
                 android:title="第三方绑定管理"/>
+            <item
+                android:id="@+id/logout"
+                android:title="@string/logout"/>
         </menu>
     </item>
 </menu>

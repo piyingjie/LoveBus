@@ -2,7 +2,9 @@ package com.lovebus.activity;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -168,9 +170,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.city_change:
-                        Toast.makeText(Main_Activity.this,"item2",Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(Main_Activity.this,CitySelectActivity.class));
                         break;
+                    case R.id.logout:
+                        menu_switch();
                     default:
                 }
                 return false;
@@ -212,8 +215,44 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             getAlbumPhoto(Main_Activity.this);
         }
     }
+    private void menu_switch(){
+        new AlertDialog.Builder(this)
+                .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
+                .setTitle("提示")
+                .setMessage("退出登陆？")
+                .setNegativeButton("取消",null)
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        user.setAccount(null);
+                        user.setPassword(null);
+                        user.setIs_login(false);
+                        user.setNickname(null);
+                        user.setPhone(null);
+                        user.setCity(null);
+                        user.setHead_image(null);
+                        SharedPreferences_tools.clear(Main_Activity.this,"User");
+                        SharedPreferences_tools.clear(Main_Activity.this,"UserHead");
+                        updateUserInfo();
+                    }
+                }).show();
+    }
 
-
+    /*退出确认*/
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
+                .setTitle("退出爱公交")
+                .setMessage("您真的要抛弃爱公交吗")
+                .setNegativeButton("取消",null)
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                }).show();
+    }
 
     //地图显示
     private void showMap(Bundle savedInstanceState){

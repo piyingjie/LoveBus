@@ -78,4 +78,10 @@ public class SharedPreferences_tools {
         ByteArrayInputStream byteArrayInputStream=new ByteArrayInputStream(byteArray);
         return BitmapFactory.decodeStream(byteArrayInputStream);
     }
+    public static void clear(Context context,String preferenceName) {
+        SharedPreferences preferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+    }
 }
