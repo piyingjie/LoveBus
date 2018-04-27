@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -57,7 +58,11 @@ import com.lovebus.function.MyLog;
 import com.lovebus.function.Okhttp;
 import com.lovebus.function.SharedPreferences_tools;
 
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +71,8 @@ import bus.android.com.lovebus.R;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
@@ -76,6 +83,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     de.hdodenhof.circleimageview.CircleImageView user_head_image;
     TextView username;
     TextView userSetCity;
+    Bitmap photo;
+    private String image_response;
     User user=new User(false,null,null,null,null,null,null);
     private AMap aMap;
     private AutoCompleteTextView searchText;// 输入搜索关键字
@@ -379,42 +388,75 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
     private void displayImage(String imagePath){
         if(imagePath!=null){
-            Bitmap photo= compressImageFromFile(imagePath);
+            photo= LoveBusUtil.compressImageFromFile(imagePath);
+            MyLog.d("IMAGE",imagePath);
+            LoveBusUtil.saveBitmap(photo);
             MediaType MEDIA_TYPE=MediaType.parse("image/*");
-            File image=new File("/sdcard/UserHeader.jpg");
-            user_head_image.setImageBitmap(photo);
+            File image=new File(Environment.getExternalStorageDirectory().getPath()+"/UserHeader.jpg");
+            RequestBody req = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("account",user.getAccount())
+                    .addFormDataPart("head",image.getName(), RequestBody.create(MEDIA_TYPE, image)).build();
+            Okhttp.postOkHttpRequest("http://lovebus.top/lovebus/uploadhead.php", req, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(Main_Activity.this, "请检查网络连接是否顺畅", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String data = response.body().string();
+                    MyLog.d("IMAGE",data);
+                    parseJSONWithJSONObject_head(data);
+                    if (image_response.equals("true")) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                user_head_image.setImageBitmap(photo);
+                                Toast.makeText(Main_Activity.this, "头像修改成功", Toast.LENGTH_SHORT).show();
+                                File image=new File(Environment.getExternalStorageDirectory().getPath()+"/UserHeader.jpg");
+                                image.delete();
+                                photo.recycle();
+                                photo=null;
+                            }
+                        });
+                    } else if (image_response.equals("false")) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(Main_Activity.this, "头像修改失败", Toast.LENGTH_SHORT).show();
+                                File image=new File(Environment.getExternalStorageDirectory().getPath()+"/UserHeader.jpg");
+                                image.delete();
+                                photo.recycle();
+                                photo=null;
+                            }
+                        });
+                    }
+                }
+            });
         }
         else{
             Toast.makeText(this,"获取图片失败",Toast.LENGTH_SHORT).show();
         }
     }
-    /**压缩图片*/
-    private Bitmap compressImageFromFile(String srcPath) {
-        BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        newOpts.inJustDecodeBounds = true;//只读边,不读内容
-        Bitmap bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
 
-        newOpts.inJustDecodeBounds = false;
-        int w = newOpts.outWidth;
-        int h = newOpts.outHeight;
-        float hh = 800f;//
-        float ww = 480f;//
-        int be = 1;
-        if (w > h && w > ww) {
-            be = (int) (newOpts.outWidth / ww);
-        } else if (w < h && h > hh) {
-            be = (int) (newOpts.outHeight / hh);
+    /**上传头像后数据解析*/
+    private void parseJSONWithJSONObject_head(String response) {
+        /**这个部分是json的解析部分*/
+        try {
+            /**response可能需要接下来的一步改变编码*/
+            if(response != null && response.startsWith("\ufeff"))
+            {
+                response =  response.substring(1);
+            }
+            JSONObject json_data = new JSONObject(response);
+            image_response=json_data.getString("status");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        if (be <= 0)
-            be = 1;
-        newOpts.inSampleSize = be;//设置采样率
-
-        newOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;//该模式是默认的,可不设
-        newOpts.inPurgeable = true;// 同时设置才会有效
-        newOpts.inInputShareable = true;//。当系统内存不够时候图片自动被回收
-
-        bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-        return bitmap;
     }
 
 

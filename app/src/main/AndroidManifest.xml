@@ -33,7 +33,7 @@
         <activity
             android:name="com.lovebus.activity.RegisterActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name="com.lovebus.activity.PasswordFindActivity"></activity>
+        <activity android:name="com.lovebus.activity.PasswordFindActivity"/>
 
     </application>
     <!--用于进行网络定位-->
@@ -61,4 +61,5 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 </manifest>
