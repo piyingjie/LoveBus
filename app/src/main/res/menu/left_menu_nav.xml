@@ -23,8 +23,8 @@
     <item android:title="账号与安全">
         <menu>
             <item
-                android:id="@+id/itme6"
-                android:title="系统设置"/>
+                android:id="@+id/update_password"
+                android:title="@string/update_password"/>
             <item
             android:id="@+id/itme7"
             android:title="隐私与安全"/>

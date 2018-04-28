@@ -142,6 +142,15 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
+        else {
+            user.setAccount(null);
+            user.setPassword(null);
+            user.setIs_login(false);
+            user.setNickname(null);
+            user.setPhone(null);
+            user.setCity(null);
+            user.setHead_image(null);
+        }
         updateUserInfo();
     }
 
@@ -196,6 +205,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         break;
                     case R.id.logout:
                         menu_switch();
+                    case R.id.update_password:
+                        menu_update_password();
                     default:
                 }
                 return false;
@@ -221,7 +232,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     /*点击事件的一些函数*/
     private void onclick_search(){
         keyWord = LoveBusUtil.checkEditText(searchText);
-        MyLog.d("POIPOI",keyWord+"+10083");
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
@@ -260,6 +270,17 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     }
                 }).show();
     }
+    private void menu_update_password(){
+        if(user.isIs_login())
+        {
+            Intent intent=new Intent(Main_Activity.this,UpdatePasswordActivity.class);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(Main_Activity.this,"您还未登陆",Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     /*退出确认*/
     @Override
@@ -607,10 +628,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String newText = s.toString().trim();
-        MyLog.d("POIPOI",newText+"+12");
         if (!LoveBusUtil.IsEmptyOrNullString(newText)) {
             InputtipsQuery inputquery = new InputtipsQuery(newText, localCity);
-            MyLog.d("Test",localCity+"-1"+locationMsg.getCity());
             Inputtips inputTips = new Inputtips(Main_Activity.this, inputquery);
             inputTips.setInputtipsListener(this);
             inputTips.requestInputtipsAsyn();
