@@ -74,7 +74,6 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.MediaType;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
@@ -89,19 +88,19 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     Bitmap photo;
     private String image_response;
     User user=new User(false,null,null,null,null,null,null);
-    private AutoCompleteTextView searchText;// 输入搜索关键字
+    AutoCompleteTextView searchText;// 输入搜索关键字
     private String keyWord = "";// 要输入的poi搜索关键字
     private String localCity;
     private EditText editCity;// 要输入的城市名字或者城市区号
     private PoiResult poiResult; // poi返回的结果
-    private int currentPage = 0;// 当前页面，从0开始计数
+    int currentPage = 0;// 当前页面，从0开始计数
     private PoiSearch.Query query;// Poi查询条件类
     private PoiSearch poiSearch;// POI搜索
 
     private SharedPreferences sp;//获取当前城市
 
-    private SharedPreferences login_sp;
-    private SharedPreferences.Editor editor;
+    SharedPreferences login_sp;
+    SharedPreferences.Editor editor;
     private boolean first_login;//获取登录状态
 
 
@@ -177,10 +176,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
         updateUserInfo();
-        if (aMap == null) {
+        if (aMap==null) {
             aMap = mMapView.getMap();
             setUpMap();
         }
+        searchText = (AutoCompleteTextView) findViewById(R.id.keyWord);
+        searchText.addTextChangedListener(this);// 添加文本输入框监听事件
         locate_main();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -220,6 +221,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     /*点击事件的一些函数*/
     private void onclick_search(){
         keyWord = LoveBusUtil.checkEditText(searchText);
+        MyLog.d("POIPOI",keyWord+"+10083");
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
@@ -349,12 +351,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-     /* 设置页面监听*/
-    private void setUpMap() {
-        searchText = (AutoCompleteTextView) findViewById(R.id.keyWord);
-        searchText.addTextChangedListener(this);// 添加文本输入框监听事件
-        aMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
-    }
 
 
     private void updateUserInfo(){
@@ -579,6 +575,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    /* 设置页面监听*/
+    private void setUpMap() {
+        aMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
+    }
 
 
     /* poi搜索*/
@@ -607,6 +607,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
         String newText = s.toString().trim();
+        MyLog.d("POIPOI",newText+"+12");
         if (!LoveBusUtil.IsEmptyOrNullString(newText)) {
             InputtipsQuery inputquery = new InputtipsQuery(newText, localCity);
             MyLog.d("Test",localCity+"-1"+locationMsg.getCity());
