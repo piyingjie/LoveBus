@@ -37,14 +37,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.location.AMapLocation;
-import com.amap.api.maps2d.AMap;
-import com.amap.api.maps2d.AMapOptions;
-import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.MapView;
-import com.amap.api.maps2d.UiSettings;
-import com.amap.api.maps2d.model.Marker;
-import com.amap.api.maps2d.model.MyLocationStyle;
-import com.amap.api.maps2d.overlay.PoiOverlay;
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.AMapOptions;
+import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.MapView;
+import com.amap.api.maps.UiSettings;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
@@ -59,6 +58,7 @@ import com.lovebus.function.Locate;
 import com.lovebus.function.LoveBusUtil;
 import com.lovebus.function.MyLog;
 import com.lovebus.function.Okhttp;
+import com.lovebus.function.PoiOverlay;
 import com.lovebus.function.SharedPreferences_tools;
 
 import org.json.JSONObject;
@@ -79,6 +79,7 @@ import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
     MapView mMapView = null;
+    private AMap aMap;
     private DrawerLayout drawerLayout;
     ImageView leftMenu;
     ImageView search;
@@ -88,7 +89,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     Bitmap photo;
     private String image_response;
     User user=new User(false,null,null,null,null,null,null);
-    private AMap aMap;
     private AutoCompleteTextView searchText;// 输入搜索关键字
     private String keyWord = "";// 要输入的poi搜索关键字
     private String localCity;
@@ -282,7 +282,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
         //定义了一个地图view
-        AMap aMap =null;
         if (aMap == null) {
             aMap = mMapView.getMap();
         }
@@ -295,6 +294,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         mUiSettings.setScaleControlsEnabled(true);
         /*缩放按钮位置*/
         mUiSettings.setZoomPosition(AMapOptions.ZOOM_POSITION_RIGHT_CENTER);
+        mUiSettings.setTiltGesturesEnabled(false);
         /*回到当前位置按钮*/
         mUiSettings.setMyLocationButtonEnabled(true);
         //开始的缩放比例
