@@ -150,7 +150,7 @@ public class RegisterActivity extends AppCompatActivity {
         finish();
     }
     private void register_success(){
-        user.setAccount(account);
+       /* user.setAccount(account);
         user.setIs_login(true);
         user.setHead_image(null);
         user.setCity(null);
@@ -158,7 +158,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.setNickname(nickname);
         user.setPassword(register_password);
         SharedPreferences_tools.save("User","info",RegisterActivity.this,user);
-        startActivity(new Intent(RegisterActivity.this, Main_Activity.class));
+        startActivity(new Intent(RegisterActivity.this, Main_Activity.class));*/
         finish();
     }
 }
