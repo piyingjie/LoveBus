@@ -30,12 +30,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
-
     implementation 'liji.library.dev:citypickerview:3.1.6'
-
-
-
-
-
-
+    implementation files('libs/open_sdk_r5990_lite.jar')
 }

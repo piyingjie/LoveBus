@@ -1,21 +1,11 @@
 package com.lovebus.activity;
-import android.Manifest;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -62,10 +52,6 @@ import com.lovebus.function.SharedPreferences_tools;
 
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +61,7 @@ import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.MediaType;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
@@ -98,11 +85,32 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private PoiSearch.Query query;// Poi查询条件类
     private PoiSearch poiSearch;// POI搜索
 
+    private SharedPreferences sp;//获取当前城市
+
+    private SharedPreferences login_sp;
+    private SharedPreferences.Editor editor;
+    private boolean first_login;//获取登录状态
+
+
+
     Location locationMsg=new Location(0,0,null,null,null,null,null,null,null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+
+        sp= getSharedPreferences("currentCity",MODE_PRIVATE);
+        login_sp = getSharedPreferences("first_login",MODE_PRIVATE);
+
+        if (login_sp.getBoolean("first_login", true)) {
+            editor = login_sp.edit();
+            editor.putBoolean("first_login",false);
+            editor.apply();
+            first_login=true;
+        }else {
+            first_login=false;
+        }
+
         showMap(savedInstanceState);
         init();
     }
@@ -316,7 +324,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 locationMsg.setStreet(location.getStreet());
                 locationMsg.setPoiName(location.getPoiName());
                 MyLog.d("Test",locationMsg.getAddress());
-                localCity=locationMsg.getCity();
+                if (sp.getBoolean("first_start",true)){
+                    localCity=locationMsg.getCity();
+                }else {
+                    localCity=sp.getString("cCity","");
+                }
+                MyLog.d("yang",localCity);
+                MyLog.d("yang","sb");
 
             }
         });
@@ -333,9 +347,17 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private void updateUserInfo(){
         if(user.getCity()!=null&&(!user.getCity().equals("null")))
         {
-            userSetCity.setText(user.getCity());
+            if(first_login){
+
+                userSetCity.setText(user.getCity());
+            }else {
+                localCity=sp.getString("cCity","");
+                userSetCity.setText(localCity);
+            }
         }else {
-            userSetCity.setText("北京");
+            localCity=sp.getString("cCity","");
+            MyLog.d("yang",localCity);
+            userSetCity.setText(localCity);
         }
         if (user.getNickname()!=null&&(!user.getNickname().equals("null"))){
             username.setText(user.getNickname());

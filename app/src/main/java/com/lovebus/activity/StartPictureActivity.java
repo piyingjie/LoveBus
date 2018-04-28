@@ -14,8 +14,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 
-import com.lljjcoder.style.citylist.CityListSelectActivity;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
