@@ -42,11 +42,19 @@ import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
+import com.amap.api.maps.model.CameraPosition;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
+import com.amap.api.services.geocoder.GeocodeAddress;
+import com.amap.api.services.geocoder.GeocodeQuery;
+import com.amap.api.services.geocoder.GeocodeResult;
+import com.amap.api.services.geocoder.GeocodeSearch;
+import com.amap.api.services.geocoder.RegeocodeResult;
 import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
@@ -76,7 +84,9 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
+import com.amap.api.maps.model.LatLng;
+
+public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener, GeocodeSearch.OnGeocodeSearchListener{
     MapView mMapView = null;
     private AMap aMap;
     private DrawerLayout drawerLayout;
@@ -91,11 +101,16 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     AutoCompleteTextView searchText;// 输入搜索关键字
     private String keyWord = "";// 要输入的poi搜索关键字
     private String localCity;
+    private String currentCity;
     private EditText editCity;// 要输入的城市名字或者城市区号
     private PoiResult poiResult; // poi返回的结果
     int currentPage = 0;// 当前页面，从0开始计数
     private PoiSearch.Query query;// Poi查询条件类
     private PoiSearch poiSearch;// POI搜索
+
+    private GeocodeSearch geocodeSearch;
+    private AMapOptions aMapOptions;
+    private String addressName;
 
     private SharedPreferences sp;//获取当前城市
 
@@ -139,6 +154,16 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         super.onResume();
         //在activity执行onResume时执行mMapView.onResume ()，重新绘制加载地图
         mMapView.onResume();
+        currentCity=sp.getString("lCity","");
+        localCity=sp.getString("cCity","");
+        if(!currentCity.equals(localCity)){
+            MyLog.d("yuan",currentCity+localCity);
+            geocodeSearch = new GeocodeSearch(this);
+            geocodeSearch.setOnGeocodeSearchListener(this);
+            MyLog.d("yuan",localCity);
+            //MyLog.d("yuan",addressName);
+            getLatLon(localCity);
+        }
         if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
@@ -300,46 +325,78 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
     //地图显示
     private void showMap(Bundle savedInstanceState){
+        /*geocodeSearch = new GeocodeSearch(this);
+        geocodeSearch.setOnGeocodeSearchListener(this);
+        getLatLon(localCity);*/
         //获取地图控件引用
+
         mMapView = (MapView) findViewById(R.id.map);
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
-        mMapView.onCreate(savedInstanceState);
-        //定义了一个地图view
-        if (aMap == null) {
-            aMap = mMapView.getMap();
-        }
-        aMap.moveCamera(CameraUpdateFactory.zoomTo(30));
-        UiSettings mUiSettings;//定义一个UiSettings对象
-        mUiSettings = aMap.getUiSettings();//实例化UiSettings类对象
-        /*指北针*/
-        mUiSettings.setCompassEnabled(true);
-        /*比例尺*/
-        mUiSettings.setScaleControlsEnabled(true);
-        /*缩放按钮位置*/
-        mUiSettings.setZoomPosition(AMapOptions.ZOOM_POSITION_RIGHT_CENTER);
-        mUiSettings.setTiltGesturesEnabled(false);
-        /*回到当前位置按钮*/
-        mUiSettings.setMyLocationButtonEnabled(true);
-        //开始的缩放比例
-        MyLocationStyle myLocationStyle;
-        myLocationStyle = new MyLocationStyle();
-        //初始化定位蓝点样式类
-        // myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
-        // 连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
-        myLocationStyle.interval(2000);
-        //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
-        aMap.setMyLocationStyle(myLocationStyle);
-        myLocationStyle.strokeWidth(0);//设置定位蓝点精度圈的边框宽度的方法。
-        myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));// 设置圆形的边框颜色
 
-        myLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));// 设置圆形的填充颜色
-        //设置定位蓝点的Style
-        //aMap.getUiSettings().setMyLocationButtonEnabled(true);设置默认定位按钮是否显示，非必需设置。
-        aMap.setMyLocationEnabled(true);
-        // 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);
-        //连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动
+            /*geocodeSearch = new GeocodeSearch(this);
+            geocodeSearch.setOnGeocodeSearchListener(this);
+            MyLog.d("yuan",localCity);
+            getLatLon(localCity);*/
 
+
+
+
+
+            mMapView.onCreate(savedInstanceState);
+
+            //定义了一个地图view
+            if (aMap == null) {
+                aMap = mMapView.getMap();
+            }
+            aMap.moveCamera(CameraUpdateFactory.zoomTo(30));
+            UiSettings mUiSettings;//定义一个UiSettings对象
+            mUiSettings = aMap.getUiSettings();//实例化UiSettings类对象
+            /*指北针*/
+            mUiSettings.setCompassEnabled(true);
+            /*比例尺*/
+            mUiSettings.setScaleControlsEnabled(true);
+            /*缩放按钮位置*/
+            mUiSettings.setZoomPosition(AMapOptions.ZOOM_POSITION_RIGHT_CENTER);
+            mUiSettings.setTiltGesturesEnabled(false);
+            /*回到当前位置按钮*/
+            mUiSettings.setMyLocationButtonEnabled(true);
+            //开始的缩放比例
+            MyLocationStyle myLocationStyle;
+            myLocationStyle = new MyLocationStyle();
+            //初始化定位蓝点样式类
+            myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);
+            // 连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
+            myLocationStyle.interval(2000);
+            //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
+            aMap.setMyLocationStyle(myLocationStyle);
+            myLocationStyle.strokeWidth(0);//设置定位蓝点精度圈的边框宽度的方法。
+            myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));// 设置圆形的边框颜色
+
+            myLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));// 设置圆形的填充颜色
+            //设置定位蓝点的Style
+            //aMap.getUiSettings().setMyLocationButtonEnabled(true);设置默认定位按钮是否显示，非必需设置。
+            aMap.setMyLocationEnabled(true);
+
+
+            // 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
+            myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);
+            //连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动
+        /*currentCity=sp.getString("lCity","");
+        localCity=sp.getString("cCity","");
+        if(!currentCity.equals(localCity)){
+            MyLog.d("yuan",currentCity+localCity);
+            geocodeSearch = new GeocodeSearch(this);
+            geocodeSearch.setOnGeocodeSearchListener(this);
+            MyLog.d("yuan",localCity);
+            //MyLog.d("yuan",addressName);
+            getLatLon(localCity);
+        }*/
+
+    }
+
+    private void getLatLon(String name) {
+        GeocodeQuery query = new GeocodeQuery(name, localCity);// 第一个参数表示地址，第二个参数表示查询城市，中文或者中文全拼，citycode、adcode，
+        geocodeSearch.getFromLocationNameAsyn(query);
     }
 
     /*定位功能调用*/
@@ -362,15 +419,20 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 MyLog.d("Test",locationMsg.getAddress());
                 if (sp.getBoolean("first_start",true)){
                     localCity=locationMsg.getCity();
+                    currentCity = locationMsg.getCity();
+
                 }else {
                     localCity=sp.getString("cCity","");
                 }
+
                 MyLog.d("yang",localCity);
                 MyLog.d("yang","sb");
 
             }
         });
+
     }
+
 
 
 
@@ -687,5 +749,43 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     + cities.get(i).getAdCode() + "\n";
         }
         Toast.makeText(Main_Activity.this,infomation,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
+
+    }
+
+    @Override
+    public void onGeocodeSearched(GeocodeResult result, int rCode) {
+
+        if (rCode == AMapException.CODE_AMAP_SUCCESS){
+            if (result != null && result.getGeocodeAddressList()!=null
+                    &&result.getGeocodeAddressList().size()>0){
+                GeocodeAddress address = result.getGeocodeAddressList().get(0);
+
+                if (address!=null){
+                    aMap.animateCamera(CameraUpdateFactory.newLatLngZoom(convertToLatLng(address.getLatLonPoint()),15));
+                    LatLonPoint latlonPoint = address.getLatLonPoint();
+                    LatLng latLng = new LatLng(latlonPoint.getLatitude(),latlonPoint.getLongitude());
+                    addressName = "经纬度"+address.getLatLonPoint();
+                    MyLog.d("yuan",addressName);
+                    aMapOptions = new AMapOptions();
+                    aMapOptions.camera(new CameraPosition(latLng,10f,0,0));
+                    mMapView = new MapView(this,aMapOptions);
+                    aMap=mMapView.getMap();
+
+
+
+
+                }
+            }
+        }
+    }
+
+
+
+    private static LatLng convertToLatLng(LatLonPoint latLonPoint) {
+        return new LatLng(latLonPoint.getLatitude(), latLonPoint.getLongitude());
     }
 }
