@@ -44,6 +44,8 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.services.busline.BusLineItem;
+import com.amap.api.services.busline.BusLineResult;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
@@ -77,7 +79,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
-    MapView mMapView = null;
+    MapView mMapView;
     private AMap aMap;
     private DrawerLayout drawerLayout;
     ImageView leftMenu;
@@ -92,10 +94,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private String keyWord = "";// 要输入的poi搜索关键字
     private String localCity;
     private EditText editCity;// 要输入的城市名字或者城市区号
-    private PoiResult poiResult; // poi返回的结果
+    PoiResult poiResult; // poi返回的结果
     int currentPage = 0;// 当前页面，从0开始计数
     private PoiSearch.Query query;// Poi查询条件类
-    private PoiSearch poiSearch;// POI搜索
+    PoiSearch poiSearch;// POI搜索
 
     private SharedPreferences sp;//获取当前城市
 
@@ -113,7 +115,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
         sp= getSharedPreferences("currentCity",MODE_PRIVATE);
         login_sp = getSharedPreferences("first_login",MODE_PRIVATE);
-
         if (login_sp.getBoolean("first_login", true)) {
             editor = login_sp.edit();
             editor.putBoolean("first_login",false);
@@ -187,8 +188,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         updateUserInfo();
         if (aMap==null) {
             aMap = mMapView.getMap();
-            setUpMap();
         }
+        setUpMap();
         searchText = (AutoCompleteTextView) findViewById(R.id.keyWord);
         searchText.addTextChangedListener(this);// 添加文本输入框监听事件
         locate_main();
@@ -324,21 +325,20 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         MyLocationStyle myLocationStyle;
         myLocationStyle = new MyLocationStyle();
         //初始化定位蓝点样式类
-        // myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE);
-        // 连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）如果不设置myLocationType，默认也会执行此种模式。
+        /*myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);*/
+         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        //连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动
         myLocationStyle.interval(2000);
         //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
         aMap.setMyLocationStyle(myLocationStyle);
+
         myLocationStyle.strokeWidth(0);//设置定位蓝点精度圈的边框宽度的方法。
         myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));// 设置圆形的边框颜色
-
         myLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));// 设置圆形的填充颜色
         //设置定位蓝点的Style
         //aMap.getUiSettings().setMyLocationButtonEnabled(true);设置默认定位按钮是否显示，非必需设置。
         aMap.setMyLocationEnabled(true);
         // 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);
-        //连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动
 
     }
 
