@@ -5,10 +5,16 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.widget.EditText;
 
+import com.amap.api.services.route.BusPath;
+import com.amap.api.services.route.BusStep;
+import com.amap.api.services.route.RouteBusLineItem;
+import com.amap.api.services.route.RouteRailwayItem;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class LoveBusUtil {
     public static String checkEditText(EditText editText) {
@@ -72,5 +78,46 @@ public class LoveBusUtil {
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+    public static String getBusPathTitle(BusPath busPath) {
+        if (busPath == null) {
+            return String.valueOf("");
+        }
+        List<BusStep> busSetps = busPath.getSteps();
+        if (busSetps == null) {
+            return String.valueOf("");
+        }
+        StringBuffer sb = new StringBuffer();
+        for (BusStep busStep : busSetps) {
+            StringBuffer title = new StringBuffer();
+            if (busStep.getBusLines().size() > 0) {
+                for (RouteBusLineItem busline : busStep.getBusLines()) {
+                    if (busline == null) {
+                        continue;
+                    }
+
+                    String buslineName = getSimpleBusLineName(busline.getBusLineName());
+                    title.append(buslineName);
+                    title.append(" / ");
+                }
+//					RouteBusLineItem busline = busStep.getBusLines().get(0);
+
+                sb.append(title.substring(0, title.length() - 3));
+                sb.append(" > ");
+            }
+            if (busStep.getRailway() != null) {
+                RouteRailwayItem railway = busStep.getRailway();
+                sb.append(railway.getTrip()+"("+railway.getDeparturestop().getName()
+                        +" - "+railway.getArrivalstop().getName()+")");
+                sb.append(" > ");
+            }
+        }
+        return sb.substring(0, sb.length() - 3);
+    }
+    public static String getSimpleBusLineName(String busLineName) {
+        if (busLineName == null) {
+            return String.valueOf("");
+        }
+        return busLineName.replaceAll("\\(.*?\\)", "");
     }
 }

@@ -47,6 +47,7 @@ import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.busline.BusLineItem;
 import com.amap.api.services.busline.BusLineResult;
 import com.amap.api.services.core.AMapException;
+import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
 import com.amap.api.services.help.Inputtips;
@@ -54,8 +55,13 @@ import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
+import com.amap.api.services.route.BusPath;
+import com.amap.api.services.route.BusRouteResult;
+import com.amap.api.services.route.BusStep;
+import com.amap.api.services.route.RouteBusLineItem;
 import com.lovebus.entity.Location;
 import com.lovebus.entity.User;
+import com.lovebus.function.BusRoute;
 import com.lovebus.function.Locate;
 import com.lovebus.function.LoveBusUtil;
 import com.lovebus.function.MyLog;
@@ -78,7 +84,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,PoiSearch.OnPoiSearchListener,Inputtips.InputtipsListener {
+public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,Inputtips.InputtipsListener {
     MapView mMapView;
     private AMap aMap;
     private DrawerLayout drawerLayout;
@@ -134,7 +140,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         mMapView.onDestroy();
         Locate.destroyLocation();
      }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -154,20 +159,19 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         updateUserInfo();
     }
-
     @Override
     protected void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView.onPause ()，暂停地图的绘制
         mMapView.onPause();
     }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //在activity执行onSaveInstanceState时执行mMapView.onSaveInstanceState (outState)，保存地图当前的状态
         mMapView.onSaveInstanceState(outState);
     }
+
 
     /*初始化活动*/
     private void init(){
@@ -214,6 +218,11 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+    /* 设置页面监听*/
+    private void setUpMap() {
+        aMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -236,7 +245,38 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
-            doSearchQuery();
+            com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,keyWord,localCity);
+            com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
+                @Override
+                public void result(PoiResult result, int rCode) {
+                    if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                        if (result != null && result.getQuery() != null) {// 搜索poi的结果
+                            if (result.getQuery().equals(com.lovebus.function.PoiSearch.getQuery())) {// 是否是同一条
+                                poiResult = result;
+                                // 取得搜索到的poiitems有多少页
+                                List<PoiItem> poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
+                                List<SuggestionCity> suggestionCities = poiResult
+                                        .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
+                                if (poiItems != null && poiItems.size() > 0) {
+                                    aMap.clear();// 清理之前的图标
+                                    PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
+                                    poiOverlay.removeFromMap();
+                                    poiOverlay.addToMap();
+                                    poiOverlay.zoomToSpan();
+                                }
+                                else if (suggestionCities != null
+                                        && suggestionCities.size() > 0) {
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void item(PoiItem item, int rCode) {
+
+                }
+            });
         }
     }
     private void onclick_userHeadImage(){
@@ -309,7 +349,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if (aMap == null) {
             aMap = mMapView.getMap();
         }
-        aMap.moveCamera(CameraUpdateFactory.zoomTo(30));
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
         UiSettings mUiSettings;//定义一个UiSettings对象
         mUiSettings = aMap.getUiSettings();//实例化UiSettings类对象
         /*指北针*/
@@ -342,6 +382,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
     }
 
+
     /*定位功能调用*/
     private void locate_main(){
         /*初始化定位*/
@@ -371,8 +412,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
-
 
     private void updateUserInfo(){
         if(user.getCity()!=null&&(!user.getCity().equals("null")))
@@ -441,6 +480,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
 
     /*打开相册获取图片*/
     public void getAlbumPhoto(Activity activity){
@@ -520,6 +560,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         return path;
     }
+
+
     private void displayImage(String imagePath){
         if(imagePath!=null){
             photo= LoveBusUtil.compressImageFromFile(imagePath);
@@ -596,24 +638,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    /* 设置页面监听*/
-    private void setUpMap() {
-        aMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
-    }
 
 
-    /* poi搜索*/
-    protected void doSearchQuery() {
-        currentPage = 0;
-        query = new PoiSearch.Query(keyWord, "", localCity);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
-        MyLog.d("Test",locationMsg.getCity());
-        query.setPageSize(10);// 设置每页最多返回多少条poiitem
-        query.setPageNum(currentPage);// 设置查第一页
-        query.setCityLimit(true);
-        poiSearch = new PoiSearch(this, query);
-        poiSearch.setOnPoiSearchListener(this);
-        poiSearch.searchPOIAsyn();
-    }
+
+
+
+
     /*poi搜索的回调*/
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -621,8 +651,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         return false;
     }
     @Override
-    public void afterTextChanged(Editable s) {
-    }
+    public void afterTextChanged(Editable s) { }
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override
@@ -635,35 +664,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             inputTips.requestInputtipsAsyn();
         }
     }
-    /*POI信息查询回调方法*/
-    @Override
-    public void onPoiSearched(PoiResult result, int rCode) {
-        if (rCode == AMapException.CODE_AMAP_SUCCESS) {
-            if (result != null && result.getQuery() != null) {// 搜索poi的结果
-                if (result.getQuery().equals(query)) {// 是否是同一条
-                    poiResult = result;
-                    // 取得搜索到的poiitems有多少页
-                    List<PoiItem> poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
-                    List<SuggestionCity> suggestionCities = poiResult
-                            .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
-
-                    if (poiItems != null && poiItems.size() > 0) {
-                        aMap.clear();// 清理之前的图标
-                        PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
-                        poiOverlay.removeFromMap();
-                        poiOverlay.addToMap();
-                        poiOverlay.zoomToSpan();
-                    }
-                    else if (suggestionCities != null
-                            && suggestionCities.size() > 0) {
-                        showSuggestCity(suggestionCities);
-                    }
-                }
-            }
-        }
-    }
-    @Override
-    public void onPoiItemSearched(PoiItem item, int rCode) { }
     @Override
     public void onGetInputtips(List<Tip> tipList, int rCode) {
         if (rCode == AMapException.CODE_AMAP_SUCCESS) {// 正确返回
@@ -677,15 +677,5 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             searchText.setAdapter(aAdapter);
             aAdapter.notifyDataSetChanged();
         }
-    }
-     /*poi没有搜索到数据，返回一些推荐城市的信息*/
-    private void showSuggestCity(List<SuggestionCity> cities) {
-        String infomation = "推荐城市\n";
-        for (int i = 0; i < cities.size(); i++) {
-            infomation += "城市名称:" + cities.get(i).getCityName() + "城市区号:"
-                    + cities.get(i).getCityCode() + "城市编码:"
-                    + cities.get(i).getAdCode() + "\n";
-        }
-        Toast.makeText(Main_Activity.this,infomation,Toast.LENGTH_SHORT).show();
     }
 }

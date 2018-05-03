@@ -35,4 +35,7 @@ public class PoiSearch {
             }
         });
     }
+    public static com.amap.api.services.poisearch.PoiSearch.Query getQuery(){
+        return query;
+    }
 }
