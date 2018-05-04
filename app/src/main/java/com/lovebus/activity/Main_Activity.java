@@ -46,6 +46,7 @@ import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.busline.BusLineItem;
 import com.amap.api.services.busline.BusLineResult;
+import com.amap.api.services.busline.BusLineSearch;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
@@ -246,6 +247,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
             com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,keyWord,localCity);
+            /*LatLonPoint lp = new LatLonPoint(locationMsg.getLatitude(), locationMsg.getLongitude());
+            com.lovebus.function.PoiSearch.BusStationNear(lp,Main_Activity.this,5000,localCity);*/
             com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
                 @Override
                 public void result(PoiResult result, int rCode) {
