@@ -32,7 +32,11 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,6 +101,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     de.hdodenhof.circleimageview.CircleImageView user_head_image;
     TextView username;
     TextView userSetCity;
+    LinearLayout mBusResultLayout;
+    FrameLayout maplayout;
+    ListView mBusResultList;
+    com.lovebus.view.top_title main_title;
     Bitmap photo;
     private String image_response;
     User user=new User(false,null,null,null,null,null,null);
@@ -183,6 +191,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         NavigationView navigationView= (NavigationView) findViewById(R.id.leftView_1);
         leftMenu =(ImageView) findViewById(R.id.leftMenu);
         search=(ImageView) findViewById(R.id.search);
+        mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
+        mBusResultList = (ListView) findViewById(R.id.bus_result_list);
+        maplayout=(FrameLayout) findViewById(R.id.map_layout);
+        main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
         View user_header=navigationView.inflateHeaderView(R.layout.header_nav);
         user_head_image=(de.hdodenhof.circleimageview.CircleImageView)user_header.findViewById(R.id.userHeadImage);
         username=(TextView) user_header.findViewById(R.id.user_set_name);
@@ -331,17 +343,24 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     /*退出确认*/
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
-                .setTitle("退出爱公交")
-                .setMessage("您真的要抛弃爱公交吗")
-                .setNegativeButton("取消",null)
-                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                }).show();
+        if(maplayout.getVisibility()==View.GONE){
+            mBusResultLayout.setVisibility(View.GONE);
+            main_title.setVisibility(View.VISIBLE);
+            maplayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
+                    .setTitle("退出爱公交")
+                    .setMessage("您真的要抛弃爱公交吗")
+                    .setNegativeButton("取消",null)
+                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
+        }
     }
 
     //地图显示
@@ -422,9 +441,11 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
                     if (result != null && result.getPaths() != null) {
                         if (result.getPaths().size() > 0) {
-                            List<BusPath> mBusPathList = result.getPaths();
-                            BusPath item = mBusPathList.get(0);
-                            MyLog.d("BUSBUS",LoveBusUtil.getBusPathTitle(item));
+                            BusResultListAdapter mBusResultListAdapter = new BusResultListAdapter(Main_Activity.this, result);
+                            mBusResultLayout.setVisibility(View.VISIBLE);
+                            main_title.setVisibility(View.GONE);
+                            maplayout.setVisibility(View.GONE);
+                            mBusResultList.setAdapter(mBusResultListAdapter);
                         } else if (result != null && result.getPaths() == null) {
                             Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
                         }
