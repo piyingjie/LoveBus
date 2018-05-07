@@ -51,6 +51,8 @@ import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
+import com.amap.api.services.geocoder.GeocodeAddress;
+import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
@@ -63,6 +65,7 @@ import com.amap.api.services.route.RouteBusLineItem;
 import com.lovebus.entity.Location;
 import com.lovebus.entity.User;
 import com.lovebus.function.BusRoute;
+import com.lovebus.function.Geocoder;
 import com.lovebus.function.Locate;
 import com.lovebus.function.LoveBusUtil;
 import com.lovebus.function.MyLog;
@@ -105,7 +108,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     int currentPage = 0;// 当前页面，从0开始计数
     private PoiSearch.Query query;// Poi查询条件类
     PoiSearch poiSearch;// POI搜索
-
+    LatLonPoint endLat;
     private SharedPreferences sp;//获取当前城市
 
     SharedPreferences login_sp;
@@ -246,9 +249,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
-            com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,keyWord,localCity);
-            /*LatLonPoint lp = new LatLonPoint(locationMsg.getLatitude(), locationMsg.getLongitude());
-            com.lovebus.function.PoiSearch.BusStationNear(lp,Main_Activity.this,5000,localCity);*/
+           /* com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,keyWord,localCity);
             com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
                 @Override
                 public void result(PoiResult result, int rCode) {
@@ -279,7 +280,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 public void item(PoiItem item, int rCode) {
 
                 }
-            });
+            });*/
+            searchBusRoute(keyWord,localCity);
         }
     }
     private void onclick_userHeadImage(){
@@ -386,6 +388,57 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    /*最佳路线查询*/
+    private void searchBusRoute(String searchTest,String cityName){
+        /*位置转经纬度*/
+        Geocoder.getLatlon(searchTest,cityName,Main_Activity.this);
+        MyLog.d("BUSBUS","001+"+cityName);
+        Geocoder.getLatlonResult(new Geocoder.GeocodeSearchListener() {
+            @Override
+            public void result(GeocodeResult result, int rCode) {
+                if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (result != null && result.getGeocodeAddressList() != null
+                            && result.getGeocodeAddressList().size() > 0) {
+                        GeocodeAddress address = result.getGeocodeAddressList().get(0);
+                        endLat=address.getLatLonPoint();
+                        MyLog.d("BUSBUS","002+"+endLat.toString());
+                        LatLonPoint startLat=new LatLonPoint(locationMsg.getLatitude(),locationMsg.getLongitude());
+                        searchRoute(startLat,endLat,localCity);
+                    } else {
+                        Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    /*经纬度查询路径*/
+    private void searchRoute(LatLonPoint startPoint,LatLonPoint endPoint,String cityName){
+        BusRoute.searchRouteResult(Main_Activity.this,startPoint,endPoint,cityName);
+        BusRoute.getBusRoute(new BusRoute.RouteSearchListener() {
+            @Override
+            public void result(BusRouteResult result, int errorCode) {
+                if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (result != null && result.getPaths() != null) {
+                        if (result.getPaths().size() > 0) {
+                            List<BusPath> mBusPathList = result.getPaths();
+                            BusPath item = mBusPathList.get(0);
+                            MyLog.d("BUSBUS",LoveBusUtil.getBusPathTitle(item));
+                        } else if (result != null && result.getPaths() == null) {
+                            Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
     /*定位功能调用*/
     private void locate_main(){
         /*初始化定位*/
@@ -450,6 +503,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+
+
     /*从服务器上获取头像*/
     private void updateImage(){
         Okhttp.getOkHttpRequest("http://lovebus.top/lovebus/head/" + user.getAccount() + ".jpg", new Callback() {
@@ -483,6 +538,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
+
+
 
 
     /*打开相册获取图片*/
@@ -563,6 +621,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         return path;
     }
+
+
 
 
     private void displayImage(String imagePath){

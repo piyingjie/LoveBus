@@ -18,7 +18,6 @@ public class BusLineSearch {
         busLineQuery.setPageSize(10);// 设置每页返回多少条数据
         busLineQuery.setPageNumber(currentpage);// 设置查询第几页，第一页从0开始算起
         busLineSearch = new com.amap.api.services.busline.BusLineSearch(context,busLineQuery);
-        busLineSearch.searchBusLineAsyn();// 异步查询公交线路名称
     }
 
     /*通过id查询公交*/
@@ -41,5 +40,6 @@ public class BusLineSearch {
                 listener.result(busLineResult,i);
             }
         });
+        busLineSearch.searchBusLineAsyn();// 异步查询公交线路名称
     }
 }
