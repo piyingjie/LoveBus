@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.widget.EditText;
 
+import com.amap.api.maps.model.LatLng;
+import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.BusPath;
 import com.amap.api.services.route.BusStep;
 import com.amap.api.services.route.RouteBusLineItem;
@@ -16,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LoveBusUtil {
@@ -134,7 +137,7 @@ public class LoveBusUtil {
         String walkDis = getFriendlyLength((int) walkDistance);
         return String.valueOf(time + " | " + subDis + " | 步行" + walkDis);
     }
-    private static String getFriendlyTime(int second) {
+    public static String getFriendlyTime(int second) {
         if (second > 3600) {
             int hour = second / 3600;
             int miniate = (second % 3600) / 60;
@@ -146,7 +149,7 @@ public class LoveBusUtil {
         }
         return second + "秒";
     }
-    private static String getFriendlyLength(int lenMeter) {
+    public static String getFriendlyLength(int lenMeter) {
         if (lenMeter > 10000) // 10 km
         {
             int dis = lenMeter / 1000;
@@ -171,5 +174,17 @@ public class LoveBusUtil {
         }
 
         return dis + ChString.Meter;
+    }
+    public static LatLng convertToLatLng(LatLonPoint latLonPoint) {
+        return new LatLng(latLonPoint.getLatitude(), latLonPoint.getLongitude());
+    }
+
+    public static ArrayList<LatLng> convertArrList(List<LatLonPoint> shapes) {
+        ArrayList<LatLng> lineShapes = new ArrayList<LatLng>();
+        for (LatLonPoint point : shapes) {
+            LatLng latLngTemp = LoveBusUtil.convertToLatLng(point);
+            lineShapes.add(latLngTemp);
+        }
+        return lineShapes;
     }
 }
