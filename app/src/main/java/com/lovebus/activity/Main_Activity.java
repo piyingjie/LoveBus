@@ -38,8 +38,12 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,16 +65,21 @@ import com.amap.api.services.busline.BusStationItem;
 import com.amap.api.services.busline.BusStationQuery;
 import com.amap.api.services.busline.BusStationResult;
 //import com.amap.api.services.busline.BusStationSearch;
+//import com.amap.api.services.busline.BusLineSearch;
 import com.amap.api.services.core.AMapException;
 
+import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.core.SuggestionCity;
+import com.amap.api.services.geocoder.GeocodeAddress;
+import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
 import com.amap.api.services.poisearch.PoiResult;
 import com.amap.api.services.poisearch.PoiSearch;
 
+import com.amap.api.services.route.BusRouteResult;
 import com.lovebus.entity.Location;
 import com.lovebus.entity.User;
 
@@ -79,6 +88,8 @@ import com.lovebus.function.BusLineOverlay;
 
 import com.lovebus.function.BusLineSearch;
 import com.lovebus.function.BusStationSearch;
+import com.lovebus.function.BusRoute;
+import com.lovebus.function.Geocoder;
 import com.lovebus.function.Locate;
 import com.lovebus.function.LoveBusUtil;
 import com.lovebus.function.MyLog;
@@ -117,6 +128,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     de.hdodenhof.circleimageview.CircleImageView user_head_image;
     TextView username;
     TextView userSetCity;
+    LinearLayout mBusResultLayout;
+    FrameLayout maplayout;
+    ListView mBusResultList;
+    com.lovebus.view.top_title main_title;
     Bitmap photo;
     private String image_response;
     User user=new User(false,null,null,null,null,null,null);
@@ -128,7 +143,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
     private PoiSearch.Query query;// Poi查询条件类
     PoiSearch poiSearch;// POI搜索
-
+    LatLonPoint endLat;
     private SharedPreferences sp;//获取当前城市
 
     SharedPreferences login_sp;
@@ -164,12 +179,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         showMap(savedInstanceState);
         init();
     }
-
-    /**
-     * 设置marker的监听和信息窗口的监听
-     */
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -216,6 +225,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         NavigationView navigationView= (NavigationView) findViewById(R.id.leftView_1);
         leftMenu =(ImageView) findViewById(R.id.leftMenu);
         search=(ImageView) findViewById(R.id.search);
+        mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
+        mBusResultList = (ListView) findViewById(R.id.bus_result_list);
+        maplayout=(FrameLayout) findViewById(R.id.map_layout);
+        main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
         View user_header=navigationView.inflateHeaderView(R.layout.header_nav);
         user_head_image=(de.hdodenhof.circleimageview.CircleImageView)user_header.findViewById(R.id.userHeadImage);
         username=(TextView) user_header.findViewById(R.id.user_set_name);
@@ -302,7 +315,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
-            com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,keyWord,localCity);
+            /*com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,keyWord,localCity);
             com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
                 @Override
                 public void result(PoiResult result, int rCode) {
@@ -334,115 +347,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 public void item(PoiItem item, int rCode) {
 
                 }
-            });
-            //searchLine();
-            com.lovebus.function.BusLineSearch.searchLine_byName(Main_Activity.this,
-                    keyWord,localCity);
-            com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
-
-                @Override
-                public void result(BusLineResult result, final int rCode) {
-                    dissmissProgressDialog();
-                    if (rCode == AMapException.CODE_AMAP_SUCCESS){
-                        if (result!=null&&result.getQuery()!=null
-                                &&result.getQuery().equals(com.lovebus.function.BusLineSearch.getQuery())){
-                            if (result.getQuery().getCategory()== BusLineQuery.SearchType.BY_LINE_NAME){
-                                if (result.getPageCount()>0
-                                    &&result.getBusLines()!=null
-                                        &&result.getBusLines().size()>0){
-                                    busLineResult = result;
-                                    lineItems = result.getBusLines();
-                                    if (lineItems !=null){
-                                        //showResultList(lineItems);
-                                        BusLineDialog busLineDialog = new BusLineDialog(
-                                                Main_Activity.this,lineItems);
-                                        busLineDialog.show();
-                                        busLineDialog.onListItemClicklistener(new OnListItemlistener() {
-                                            @Override
-                                            public void onListItemClick(BusLineDialog dialog, BusLineItem item) {
-                                                showProgressDialog();
-
-                                                String lineId =item.getBusLineId();
-                                                com.lovebus.function.BusLineSearch.searchLine_byId(Main_Activity.this,lineId,localCity);
-                                                com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
-                                                    @Override
-                                                    public void result(BusLineResult result, int rCode) {
-                                                        dissmissProgressDialog();
-                                                        if (rCode == AMapException.CODE_AMAP_SUCCESS){
-                                                            if (result!=null&&result.getQuery()!=null
-                                                                    &&result.getQuery().equals(com.lovebus.function.BusLineSearch.getQuery())){
-                                                                if(result.getQuery().getCategory()== BusLineQuery.SearchType.BY_LINE_ID){
-                                                                    aMap.clear();// 清理地图上的marker
-                                                                    busLineResult = result;
-                                                                    lineItems = busLineResult.getBusLines();
-                                                                    if (lineItems!=null&&lineItems.size()>0){
-                                                                        BusLineOverlay busLineOverlay = new BusLineOverlay(Main_Activity.this,aMap,lineItems.get(0));
-                                                                        busLineOverlay.removeFromMap();
-                                                                        busLineOverlay.addToMap();
-                                                                        busLineOverlay.zoomToSpan();
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                        });
-                                        busLineDialog.show();
-                                    }
-                                }
-                            }else if(result.getQuery().getCategory()== BusLineQuery.SearchType.BY_LINE_ID){
-                                aMap.clear();// 清理地图上的marker
-                                busLineResult = result;
-                                lineItems = busLineResult.getBusLines();
-                                if (lineItems!=null&&lineItems.size()>0){
-                                    BusLineOverlay busLineOverlay = new BusLineOverlay(Main_Activity.this,aMap,lineItems.get(0));
-                                    busLineOverlay.removeFromMap();
-                                    busLineOverlay.addToMap();
-                                    busLineOverlay.zoomToSpan();
-                                }
-                            }
-                        }else {
-                            ToastUtil.show(Main_Activity.this,R.string.no_result);
-                        }
-                    }else {
-                        ToastUtil.showerror(Main_Activity.this,rCode);
-                    }
-                }
-            });
-            com.lovebus.function.BusStationSearch.searchStation(Main_Activity.this,keyWord,localCity);
-            com.lovebus.function.BusStationSearch.getBusStation(new BusStationSearch.BusStationListener() {
-                @Override
-                public void result(BusStationResult result, int rCode) {
-                    dissmissProgressDialog();
-                    if (rCode == AMapException.CODE_AMAP_SUCCESS) {
-                        if (result != null && result.getPageCount() > 0
-                                && result.getBusStations() != null
-                                && result.getBusStations().size() > 0) {
-                            ArrayList<BusStationItem> item = (ArrayList<BusStationItem>) result
-                                    .getBusStations();
-                            StringBuffer buf = new StringBuffer();
-                            for (int i = 0; i < item.size(); i++) {
-                                BusStationItem stationItem = item.get(i);
-
-
-                                buf.append(" station: ").append(i).append(" name: ")
-                                        .append(stationItem.getBusStationName());
-                                Log.d("LG", "stationName:"
-                                        + stationItem.getBusStationName() + "stationpos:"
-                                        + stationItem.getLatLonPoint().toString());
-                            }
-                            String text = buf.toString();
-                            Toast.makeText(Main_Activity.this, text,
-                                    Toast.LENGTH_SHORT).show();
-                        } else {
-                            ToastUtil.show(Main_Activity.this, R.string.no_result);
-                        }
-                    } else  {
-                        ToastUtil.showerror(Main_Activity.this, rCode);
-                    }
-                }
-            });
+            });*/
+            //searchLine(keyWord,localCity);
+            searchBusRoute(keyWord,localCity);
         }
     }
     private void onclick_userHeadImage(){
@@ -492,17 +399,24 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     /*退出确认*/
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
-                .setTitle("退出爱公交")
-                .setMessage("您真的要抛弃爱公交吗")
-                .setNegativeButton("取消",null)
-                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                }).show();
+        if(maplayout.getVisibility()==View.GONE){
+            mBusResultLayout.setVisibility(View.GONE);
+            main_title.setVisibility(View.VISIBLE);
+            maplayout.setVisibility(View.VISIBLE);
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
+                    .setTitle("退出爱公交")
+                    .setMessage("您真的要抛弃爱公交吗")
+                    .setNegativeButton("取消",null)
+                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    }).show();
+        }
     }
 
     //地图显示
@@ -546,6 +460,168 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         aMap.setMyLocationEnabled(true);
         // 设置为true表示启动显示定位蓝点，false表示隐藏定位蓝点并不进行定位，默认是false。
 
+    }
+
+    private void searchLine(String serchTest, final String cityName){
+        com.lovebus.function.BusLineSearch.searchLine_byName(Main_Activity.this,
+                serchTest,cityName);
+        com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
+
+            @Override
+            public void result(BusLineResult result, final int rCode) {
+                dissmissProgressDialog();
+                if (rCode == AMapException.CODE_AMAP_SUCCESS){
+                    if (result!=null&&result.getQuery()!=null
+                            &&result.getQuery().equals(com.lovebus.function.BusLineSearch.getQuery())){
+                        if (result.getQuery().getCategory()== BusLineQuery.SearchType.BY_LINE_NAME){
+                            if (result.getPageCount()>0
+                                    &&result.getBusLines()!=null
+                                    &&result.getBusLines().size()>0){
+                                busLineResult = result;
+                                lineItems = result.getBusLines();
+                                if (lineItems !=null){
+                                    //showResultList(lineItems);
+                                    BusLineDialog busLineDialog = new BusLineDialog(
+                                            Main_Activity.this,lineItems);
+                                    busLineDialog.show();
+                                    busLineDialog.onListItemClicklistener(new OnListItemlistener() {
+                                        @Override
+                                        public void onListItemClick(BusLineDialog dialog, BusLineItem item) {
+                                            showProgressDialog();
+
+                                            String lineId =item.getBusLineId();
+                                            com.lovebus.function.BusLineSearch.searchLine_byId(Main_Activity.this,lineId,cityName);
+                                            com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
+                                                @Override
+                                                public void result(BusLineResult result, int rCode) {
+                                                    dissmissProgressDialog();
+                                                    if (rCode == AMapException.CODE_AMAP_SUCCESS){
+                                                        if (result!=null&&result.getQuery()!=null
+                                                                &&result.getQuery().equals(com.lovebus.function.BusLineSearch.getQuery())){
+                                                            if(result.getQuery().getCategory()== BusLineQuery.SearchType.BY_LINE_ID){
+                                                                aMap.clear();// 清理地图上的marker
+                                                                busLineResult = result;
+                                                                lineItems = busLineResult.getBusLines();
+                                                                if (lineItems!=null&&lineItems.size()>0){
+                                                                    BusLineOverlay busLineOverlay = new BusLineOverlay(Main_Activity.this,aMap,lineItems.get(0));
+                                                                    busLineOverlay.removeFromMap();
+                                                                    busLineOverlay.addToMap();
+                                                                    busLineOverlay.zoomToSpan();
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    });
+                                    busLineDialog.show();
+                                }
+                            }
+                        }else if(result.getQuery().getCategory()== BusLineQuery.SearchType.BY_LINE_ID){
+                            aMap.clear();// 清理地图上的marker
+                            busLineResult = result;
+                            lineItems = busLineResult.getBusLines();
+                            if (lineItems!=null&&lineItems.size()>0){
+                                BusLineOverlay busLineOverlay = new BusLineOverlay(Main_Activity.this,aMap,lineItems.get(0));
+                                busLineOverlay.removeFromMap();
+                                busLineOverlay.addToMap();
+                                busLineOverlay.zoomToSpan();
+                            }
+                        }
+                    }else {
+                        ToastUtil.show(Main_Activity.this,R.string.no_result);
+                    }
+                }else {
+                    ToastUtil.showerror(Main_Activity.this,rCode);
+                }
+            }
+        });
+        com.lovebus.function.BusStationSearch.searchStation(Main_Activity.this,serchTest,cityName);
+        com.lovebus.function.BusStationSearch.getBusStation(new BusStationSearch.BusStationListener() {
+            @Override
+            public void result(BusStationResult result, int rCode) {
+                dissmissProgressDialog();
+                if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (result != null && result.getPageCount() > 0
+                            && result.getBusStations() != null
+                            && result.getBusStations().size() > 0) {
+                        ArrayList<BusStationItem> item = (ArrayList<BusStationItem>) result
+                                .getBusStations();
+                        StringBuffer buf = new StringBuffer();
+                        for (int i = 0; i < item.size(); i++) {
+                            BusStationItem stationItem = item.get(i);
+
+
+                            buf.append(" station: ").append(i).append(" name: ")
+                                    .append(stationItem.getBusStationName());
+                            Log.d("LG", "stationName:"
+                                    + stationItem.getBusStationName() + "stationpos:"
+                                    + stationItem.getLatLonPoint().toString());
+                        }
+                        String text = buf.toString();
+                        Toast.makeText(Main_Activity.this, text,
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        ToastUtil.show(Main_Activity.this, R.string.no_result);
+                    }
+                } else  {
+                    ToastUtil.showerror(Main_Activity.this, rCode);
+                }
+            }
+        });
+    }
+    /*最佳路线查询*/
+    private void searchBusRoute(String searchTest,String cityName){
+        /*位置转经纬度*/
+        Geocoder.getLatlon(searchTest,cityName,Main_Activity.this);
+        MyLog.d("BUSBUS","001+"+cityName);
+        Geocoder.getLatlonResult(new Geocoder.GeocodeSearchListener() {
+            @Override
+            public void result(GeocodeResult result, int rCode) {
+                if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (result != null && result.getGeocodeAddressList() != null
+                            && result.getGeocodeAddressList().size() > 0) {
+                        GeocodeAddress address = result.getGeocodeAddressList().get(0);
+                        endLat=address.getLatLonPoint();
+                        MyLog.d("BUSBUS","002+"+endLat.toString());
+                        LatLonPoint startLat=new LatLonPoint(locationMsg.getLatitude(),locationMsg.getLongitude());
+                        searchRoute(startLat,endLat,localCity);
+                    } else {
+                        Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    /*经纬度查询路径*/
+    private void searchRoute(LatLonPoint startPoint,LatLonPoint endPoint,String cityName){
+        BusRoute.searchRouteResult(Main_Activity.this,startPoint,endPoint,cityName);
+        BusRoute.getBusRoute(new BusRoute.RouteSearchListener() {
+            @Override
+            public void result(BusRouteResult result, int errorCode) {
+                dissmissProgressDialog();
+                if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (result != null && result.getPaths() != null) {
+                        if (result.getPaths().size() > 0) {
+                            BusResultListAdapter mBusResultListAdapter = new BusResultListAdapter(Main_Activity.this, result);
+                            mBusResultLayout.setVisibility(View.VISIBLE);
+                            main_title.setVisibility(View.GONE);
+                            maplayout.setVisibility(View.GONE);
+                            mBusResultList.setAdapter(mBusResultListAdapter);
+                        } else if (result != null && result.getPaths() == null) {
+                            Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
@@ -613,6 +689,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+
+
     /*从服务器上获取头像*/
     private void updateImage(){
         Okhttp.getOkHttpRequest("http://lovebus.top/lovebus/head/" + user.getAccount() + ".jpg", new Callback() {
@@ -646,6 +724,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
+
+
 
 
     /*打开相册获取图片*/
@@ -726,6 +807,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         return path;
     }
+
+
 
 
     private void displayImage(String imagePath){
@@ -859,125 +942,4 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             aAdapter.notifyDataSetChanged();
         }
     }
-
-    /**
-     * 公交线路搜索
-     */
-    /*public void searchLine() {
-        currentpage = 0;// 第一页默认从0开始
-        showProgressDialog();
-        String search = keyWord.trim();
-        if ("".equals(search)) {
-            search = "641";
-            keyWord=search;
-        }
-        busLineQuery = new BusLineQuery(search, BusLineQuery.SearchType.BY_LINE_NAME,
-                localCity);// 第一个参数表示公交线路名，第二个参数表示公交线路查询，第三个参数表示所在城市名或者城市区号
-        busLineQuery.setPageSize(10);// 设置每页返回多少条数据
-        busLineQuery.setPageNumber(currentpage);// 设置查询第几页，第一页从0开始算起
-        busLineSearch = new com.amap.api.services.busline.BusLineSearch(this, busLineQuery);// 设置条件
-        busLineSearch.setOnBusLineSearchListener(this);// 设置查询结果的监听
-        busLineSearch.searchBusLineAsyn();// 异步查询公交线路名称
-        // 公交站点搜索事例
-
-          BusStationQuery query = new BusStationQuery(search,localCity);
-         query.setPageSize(10);
-         query.setPageNumber(currentpage);
-          BusStationSearch busStationSearch = new BusStationSearch(this,query);
-         busStationSearch.setOnBusStationSearchListener(this);
-         busStationSearch.searchBusStationAsyn();
-
-    }
-
-    *//**
-     * 公交线路查询结果回调
-     *//*
-    @Override
-    public void onBusLineSearched(BusLineResult result, int rCode) {
-        dissmissProgressDialog();
-        if (rCode == AMapException.CODE_AMAP_SUCCESS) {
-            if (result != null && result.getQuery() != null
-                    && result.getQuery().equals(busLineQuery)) {
-                if (result.getQuery().getCategory() == BusLineQuery.SearchType.BY_LINE_NAME) {
-                    if (result.getPageCount() > 0
-                            && result.getBusLines() != null
-                            && result.getBusLines().size() > 0) {
-                        busLineResult = result;
-                        lineItems = result.getBusLines();
-                        if(lineItems != null) {
-                            showResultList(lineItems);
-                        }
-                    }
-                } else if (result.getQuery().getCategory() == BusLineQuery.SearchType.BY_LINE_ID) {
-                    aMap.clear();// 清理地图上的marker
-                    busLineResult = result;
-                    lineItems = busLineResult.getBusLines();
-                    if(lineItems != null && lineItems.size() > 0) {
-                        BusLineOverlay busLineOverlay = new BusLineOverlay(this,
-                                aMap, lineItems.get(0));
-                        busLineOverlay.removeFromMap();
-                        busLineOverlay.addToMap();
-                        busLineOverlay.zoomToSpan();
-                    }
-                }
-            } else {
-                ToastUtil.show(Main_Activity.this, R.string.no_result);
-            }
-        } else {
-            ToastUtil.showerror(Main_Activity.this, rCode);
-        }
-    }
-    *//**
-     * 公交线路搜索返回的结果显示在dialog中
-     *//*
-    private void showResultList(List<BusLineItem> busLineItems) {
-        BusLineDialog busLineDialog = new BusLineDialog(this, busLineItems);
-        busLineDialog.onListItemClicklistener(new OnListItemlistener() {
-            @Override
-            public void onListItemClick(BusLineDialog dialog,
-                                        final BusLineItem item) {
-                showProgressDialog();
-
-                String lineId = item.getBusLineId();// 得到当前点击item公交线路id
-                busLineQuery = new BusLineQuery(lineId, BusLineQuery.SearchType.BY_LINE_ID,
-                        localCity);// 第一个参数表示公交线路id，第二个参数表示公交线路id查询，第三个参数表示所在城市名或者城市区号
-                com.amap.api.services.busline.BusLineSearch busLineSearch = new com.amap.api.services.busline.BusLineSearch(
-                        Main_Activity.this, busLineQuery);
-                busLineSearch.setOnBusLineSearchListener(Main_Activity.this);
-                busLineSearch.searchBusLineAsyn();// 异步查询公交线路id
-            }
-        });
-        busLineDialog.show();
-    }
-
-    @Override
-    public void onBusStationSearched(BusStationResult result, int rCode) {
-        dissmissProgressDialog();
-        if (rCode == AMapException.CODE_AMAP_SUCCESS) {
-            if (result != null && result.getPageCount() > 0
-                    && result.getBusStations() != null
-                    && result.getBusStations().size() > 0) {
-                ArrayList<BusStationItem> item = (ArrayList<BusStationItem>) result
-                        .getBusStations();
-                StringBuffer buf = new StringBuffer();
-                for (int i = 0; i < item.size(); i++) {
-                    BusStationItem stationItem = item.get(i);
-
-
-                    buf.append(" station: ").append(i).append(" name: ")
-                            .append(stationItem.getBusStationName());
-                    Log.d("LG", "stationName:"
-                            + stationItem.getBusStationName() + "stationpos:"
-                            + stationItem.getLatLonPoint().toString());
-                }
-                String text = buf.toString();
-                Toast.makeText(Main_Activity.this, text,
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                ToastUtil.show(Main_Activity.this, R.string.no_result);
-            }
-        } else  {
-            ToastUtil.showerror(Main_Activity.this, rCode);
-        }
-    }*/
 }

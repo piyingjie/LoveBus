@@ -55,6 +55,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.lovebus.activity.BusRouteDetailActivity"
+            android:theme="@style/FullAppTheme"/>
         <activity android:name="com.lovebus.activity.OffLineMapActivity" />
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
         <activity android:name="com.lovebus.activity.NoticeActivity" />

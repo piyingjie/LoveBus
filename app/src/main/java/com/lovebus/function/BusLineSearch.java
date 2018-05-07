@@ -1,17 +1,11 @@
 package com.lovebus.function;
 
-
 import android.content.Context;
-
-
 
 import com.amap.api.services.busline.BusLineQuery;
 import com.amap.api.services.busline.BusLineResult;
 
-
-
-
-public class BusLineSearch  {
+public class BusLineSearch {
     private static int currentpage;
     public static BusLineQuery busLineQuery;
 
@@ -30,7 +24,6 @@ public class BusLineSearch  {
         busLineQuery.setPageSize(10);// 设置每页返回多少条数据
         busLineQuery.setPageNumber(currentpage);// 设置查询第几页，第一页从0开始算起
         busLineSearch = new com.amap.api.services.busline.BusLineSearch(context, busLineQuery);
-
     }
 
     /*通过id查询公交*/
@@ -63,9 +56,4 @@ public class BusLineSearch  {
         });
         busLineSearch.searchBusLineAsyn();// 异步查询公交线路名称
     }
-
-
-
-
-
 }
