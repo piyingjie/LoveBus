@@ -2,6 +2,7 @@ package com.lovebus.function;
 
 import android.content.Context;
 
+import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.core.PoiItem;
 import com.amap.api.services.poisearch.PoiResult;
 
@@ -12,7 +13,7 @@ public class PoiSearch {
     /* poi搜索*/
     public static void doSearchQuery(Context context,String keyWord,String localCity) {
         query = new com.amap.api.services.poisearch.PoiSearch.Query(keyWord, "", localCity);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
-        query.setPageSize(10);// 设置每页最多返回多少条poiitem
+        query.setPageSize(1);// 设置每页最多返回多少条poiitem
         query.setPageNum(currentPage);// 设置查第一页
         query.setCityLimit(true);
         poiSearch = new com.amap.api.services.poisearch.PoiSearch(context, query);
@@ -37,5 +38,14 @@ public class PoiSearch {
     }
     public static com.amap.api.services.poisearch.PoiSearch.Query getQuery(){
         return query;
+    }
+
+    public static void BusStationNear(LatLonPoint lp, Context context, int boundary, String localCity) {
+        query = new com.amap.api.services.poisearch.PoiSearch.Query("公交站", "1507", localCity);// 第一个参数表示搜索字符串，第二个参数表示poi搜索类型，第三个参数表示poi搜索区域（空字符串代表全国）
+        query.setPageSize(20);// 设置每页最多返回多少条poiitem
+        query.setPageNum(0);// 设置查第一页
+        poiSearch = new com.amap.api.services.poisearch.PoiSearch(context, query);
+        poiSearch.setBound(new com.amap.api.services.poisearch.PoiSearch.SearchBound(lp, boundary, true));//
+        poiSearch.searchPOIAsyn();// 异步搜索
     }
 }
