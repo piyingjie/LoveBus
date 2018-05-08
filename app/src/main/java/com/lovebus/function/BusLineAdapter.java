@@ -20,7 +20,7 @@ public class BusLineAdapter extends BaseAdapter {
 	private LayoutInflater layoutInflater;
 	private List<BusStationItem> mBusStations;
 
-	public BusLineAdapter(Context context, List<BusLineItem> busLineItems) {
+	BusLineAdapter(Context context, List<BusLineItem> busLineItems) {
 		this.busLineItems = busLineItems;
 		layoutInflater = LayoutInflater.from(context);
 	}
@@ -64,9 +64,9 @@ public class BusLineAdapter extends BaseAdapter {
 	}
 
 	class ViewHolder {
-		public TextView busName;
-		public TextView busId;
-		public TextView busTest;
+		TextView busName;
+		TextView busId;
+		TextView busTest;
 	}
 
 }

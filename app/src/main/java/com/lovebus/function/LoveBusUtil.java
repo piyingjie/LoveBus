@@ -13,15 +13,18 @@ import com.amap.api.services.route.RouteBusLineItem;
 import com.amap.api.services.route.RouteRailwayItem;
 import com.lovebus.entity.ChString;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LoveBusUtil {
+    public static int BUFFER_SIZE = 2048;
     public static String checkEditText(EditText editText) {
         if (editText != null && editText.getText() != null
                 && !(editText.getText().toString().trim().equals(""))) {
@@ -187,4 +190,29 @@ public class LoveBusUtil {
         }
         return lineShapes;
     }
+    public static byte[] inputStreamToByte(InputStream in) throws IOException {
+
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] data = new byte[BUFFER_SIZE];
+        int count = -1;
+        while ((count = in.read(data, 0, BUFFER_SIZE)) != -1)
+            outStream.write(data, 0, count);
+
+        data = null;
+        return outStream.toByteArray();
+    }
+    public static LatLonPoint convertToLatLonPoint(LatLng latlon) {
+        return new LatLonPoint(latlon.latitude, latlon.longitude);
+    }
+    public static Bitmap zoomBitmap(Bitmap bitmap, float res) {
+        if (bitmap == null) {
+            return null;
+        }
+        int width, height;
+        width = (int) (bitmap.getWidth() * res);
+        height = (int) (bitmap.getHeight() * res);
+        Bitmap newbmp = Bitmap.createScaledBitmap(bitmap, width, height, true);
+        return newbmp;
+    }
+
 }

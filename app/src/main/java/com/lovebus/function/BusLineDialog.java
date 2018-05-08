@@ -87,6 +87,9 @@ public class BusLineDialog extends Dialog implements View.OnClickListener{
         //busLineSearch.setOnBusLineSearchListener();
         busLineSearch.searchBusLineAsyn();// 异步查询公交线路名称
     }
+    public interface OnListItemlistener {
+        void onListItemClick(BusLineDialog dialog, BusLineItem item);
+    }
 }
 
 
