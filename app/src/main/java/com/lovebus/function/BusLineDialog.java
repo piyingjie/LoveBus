@@ -46,8 +46,8 @@ public class BusLineDialog extends Dialog implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.busline_dialog);
-        preButton = (Button) findViewById(R.id.preButton);
-        nextButton = (Button) findViewById(R.id.nextButton);
+        /*preButton = (Button) findViewById(R.id.preButton);
+        nextButton = (Button) findViewById(R.id.nextButton);*/
         listView = (ListView) findViewById(R.id.listview);
         listView.setAdapter(busLineAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -58,22 +58,27 @@ public class BusLineDialog extends Dialog implements View.OnClickListener{
                 onListItemlistener.onListItemClick(BusLineDialog.this,busLineItems.get(arg2));
                 //onListItemlistener.onListItemClick(BusLineSearch.BusLineDialog.this,
                         //busLineItems.get(arg2));
-                dismiss();
+                //dismiss();
 
             }
         });
-        preButton.setOnClickListener(this);
+        /*preButton.setOnClickListener(this);
         nextButton.setOnClickListener(this);
         if (currentpage <= 0) {
             preButton.setEnabled(false);
         }
             if (currentpage >= busLineResult.getPageCount() - 1) {
                 nextButton.setEnabled(false);
-            }
+            }*/
 
     }
 
     @Override
+    public void onClick(View v) {
+
+    }
+
+   /* @Override
     public void onClick(View v) {
         this.dismiss();
         if (v.equals(preButton)) {
@@ -86,7 +91,7 @@ public class BusLineDialog extends Dialog implements View.OnClickListener{
         busLineQuery.setPageNumber(currentpage);// 设置公交查询第几页
         //busLineSearch.setOnBusLineSearchListener();
         busLineSearch.searchBusLineAsyn();// 异步查询公交线路名称
-    }
+    }*/
 }
 
 

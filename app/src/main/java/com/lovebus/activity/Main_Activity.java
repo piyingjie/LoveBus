@@ -83,6 +83,7 @@ import com.amap.api.services.route.BusRouteResult;
 import com.lovebus.entity.Location;
 import com.lovebus.entity.User;
 
+import com.lovebus.function.BusLineDetailDialog;
 import com.lovebus.function.BusLineDialog;
 import com.lovebus.function.BusLineOverlay;
 
@@ -152,7 +153,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
     /*公交线路搜索*/
     private ProgressDialog progDialog = null;// 进度框
-    int currentpage = 0;// 当前页面，从0开始计数
+
     public static BusLineResult busLineResult;// 公交线路搜索返回的结果
     private List<BusLineItem> lineItems = null;// 公交线路搜索返回的busline
     private BusLineQuery busLineQuery;// 公交线路查询的查询类
@@ -348,7 +349,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
                 }
             });*/
-            //searchLine(keyWord,localCity);
+            searchLine(keyWord,localCity);//公交线路搜索
             searchBusRoute(keyWord,localCity);
         }
     }
@@ -481,7 +482,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                 lineItems = result.getBusLines();
                                 if (lineItems !=null){
                                     //showResultList(lineItems);
-                                    BusLineDialog busLineDialog = new BusLineDialog(
+                                    final BusLineDialog busLineDialog = new BusLineDialog(
                                             Main_Activity.this,lineItems);
                                     busLineDialog.show();
                                     busLineDialog.onListItemClicklistener(new OnListItemlistener() {
@@ -490,6 +491,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                             showProgressDialog();
 
                                             String lineId =item.getBusLineId();
+
+
+                                           /* List<BusStationItem> busStationItem=item.getBusStations();
+                                            BusLineDetailDialog busLineDetailDialog = new BusLineDetailDialog(Main_Activity.this,busStationItem);
+                                            busLineDetailDialog.show();*/
+
+
                                             com.lovebus.function.BusLineSearch.searchLine_byId(Main_Activity.this,lineId,cityName);
                                             com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
                                                 @Override
