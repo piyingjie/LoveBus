@@ -25,6 +25,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>
+
+        <com.lovebus.view.ChooseLocationWidget
+            android:id="@+id/choose_location_widget"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 
     <android.support.design.widget.NavigationView

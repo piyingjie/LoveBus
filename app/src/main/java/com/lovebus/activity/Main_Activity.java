@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -69,6 +70,7 @@ import com.lovebus.function.MyLog;
 import com.lovebus.function.Okhttp;
 import com.lovebus.function.PoiOverlay;
 import com.lovebus.function.SharedPreferences_tools;
+import com.lovebus.view.ChooseLocationWidget;
 
 import org.json.JSONObject;
 
@@ -98,6 +100,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private String image_response;
     User user=new User(false,null,null,null,null,null,null);
     AutoCompleteTextView searchText;// 输入搜索关键字
+    AutoCompleteTextView searchText2;
+    AutoCompleteTextView searchText3;
     private String keyWord = "";// 要输入的poi搜索关键字
     private String localCity;
     private EditText editCity;// 要输入的城市名字或者城市区号
@@ -111,8 +115,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     SharedPreferences login_sp;
     SharedPreferences.Editor editor;
     private boolean first_login;//获取登录状态
-
-
 
     Location locationMsg=new Location(0,0,null,null,null,null,null,null,null);
     @Override
@@ -184,6 +186,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         user_head_image=(de.hdodenhof.circleimageview.CircleImageView)user_header.findViewById(R.id.userHeadImage);
         username=(TextView) user_header.findViewById(R.id.user_set_name);
         userSetCity=(TextView)user_header.findViewById(R.id.user_set_city);
+
+        ChooseLocationWidget.ChooseLocationItemWidget mStartItem = (ChooseLocationWidget.ChooseLocationItemWidget) findViewById(R.id.choose_start_item_widget);
+        ChooseLocationWidget.ChooseLocationItemWidget mDestItem = (ChooseLocationWidget.ChooseLocationItemWidget) findViewById(R.id.choose_dest_item_widget);
+
+        mStartItem.setOnClickListener(this);
+        mDestItem.setOnClickListener(this);
+
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
         user_head_image.setOnClickListener(this);
@@ -196,7 +205,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         setUpMap();
         searchText = (AutoCompleteTextView) findViewById(R.id.keyWord);
-        searchText.addTextChangedListener(this);// 添加文本输入框监听事件
+        searchText2 = (AutoCompleteTextView)findViewById(R.id.keyword5);
+        searchText3 = (AutoCompleteTextView) findViewById(R.id.keyword6);
+
+        searchText.addTextChangedListener(textWatcher1);// 添加文本输入框监听事件
+        searchText2.addTextChangedListener(this);// 添加文本输入框监听事件
+        searchText3.addTextChangedListener(textWatcher2);// 添加文本输入框监听事件
+
         locate_main();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -232,15 +247,27 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.search:
+                Log.d("CHOOSE", "onClick:呵呵呵 ");
                 onclick_search();
                 break;
             case R.id.userHeadImage:
                 onclick_userHeadImage();
                 break;
+           case R.id.choose_start_item_widget:
+                Log.d("CHOOSE", "onClick:起始点 ");
+                //onclick_search();
+                break;
+            case R.id.choose_dest_item_widget:
+
+                Log.d("CHOOSE", "onClick: 目的地");
+                //onclick_search();
+                break;
             default:
         }
     }
+
     /*点击事件的一些函数*/
+
     private void onclick_search(){
         keyWord = LoveBusUtil.checkEditText(searchText);
         if ("".equals(keyWord)) {
@@ -645,16 +672,101 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
 
 
-
-
     /*poi搜索的回调*/
+
+    class TextWatcher1 implements TextWatcher, Inputtips.InputtipsListener {
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String newText = s.toString().trim();
+            if (!LoveBusUtil.IsEmptyOrNullString(newText)) {
+                InputtipsQuery inputquery = new InputtipsQuery(newText, localCity);
+                Inputtips inputTips = new Inputtips(Main_Activity.this, inputquery);
+                inputTips.setInputtipsListener(this);
+                inputTips.requestInputtipsAsyn();
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+
+        @Override
+        public void onGetInputtips(List<Tip> tipList, int rCode) {
+            if (rCode == AMapException.CODE_AMAP_SUCCESS) {// 正确返回
+                List<String> listString = new ArrayList<String>();
+                for (int i = 0; i < tipList.size(); i++) {
+                    listString.add(tipList.get(i).getName());
+                }
+                ArrayAdapter<String> aAdapter = new ArrayAdapter<String>(
+                        getApplicationContext(),
+                        R.layout.route_inputs, listString);
+                searchText.setAdapter(aAdapter);
+                aAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    class TextWatcher2 implements TextWatcher, Inputtips.InputtipsListener {
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String newText = s.toString().trim();
+            if (!LoveBusUtil.IsEmptyOrNullString(newText)) {
+                InputtipsQuery inputquery = new InputtipsQuery(newText, localCity);
+                Inputtips inputTips = new Inputtips(Main_Activity.this, inputquery);
+                inputTips.setInputtipsListener(this);
+                inputTips.requestInputtipsAsyn();
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            Log.d("CHOOSE", "afterTextChanged: "+ s);
+        }
+
+        @Override
+        public void onGetInputtips(List<Tip> tipList, int rCode) {
+            if (rCode == AMapException.CODE_AMAP_SUCCESS) {// 正确返回
+                List<String> listString = new ArrayList<String>();
+                for (int i = 0; i < tipList.size(); i++) {
+                    listString.add(tipList.get(i).getName());
+                }
+                ArrayAdapter<String> aAdapter = new ArrayAdapter<String>(
+                        getApplicationContext(),
+                        R.layout.route_inputs, listString);
+                searchText3.setAdapter(aAdapter);
+                aAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+    TextWatcher1 textWatcher1 = new TextWatcher1();
+    TextWatcher2 textWatcher2 = new TextWatcher2();
+
     @Override
     public boolean onMarkerClick(Marker marker) {
         marker.showInfoWindow();
+        Log.d("CHOOSE", "onMarkerClick:回调的方法");
         return false;
     }
+
+
+
     @Override
-    public void afterTextChanged(Editable s) { }
+    public void afterTextChanged(Editable s) {
+
+    }
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
     @Override
@@ -677,7 +789,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             ArrayAdapter<String> aAdapter = new ArrayAdapter<String>(
                     getApplicationContext(),
                     R.layout.route_inputs, listString);
-            searchText.setAdapter(aAdapter);
+            searchText2.setAdapter(aAdapter);
             aAdapter.notifyDataSetChanged();
         }
     }

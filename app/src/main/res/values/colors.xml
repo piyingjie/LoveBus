@@ -8,7 +8,9 @@
     <color name="lightpink">#ffb6c1</color><!--亮粉红色 -->
     <color name="orangered">#ff4500</color><!--红橙色 -->
     <color name="lightyellow">#ffffe0</color><!--亮黄色 -->
-
+     <color name="normal_text_color">#666</color>
+    <color name="divider_color">#f0f0f0</color>
     <color name="blue">#5a78ca</color>
     <color name="text">#000000</color>
+    <color name="common_bg">#ffffff</color>
 </resources>
