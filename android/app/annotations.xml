@@ -1,0 +1,6 @@
+<root>
+    <item name='android.app.ProgressDialog ProgressDialog(BusLineDialog) 0'>
+        <annotation name='java.lang.Deprecated' />
+        <annotation name='android.support.annotation.NonNull' />
+    </item>
+</root>
