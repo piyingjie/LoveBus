@@ -261,38 +261,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
-           /* com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,keyWord,localCity);
-            com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
-                @Override
-                public void result(PoiResult result, int rCode) {
-                    if (rCode == AMapException.CODE_AMAP_SUCCESS) {
-                        if (result != null && result.getQuery() != null) {// 搜索poi的结果
-                            if (result.getQuery().equals(com.lovebus.function.PoiSearch.getQuery())) {// 是否是同一条
-                                poiResult = result;
-                                // 取得搜索到的poiitems有多少页
-                                List<PoiItem> poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
-                                List<SuggestionCity> suggestionCities = poiResult
-                                        .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
-                                if (poiItems != null && poiItems.size() > 0) {
-                                    aMap.clear();// 清理之前的图标
-                                    PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
-                                    poiOverlay.removeFromMap();
-                                    poiOverlay.addToMap();
-                                    poiOverlay.zoomToSpan();
-                                }
-                                else if (suggestionCities != null
-                                        && suggestionCities.size() > 0) {
-                                }
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void item(PoiItem item, int rCode) {
-
-                }
-            });*/
             searchBusRoute(keyWord,localCity);
         }
     }
@@ -307,26 +275,32 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
     private void menu_switch(){
-        new AlertDialog.Builder(this)
-                .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
-                .setTitle("提示")
-                .setMessage("退出登陆？")
-                .setNegativeButton("取消",null)
-                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        user.setAccount(null);
-                        user.setPassword(null);
-                        user.setIs_login(false);
-                        user.setNickname(null);
-                        user.setPhone(null);
-                        user.setCity(null);
-                        user.setHead_image(null);
-                        SharedPreferences_tools.clear(Main_Activity.this,"User");
-                        SharedPreferences_tools.clear(Main_Activity.this,"UserHead");
-                        updateUserInfo();
-                    }
-                }).show();
+        if(user.isIs_login())
+        {
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
+                    .setTitle("提示")
+                    .setMessage("退出登陆？")
+                    .setNegativeButton("取消",null)
+                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            user.setAccount(null);
+                            user.setPassword(null);
+                            user.setIs_login(false);
+                            user.setNickname(null);
+                            user.setPhone(null);
+                            user.setCity(null);
+                            user.setHead_image(null);
+                            SharedPreferences_tools.clear(Main_Activity.this,"User");
+                            SharedPreferences_tools.clear(Main_Activity.this,"UserHead");
+                            updateUserInfo();
+                        }
+                    }).show();
+        }
+        else {
+            Toast.makeText(Main_Activity.this,"您还未登陆",Toast.LENGTH_SHORT).show();
+        }
     }
     private void menu_update_password(){
         if(user.isIs_login())
@@ -459,6 +433,40 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    private void poiSearch(String searchText,String cityName){
+         com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,searchText,cityName);
+         com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
+                @Override
+                public void result(PoiResult result, int rCode) {
+                    if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                        if (result != null && result.getQuery() != null) {// 搜索poi的结果
+                            if (result.getQuery().equals(com.lovebus.function.PoiSearch.getQuery())) {// 是否是同一条
+                                poiResult = result;
+                                // 取得搜索到的poiitems有多少页
+                                List<PoiItem> poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
+                                List<SuggestionCity> suggestionCities = poiResult
+                                        .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
+                                if (poiItems != null && poiItems.size() > 0) {
+                                    aMap.clear();// 清理之前的图标
+                                    PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
+                                    poiOverlay.removeFromMap();
+                                    poiOverlay.addToMap();
+                                    poiOverlay.zoomToSpan();
+                                }
+                                else if (suggestionCities != null
+                                        && suggestionCities.size() > 0) {
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void item(PoiItem item, int rCode) {
+
+                }
+            });
+    }
 
     /*定位功能调用*/
     private void locate_main(){

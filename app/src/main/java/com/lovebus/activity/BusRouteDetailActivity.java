@@ -30,9 +30,9 @@ public class BusRouteDetailActivity extends Activity implements OnMapLoadedListe
 	private MapView mapView;
 	private BusPath mBuspath;
 	private BusRouteResult mBusRouteResult;
-	private TextView mTitle, mTitleBusRoute, mDesBusRoute;
-	private ListView mBusSegmentList;
-	private BusSegmentListAdapter mBusSegmentListAdapter;
+	TextView mTitle, mTitleBusRoute, mDesBusRoute;
+	ListView mBusSegmentList;
+	BusSegmentListAdapter mBusSegmentListAdapter;
 	private LinearLayout mBusMap, mBuspathview;
 	private BusRouteOverlay mBusrouteOverlay;
 	@Override
