@@ -286,7 +286,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
-            searchLine(keyWord,localCity);
+            selectKeyWord(keyWord,localCity);
+            /*searchLine(keyWord,localCity);*/
             /*searchBusRoute(keyWord,localCity);*/
             /*poiSearch(keyWord,localCity);*/
         }
@@ -657,7 +658,18 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
+    /*根据关键词类型，选择调用方法*/
+    private void selectKeyWord(String keyWord,String cityName){
+        if(keyWord.contains("公交站")){
+            busStationSearch(keyWord,cityName);
+        }
+        else if(LoveBusUtil.isNumber(keyWord)||LoveBusUtil.isBusStation(keyWord)){
+            searchLine(keyWord, cityName);
+        }
+        else {
+            searchBusRoute(keyWord, cityName);
+        }
+    }
 
     /*从服务器上获取头像*/
     private void updateImage(){

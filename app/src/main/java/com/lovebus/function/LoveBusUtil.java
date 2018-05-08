@@ -214,5 +214,20 @@ public class LoveBusUtil {
         Bitmap newbmp = Bitmap.createScaledBitmap(bitmap, width, height, true);
         return newbmp;
     }
-
+    public static boolean isNumber(String str){
+        int length=str.length();
+        for (int i=0;i<length;i++){
+            if(!Character.isDigit(str.charAt(i))){
+                return false;
+            }
+        }
+        return true;
+    }
+    public static boolean isBusStation(String str){
+       if(!str.endsWith("路")){
+           return false;
+       }
+       String str2=str.replaceAll("路","");
+       return isNumber(str2);
+    }
 }

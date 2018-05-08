@@ -14,7 +14,7 @@ import java.util.List;
 
 import bus.android.com.lovebus.R;
 
-import static com.lovebus.activity.Main_Activity.busLineResult;
+
 import static com.lovebus.function.BusLineSearch.busLineQuery;
 import static com.lovebus.function.BusLineSearch.busLineSearch;
 
@@ -62,14 +62,7 @@ public class BusLineDialog extends Dialog implements View.OnClickListener{
 
             }
         });
-        preButton.setOnClickListener(this);
-        nextButton.setOnClickListener(this);
-        if (currentpage <= 0) {
-            preButton.setEnabled(false);
-        }
-            if (currentpage >= busLineResult.getPageCount() - 1) {
-                nextButton.setEnabled(false);
-            }
+
 
     }
 
