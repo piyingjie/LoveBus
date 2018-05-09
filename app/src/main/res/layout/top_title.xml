@@ -25,6 +25,8 @@
             android:completionThreshold="1"
             android:dropDownVerticalOffset="1.0dip"
             android:hint="@string/search_hint"
+            android:background="@null"
+            android:gravity="center"
             android:paddingStart="37.0dip"
             android:paddingEnd="37.0dip"
             android:imeOptions="actionDone"
@@ -33,10 +35,11 @@
             android:textColor="#000000"
             android:textSize="16.0sp" />
         <ImageView
+            android:paddingTop="6dp"
             android:id="@+id/search"
-            android:src="@drawable/search"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:src="@drawable/search2"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             />
     </LinearLayout>
 </RelativeLayout>
