@@ -24,7 +24,7 @@ public class BusSegmentListAdapter extends BaseAdapter {
 	private Context mContext;
 	private List<SchemeBusStep> mBusStepList = new ArrayList<SchemeBusStep>();
 
-	public BusSegmentListAdapter(Context context, List<BusStep> list) {
+	 BusSegmentListAdapter(Context context, List<BusStep> list) {
 		this.mContext = context;
 		SchemeBusStep start = new SchemeBusStep(null);
 		start.setStart(true);
