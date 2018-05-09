@@ -24,7 +24,6 @@
             android:layout_height="wrap_content"
             android:completionThreshold="1"
             android:dropDownVerticalOffset="1.0dip"
-            android:background="@null"
             android:layout_gravity="center_vertical"
             android:hint="@string/search_hint"
             android:background="@null"
