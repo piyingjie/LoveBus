@@ -117,12 +117,12 @@ public class ChooseLocationWidget extends LinearLayout implements View.OnClickLi
         @SuppressLint("ResourceType")
         public void setType(int type) {
             if (START_TYPE == type) {
-                mTypeIV.setImageResource(R.mipmap.source);
+                mTypeIV.setImageResource(R.drawable.dir_start);
                 mInputET.setHint("你从哪里出发");
                 mInputET.setId(R.id.keyword5);
                 mDivider.setVisibility(View.VISIBLE);
             } else {
-                mTypeIV.setImageResource(R.mipmap.dest_icon);
+                mTypeIV.setImageResource(R.drawable.dir_end);
                 mInputET.setHint("你要去哪儿");
                 mInputET.setId(R.id.keyword6);
                 mDivider.setVisibility(View.GONE);

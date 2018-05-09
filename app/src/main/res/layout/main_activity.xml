@@ -54,7 +54,9 @@
             android:id="@+id/choose_location_widget"
             android:layout_margin="10dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            />
 
     </LinearLayout>
 

@@ -31,6 +31,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -103,7 +104,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,Inputtips.InputtipsListener,
-        AMap.InfoWindowAdapter {
+        AMap.InfoWindowAdapter, AdapterView.OnItemClickListener {
     MapView mMapView;
     private AMap aMap;
     private DrawerLayout drawerLayout;
@@ -120,10 +121,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private String image_response;
     User user=new User(false,null,null,null,null,null,null);
     AutoCompleteTextView searchText;// 输入搜索关键字
-    AutoCompleteTextView searchText2;
-    AutoCompleteTextView searchText3;
+    AutoCompleteTextView startText;
+    AutoCompleteTextView endText;
     private String keyWord = "";// 要输入的poi搜索关键字
+    private String start_text = "";//出发地点的输入
+    private String end_text = "";//目的地的输入
     private String localCity;
+    LatLonPoint startLat;
     LatLonPoint endLat;
     private SharedPreferences sp;//获取当前城市
 
@@ -210,10 +214,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
         ChooseLocationWidget.ChooseLocationItemWidget mStartItem = (ChooseLocationWidget.ChooseLocationItemWidget) findViewById(R.id.choose_start_item_widget);
         ChooseLocationWidget.ChooseLocationItemWidget mDestItem = (ChooseLocationWidget.ChooseLocationItemWidget) findViewById(R.id.choose_dest_item_widget);
-
         mStartItem.setOnClickListener(this);
         mDestItem.setOnClickListener(this);
-
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
         user_head_image.setOnClickListener(this);
@@ -226,13 +228,14 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         setUpMap();
         searchText = (AutoCompleteTextView) findViewById(R.id.keyWord);
-        searchText2 = (AutoCompleteTextView)findViewById(R.id.keyword5);
-        searchText3 = (AutoCompleteTextView) findViewById(R.id.keyword6);
+        startText = (AutoCompleteTextView)findViewById(R.id.keyword5);
+        endText = (AutoCompleteTextView) findViewById(R.id.keyword6);
 
         searchText.addTextChangedListener(textWatcher1);// 添加文本输入框监听事件
-        searchText2.addTextChangedListener(this);// 添加文本输入框监听事件
-        searchText3.addTextChangedListener(textWatcher2);// 添加文本输入框监听事件
+        startText.addTextChangedListener(this);// 添加文本输入框监听事件
 
+        endText.addTextChangedListener(textWatcher2);// 添加文本输入框监听事件
+        endText.setOnItemClickListener(this);
         locate_main();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -289,7 +292,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
   private void showProgressDialog() {
         if (progDialog == null)
             progDialog = new ProgressDialog(this);
@@ -305,10 +307,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             progDialog.dismiss();
         }
     }
-
-
     /*点击事件的一些函数*/
-
     private void onclick_search(){
         keyWord = LoveBusUtil.checkEditText(searchText);
         if ("".equals(keyWord)) {
@@ -368,8 +367,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(Main_Activity.this,"您还未登陆",Toast.LENGTH_SHORT).show();
         }
     }
-
-
     /*退出确认*/
     @Override
     public void onBackPressed() {
@@ -392,7 +389,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     }).show();
         }
     }
-
     //地图显示
     private void showMap(Bundle savedInstanceState){
         //获取地图控件引用
@@ -439,7 +435,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private void searchLine(String serchTest, final String cityName){
         com.lovebus.function.BusLineSearch.searchLine_byName(Main_Activity.this, serchTest,cityName);
         com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
-
             @Override
             public void result(BusLineResult result, final int rCode) {
                 dissmissProgressDialog();
@@ -473,6 +468,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
     /*最佳路线查询*/
     private void searchBusRoute(String searchTest,String cityName){
         /*位置转经纬度*/
@@ -733,10 +729,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-
-
-
-
     /*打开相册获取图片*/
     public void getAlbumPhoto(Activity activity){
         if(ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
@@ -815,10 +807,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         return path;
     }
-
-
-
-
     private void displayImage(String imagePath){
         if(imagePath!=null){
             photo= LoveBusUtil.compressImageFromFile(imagePath);
@@ -912,6 +900,56 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        start_text = LoveBusUtil.checkEditText(startText);
+        end_text = LoveBusUtil.checkEditText(endText);
+        String obj = parent.getItemAtPosition(position).toString();
+        Log.d("CHOOSE", "onItemClick: "+"/"+start_text+"/"+end_text);
+        convert1();
+        convert2();
+
+    }
+    private void convert1(){
+        Geocoder.getLatlon(start_text,localCity,this);
+        Geocoder.getLatlonResult(new Geocoder.GeocodeSearchListener() {
+            @Override
+            public void result(GeocodeResult result, int rCode) {
+                if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (result != null && result.getGeocodeAddressList() != null
+                            && result.getGeocodeAddressList().size() > 0) {
+                        GeocodeAddress address = result.getGeocodeAddressList().get(0);
+                        startLat=address.getLatLonPoint();
+                    } else {
+                        Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+    private void convert2(){
+        Geocoder.getLatlon(end_text,localCity,this);
+        Geocoder.getLatlonResult(new Geocoder.GeocodeSearchListener() {
+            @Override
+            public void result(GeocodeResult result, int rCode) {
+                if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (result != null && result.getGeocodeAddressList() != null
+                            && result.getGeocodeAddressList().size() > 0) {
+                        GeocodeAddress address = result.getGeocodeAddressList().get(0);
+                        endLat=address.getLatLonPoint();
+                        searchRoute(startLat,endLat,localCity);
+                    } else {
+                        Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
 
     /*poi搜索的回调*/
@@ -975,7 +1013,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void afterTextChanged(Editable s) {
-            Log.d("CHOOSE", "afterTextChanged: "+ s);
+
         }
 
         @Override
@@ -988,7 +1026,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 ArrayAdapter<String> aAdapter = new ArrayAdapter<String>(
                         getApplicationContext(),
                         R.layout.route_inputs, listString);
-                searchText3.setAdapter(aAdapter);
+                endText.setAdapter(aAdapter);
                 aAdapter.notifyDataSetChanged();
             }
         }
@@ -1031,7 +1069,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             ArrayAdapter<String> aAdapter = new ArrayAdapter<String>(
                     getApplicationContext(),
                     R.layout.route_inputs, listString);
-            searchText2.setAdapter(aAdapter);
+            startText.setAdapter(aAdapter);
             aAdapter.notifyDataSetChanged();
         }
     }
