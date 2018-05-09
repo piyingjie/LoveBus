@@ -11,7 +11,7 @@
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/leftMenu"
-            android:src="@drawable/account_menu"
+            android:src="@drawable/user2"
             android:layout_width="48dp"
             android:layout_height="48dp"
             />

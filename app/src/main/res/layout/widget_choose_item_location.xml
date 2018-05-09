@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/type_icon_r1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true">
+
+        <ImageView
+            android:id="@+id/type_icon"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/todo" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@id/type_icon_r1">
+
+        <include
+            android:id="@+id/divider"
+            layout="@layout/widget_gray_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+        </include>
+
+        <AutoCompleteTextView
+            android:id="@+id/keyword5"
+            android:layout_width="match_parent"
+            android:completionThreshold="1"
+            android:dropDownVerticalOffset="1.0dip"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@null"
+            android:inputType="text|textAutoComplete"
+            android:maxLength="20"
+            android:textSize="14sp"
+            tools:ignore="LabelFor" />
+    </RelativeLayout>
+</merge>

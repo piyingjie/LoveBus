@@ -49,6 +49,15 @@
                 android:listSelector="#00000000" >
             </ListView>
         </LinearLayout>
+
+        <com.lovebus.view.ChooseLocationWidget
+            android:id="@+id/choose_location_widget"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            />
+
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
