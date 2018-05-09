@@ -25,4 +25,5 @@
     <string name="new_password_r">确认密码</string>
     <string name="update_r">确认修改</string>
     <string name="todo">TODO</string>
+    <string name="no_result">对不起，没有搜索到相关数据！</string>
 </resources>

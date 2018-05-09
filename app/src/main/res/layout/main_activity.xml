@@ -13,10 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
          <com.lovebus.view.top_title
+             android:id="@+id/main_title"
              android:layout_width="match_parent"
              android:layout_height="wrap_content">
          </com.lovebus.view.top_title>
         <FrameLayout
+            android:id="@+id/map_layout"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="0dp">
@@ -25,6 +27,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>
+        <LinearLayout
+            android:id="@+id/bus_result"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:background="@color/transparent"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <ListView
+                android:id="@+id/bus_result_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:cacheColorHint="#00000000"
+                android:divider="@null"
+                android:fadingEdge="none"
+                android:fadingEdgeLength="0dp"
+                android:footerDividersEnabled="false"
+                android:headerDividersEnabled="false"
+                android:listSelector="#00000000" >
+            </ListView>
+        </LinearLayout>
 
         <com.lovebus.view.ChooseLocationWidget
             android:id="@+id/choose_location_widget"

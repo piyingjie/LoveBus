@@ -220,6 +220,9 @@ public class CitySelectActivity extends AppCompatActivity{
                     mCurrentCity.setText(sharedPreferences.getString("cCity",""));
                 }
                 mLocalCity.setText(cityLocation);
+                editor = sharedPreferences.edit();
+                editor.putString("lCity",cityLocation);
+                editor.apply();
             }
         });
 
