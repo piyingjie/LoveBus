@@ -6,6 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     tools:openDrawer="start"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.lovebus.activity.Main_Activity">
     <!--主页面内容-->
     <LinearLayout

@@ -34,7 +34,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -66,7 +65,6 @@ import com.amap.api.services.help.Inputtips;
 import com.amap.api.services.help.InputtipsQuery;
 import com.amap.api.services.help.Tip;
 import com.amap.api.services.poisearch.PoiResult;
-import com.amap.api.services.poisearch.PoiSearch;
 
 import com.amap.api.services.route.BusRouteResult;
 import com.lovebus.entity.Location;
@@ -86,7 +84,6 @@ import com.lovebus.function.Okhttp;
 import com.lovebus.function.PoiOverlay;
 import com.lovebus.function.SharedPreferences_tools;
 import com.lovebus.function.ToastUtil;
-import com.lovebus.view.ChooseLocationWidget;
 
 import org.json.JSONObject;
 
@@ -211,11 +208,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         user_head_image=(de.hdodenhof.circleimageview.CircleImageView)user_header.findViewById(R.id.userHeadImage);
         username=(TextView) user_header.findViewById(R.id.user_set_name);
         userSetCity=(TextView)user_header.findViewById(R.id.user_set_city);
-
-        ChooseLocationWidget.ChooseLocationItemWidget mStartItem = (ChooseLocationWidget.ChooseLocationItemWidget) findViewById(R.id.choose_start_item_widget);
-        ChooseLocationWidget.ChooseLocationItemWidget mDestItem = (ChooseLocationWidget.ChooseLocationItemWidget) findViewById(R.id.choose_dest_item_widget);
-        mStartItem.setOnClickListener(this);
-        mDestItem.setOnClickListener(this);
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
         user_head_image.setOnClickListener(this);
@@ -230,10 +222,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         searchText = (AutoCompleteTextView) findViewById(R.id.keyWord);
         startText = (AutoCompleteTextView)findViewById(R.id.keyword5);
         endText = (AutoCompleteTextView) findViewById(R.id.keyword6);
-
         searchText.addTextChangedListener(textWatcher1);// 添加文本输入框监听事件
         startText.addTextChangedListener(this);// 添加文本输入框监听事件
-
         endText.addTextChangedListener(textWatcher2);// 添加文本输入框监听事件
         endText.setOnItemClickListener(this);
         locate_main();
@@ -272,21 +262,11 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 drawerLayout.openDrawer(GravityCompat.START);
                 break;
             case R.id.search:
-                Log.d("CHOOSE", "onClick:呵呵呵 ");
                 onclick_search();
                 showProgressDialog();
                 break;
             case R.id.userHeadImage:
                 onclick_userHeadImage();
-                break;
-           case R.id.choose_start_item_widget:
-                Log.d("CHOOSE", "onClick:起始点 ");
-                //onclick_search();
-                break;
-            case R.id.choose_dest_item_widget:
-
-                Log.d("CHOOSE", "onClick: 目的地");
-                //onclick_search();
                 break;
             default:
         }
@@ -314,9 +294,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
             selectKeyWord(keyWord,localCity);
-            /*searchLine(keyWord,localCity);*/
-            /*searchBusRoute(keyWord,localCity);*/
-            /*poiSearch(keyWord,localCity);*/
         }
     }
     private void onclick_userHeadImage(){
@@ -527,6 +504,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
          com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
                 @Override
                 public void result(PoiResult result, int rCode) {
+                    dissmissProgressDialog();
                     if (rCode == AMapException.CODE_AMAP_SUCCESS) {
                         if (result != null && result.getQuery() != null) {// 搜索poi的结果
                             if (result.getQuery().equals(com.lovebus.function.PoiSearch.getQuery())) {// 是否是同一条
@@ -691,7 +669,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             searchLine(keyWord, cityName);
         }
         else {
-            searchBusRoute(keyWord, cityName);
+            poiSearch(keyWord,cityName);
+            /*searchBusRoute(keyWord, cityName);*/
         }
     }
 
@@ -883,17 +862,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    /**
-     * 提供一个给默认信息窗口定制内容的方法
-     */
+
     @Override
     public View getInfoContents(Marker marker) {
         return null;
     }
 
-    /**
-     * 提供一个个性化定制信息窗口的方法
-     */
     @Override
     public View getInfoWindow(Marker marker) {
         return null;
@@ -951,8 +925,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
-    /*poi搜索的回调*/
 
     class TextWatcher1 implements TextWatcher, Inputtips.InputtipsListener {
 
