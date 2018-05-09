@@ -263,7 +263,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.search:
                 onclick_search();
-                showProgressDialog();
                 break;
             case R.id.userHeadImage:
                 onclick_userHeadImage();
@@ -272,7 +271,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-  private void showProgressDialog() {
+    private void showProgressDialog() {
         if (progDialog == null)
             progDialog = new ProgressDialog(this);
         progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -293,6 +292,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if ("".equals(keyWord)) {
             Toast.makeText(Main_Activity.this,"请输入关键字",Toast.LENGTH_SHORT).show();
         } else {
+            showProgressDialog();
             selectKeyWord(keyWord,localCity);
         }
     }
