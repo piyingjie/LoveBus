@@ -240,8 +240,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         break;
                     case R.id.logout:
                         menu_switch();
+                        break;
                     case R.id.update_password:
                         menu_update_password();
+                        break;
                     default:
                 }
                 return false;
