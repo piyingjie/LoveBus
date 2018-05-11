@@ -54,10 +54,8 @@ public class BusLineAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		mBusStations=busLineItems.get(position).getBusStations();
-		holder.busName.setText("公交名 :"
-				+ busLineItems.get(position).getBusLineName());
-		holder.busId.setText("公交ID:"
-				+ busLineItems.get(position).getBusLineId());
+		holder.busName.setText("公交名:"+busLineItems.get(position).getBusLineName());
+		holder.busId.setText("公交ID:"+busLineItems.get(position).getBusLineId());
 		holder.busTest.setText("经过站点："+mBusStations.get(mBusStations.size()-1).getBusStationName());
 		return convertView;
 

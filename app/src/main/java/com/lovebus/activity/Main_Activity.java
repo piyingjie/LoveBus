@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.provider.SyncStateContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -34,6 +35,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -47,7 +49,10 @@ import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.busline.BusLineItem;
 import com.amap.api.services.busline.BusLineQuery;
@@ -101,7 +106,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,Inputtips.InputtipsListener,
-        AMap.InfoWindowAdapter, AdapterView.OnItemClickListener {
+        AMap.InfoWindowAdapter, AdapterView.OnItemClickListener{
     MapView mMapView;
     private AMap aMap;
     private DrawerLayout drawerLayout;
@@ -112,9 +117,11 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     TextView userSetCity;
     LinearLayout mBusResultLayout;
     FrameLayout maplayout;
+    Button route_button;
     ListView mBusResultList;
     com.lovebus.view.top_title main_title;
     Bitmap photo;
+    com.lovebus.view.ChooseLocationWidget chooseLocationWidget;
     private String image_response;
     User user=new User(false,null,null,null,null,null,null);
     AutoCompleteTextView searchText;// 输入搜索关键字
@@ -203,14 +210,17 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
         maplayout=(FrameLayout) findViewById(R.id.map_layout);
+        route_button=(Button) findViewById(R.id.route_button);
         main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
         View user_header=navigationView.inflateHeaderView(R.layout.header_nav);
         user_head_image=(de.hdodenhof.circleimageview.CircleImageView)user_header.findViewById(R.id.userHeadImage);
         username=(TextView) user_header.findViewById(R.id.user_set_name);
         userSetCity=(TextView)user_header.findViewById(R.id.user_set_city);
+        chooseLocationWidget=(com.lovebus.view.ChooseLocationWidget)findViewById(R.id.choose_location_widget);
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
         user_head_image.setOnClickListener(this);
+        route_button.setOnClickListener(this);
         if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
@@ -256,7 +266,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         aMap.setInfoWindowAdapter((AMap.InfoWindowAdapter) this);
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -268,6 +277,16 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.userHeadImage:
                 onclick_userHeadImage();
+                break;
+            case R.id.route_button:
+                MyLog.d("route","001");
+                main_title.setVisibility(View.GONE);
+                maplayout.setVisibility(View.GONE);
+                chooseLocationWidget.setVisibility(View.VISIBLE);
+                mBusResultLayout.setVisibility(View.VISIBLE);
+                startText.setText("");
+                endText.setText("");
+                searchText.setText("");
                 break;
             default:
         }
@@ -353,6 +372,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             mBusResultLayout.setVisibility(View.GONE);
             main_title.setVisibility(View.VISIBLE);
             maplayout.setVisibility(View.VISIBLE);
+            chooseLocationWidget.setVisibility(View.GONE);
+            mBusResultList.setAdapter(null);
+
         }
         else {
             new AlertDialog.Builder(this)
@@ -484,9 +506,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     if (result != null && result.getPaths() != null) {
                         if (result.getPaths().size() > 0) {
                             BusResultListAdapter mBusResultListAdapter = new BusResultListAdapter(Main_Activity.this, result);
-                            mBusResultLayout.setVisibility(View.VISIBLE);
-                            main_title.setVisibility(View.GONE);
-                            maplayout.setVisibility(View.GONE);
                             mBusResultList.setAdapter(mBusResultListAdapter);
                         } else if (result != null && result.getPaths() == null) {
                             Toast.makeText(Main_Activity.this,"路线查询失败-3",Toast.LENGTH_SHORT).show();
@@ -500,7 +519,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
     private void poiSearch(String searchText,String cityName){
          com.lovebus.function.PoiSearch.doSearchQuery(Main_Activity.this,searchText,cityName);
          com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
@@ -536,7 +554,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 }
             });
     }
-
     private void busStationSearch(String searchText,String cityName){
         com.lovebus.function.BusStationSearch.searchStation(Main_Activity.this,searchText,cityName);
         com.lovebus.function.BusStationSearch.getBusStation(new BusStationSearch.BusStationListener() {
@@ -572,7 +589,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
     private void searchBusLineById(String lineId,String cityName){
         com.lovebus.function.BusLineSearch.searchLine_byId(Main_Activity.this,lineId,cityName);
         com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
@@ -662,6 +678,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+
     /*根据关键词类型，选择调用方法*/
     private void selectKeyWord(String keyWord,String cityName){
         if(keyWord.contains("公交站")){
@@ -709,6 +726,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
+
+
 
     /*打开相册获取图片*/
     public void getAlbumPhoto(Activity activity){
@@ -869,13 +889,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     public View getInfoContents(Marker marker) {
         return null;
     }
-
     @Override
     public View getInfoWindow(Marker marker) {
         return null;
     }
-
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         start_text = LoveBusUtil.checkEditText(startText);
@@ -966,7 +983,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
-
     class TextWatcher2 implements TextWatcher, Inputtips.InputtipsListener {
 
         @Override
@@ -1007,16 +1023,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
     TextWatcher1 textWatcher1 = new TextWatcher1();
     TextWatcher2 textWatcher2 = new TextWatcher2();
-
     @Override
     public boolean onMarkerClick(Marker marker) {
         marker.showInfoWindow();
         Log.d("CHOOSE", "onMarkerClick:回调的方法");
         return false;
     }
-
-
-
     @Override
     public void afterTextChanged(Editable s) {
 
