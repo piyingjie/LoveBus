@@ -85,17 +85,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void buttonLogin(View v){
-        /**通过这句代码，SDK实现了QQ的登录，这个方法有三个参数，第一个参数是context上下文，第二个参数SCOPO 是一个String类型的字符串，表示一些权限
-         官方文档中的说明：应用需要获得哪些API的权限，由“，”分隔。例如：SCOPE = “get_user_info,add_t”；所有权限用“all”
-         第三个参数，是一个事件监听器，IUiListener接口的实例，这里用的是该接口的实现类 */
         mIUiListener = new BaseUiListener();
         //all表示获取所有权限
         mTencent.login(LoginActivity.this,"all", mIUiListener);
     }
-    /**
-     * 自定义监听器实现IUiListener接口后，需要实现的3个方法
-     * onComplete完成 onError错误 onCancel取消
-     */
+
     private class BaseUiListener implements IUiListener {
 
         @Override
