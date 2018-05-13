@@ -56,9 +56,9 @@ public class BusLineDialog extends Dialog implements View.OnClickListener{
             public void onItemClick(AdapterView<?> arg0, View arg1,
                                     int arg2, long arg3) {
                 onListItemlistener.onListItemClick(BusLineDialog.this,busLineItems.get(arg2));
-                //onListItemlistener.onListItemClick(BusLineSearch.BusLineDialog.this,
-                        //busLineItems.get(arg2));
-                //dismiss();
+                /*onListItemlistener.onListItemClick(BusLineSearch.BusLineDialog.this,
+                        busLineItems.get(arg2));*/
+                dismiss();
 
             }
         });
