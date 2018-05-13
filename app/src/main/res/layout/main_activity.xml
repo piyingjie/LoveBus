@@ -6,6 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     tools:openDrawer="start"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context="com.lovebus.activity.Main_Activity">
     <!--主页面内容-->
     <LinearLayout
@@ -26,7 +28,21 @@
                 android:id="@+id/map"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+            <Button
+                android:id="@+id/route_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/route"
+                android:layout_gravity="bottom|center_horizontal"
+                />
         </FrameLayout>
+        <com.lovebus.view.ChooseLocationWidget
+            android:id="@+id/choose_location_widget"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
         <LinearLayout
             android:id="@+id/bus_result"
             android:layout_width="match_parent"
@@ -49,6 +65,8 @@
                 android:listSelector="#00000000" >
             </ListView>
         </LinearLayout>
+
+
     </LinearLayout>
 
     <android.support.design.widget.NavigationView

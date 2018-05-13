@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.amap.api.services.busline.BusLineItem;
-import com.amap.api.services.busline.BusStationItem;
 
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class BusLineAdapter extends BaseAdapter {
 	private LayoutInflater layoutInflater;
 
 
-	public BusLineAdapter(Context context, List<BusLineItem> busLineItems) {
+	BusLineAdapter(Context context, List<BusLineItem> busLineItems) {
 		this.busLineItems = busLineItems;
 		layoutInflater = LayoutInflater.from(context);
 	}
@@ -48,8 +47,8 @@ public class BusLineAdapter extends BaseAdapter {
 			holder = new ViewHolder();
 			holder.busName = (TextView) convertView.findViewById(R.id.busname);
 			holder.busId = (TextView) convertView.findViewById(R.id.busid);
-
 			convertView.setTag(holder);
+
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}

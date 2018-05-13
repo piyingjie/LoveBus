@@ -14,7 +14,7 @@ import java.util.List;
 
 import bus.android.com.lovebus.R;
 
-import static com.lovebus.activity.Main_Activity.busLineResult;
+
 import static com.lovebus.function.BusLineSearch.busLineQuery;
 import static com.lovebus.function.BusLineSearch.busLineSearch;
 
@@ -71,6 +71,7 @@ public class BusLineDialog extends Dialog implements View.OnClickListener{
                 nextButton.setEnabled(false);
             }*/
 
+
     }
 
     @Override
@@ -92,6 +93,9 @@ public class BusLineDialog extends Dialog implements View.OnClickListener{
         //busLineSearch.setOnBusLineSearchListener();
         busLineSearch.searchBusLineAsyn();// 异步查询公交线路名称
     }*/
+    public interface OnListItemlistener {
+        void onListItemClick(BusLineDialog dialog, BusLineItem item);
+    }
 }
 
 

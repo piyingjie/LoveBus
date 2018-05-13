@@ -2,6 +2,10 @@ package com.lovebus.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.lovebus.entity.User;
+import com.lovebus.function.LoveBusUtil;
 import com.lovebus.function.MyLog;
 import com.lovebus.function.Okhttp;
 import com.tencent.connect.UserInfo;
@@ -25,12 +30,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import bus.android.com.lovebus.R;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -41,6 +54,10 @@ public class LoginActivity extends AppCompatActivity {
     private Tencent mTencent;
     private BaseUiListener mIUiListener;
     private UserInfo mUserInfo;
+    private String image_response;
+
+     String nickname;
+     String ret;
 
     private SharedPreferences login_sp;//获取登录状态
     private SharedPreferences.Editor editor;
@@ -50,6 +67,8 @@ public class LoginActivity extends AppCompatActivity {
     Button signInBtn = null;//登录按钮
     String account, password;//帐号和密码功能
     String status;
+    String figureurl;
+    Bitmap photo;
     User user=new User(false,null,null,null,null,null,null);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +104,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void buttonLogin(View v){
-        /**通过这句代码，SDK实现了QQ的登录，这个方法有三个参数，第一个参数是context上下文，第二个参数SCOPO 是一个String类型的字符串，表示一些权限
-         官方文档中的说明：应用需要获得哪些API的权限，由“，”分隔。例如：SCOPE = “get_user_info,add_t”；所有权限用“all”
-         第三个参数，是一个事件监听器，IUiListener接口的实例，这里用的是该接口的实现类 */
         mIUiListener = new BaseUiListener();
         //all表示获取所有权限
         mTencent.login(LoginActivity.this,"all", mIUiListener);
     }
-    /**
-     * 自定义监听器实现IUiListener接口后，需要实现的3个方法
-     * onComplete完成 onError错误 onCancel取消
-     */
+
     private class BaseUiListener implements IUiListener {
 
         @Override
@@ -104,9 +117,11 @@ public class LoginActivity extends AppCompatActivity {
             Log.e(TAG, "response:" + response);
             JSONObject obj = (JSONObject) response;
             try {
-                String openID = obj.getString("openid");
+                final String openID = obj.getString("openid");
+                account = openID;
                 String accessToken = obj.getString("access_token");
                 String expires = obj.getString("expires_in");
+                Log.e("yuan",expires);
                 mTencent.setOpenId(openID);
                 mTencent.setAccessToken(accessToken,expires);
                 QQToken qqToken = mTencent.getQQToken();
@@ -114,7 +129,63 @@ public class LoginActivity extends AppCompatActivity {
                 mUserInfo.getUserInfo(new IUiListener() {
                     @Override
                     public void onComplete(Object response) {
-                        Log.e(TAG,"登录成功"+response.toString());
+                        if(response == null){
+                            return;
+                        }else{
+                            Log.e("meng","登录成功"+response.toString());
+                            try {
+                                JSONObject jo = (JSONObject)response;
+                                ret = String.valueOf(jo.getInt("ret"));
+                                Log.e("yuan","ret:"+ret);
+                                nickname = jo.getString("nickname");
+                                String city = jo.getString("city");
+                                figureurl = jo.getString("figureurl_2");
+                                qqlogIn();
+                                //new NewAsynTask().execute(figureurl);
+
+
+
+                            }catch (JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
+                    private void qqlogIn() {
+                        Log.e("yuan","qqlogin");
+                        Log.e("meng","ret:"+ret);
+                        RequestBody requestBody = new FormBody.Builder().add("account", openID).add("ret",ret).
+                                add("nickname",nickname).build();
+                        Okhttp.postOkHttpRequest("http://lovebus.top/lovebus/qqlogin.php", requestBody, new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                /**这里写出错后的日志记录*/
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(LoginActivity.this, "请检查网络连接是否顺畅", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                /* 这个部分是子线程，和主线程通信很麻烦；另外里面不能直接进行UI操作，需要使用runOnUiThread（）*/
+                                String data=response.body().string();
+                                Log.e("meng","data:"+data);
+                                MyLog.d("Login",data);
+                                parseJSONWithJSONObject(data);
+                                Log.e("meng","status:"+status);
+                                if (status.equals("1")||status.equals("-2")){
+                                    toast_login_1();
+                                }
+                                else {
+                                    toast_login_2();
+                                }
+                            }
+                        });
+
                     }
 
                     @Override
@@ -198,12 +269,18 @@ public class LoginActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("yuan","qq登录");
                 Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                 SharedPreferences_tools.save("User","info",LoginActivity.this,user);
-                editor = login_sp.edit();
-                editor.putBoolean("first_login",true);
-                editor.apply();
-                finish();
+                if(user.getHead_image()!=null){
+                    editor = login_sp.edit();
+                    editor.putBoolean("first_login",true);
+                    editor.apply();
+                    finish();
+                }else{
+                    new NewAsynTask().execute(figureurl);
+                }
+
             }
         });
     }
@@ -237,7 +314,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             JSONObject json_data = new JSONObject(response);
             status=json_data.getString("status");
-            if(status.equals("1")){
+            if(status.equals("1")||status.equals("-2")){
                 user.setAccount(account);
                 user.setPassword(password);
                 user.setIs_login(true);
@@ -250,5 +327,113 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private class NewAsynTask extends AsyncTask<String,Void,Bitmap>{
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            String url = strings[0];
+            return getBitmapByUrl(url);
+        }
+
+        @Override
+        protected void onPostExecute(final Bitmap result) {
+            super.onPostExecute(result);//result为获取的头像bimap
+            /*
+            * 头像的处理
+            * */
+            photo = result;
+            LoveBusUtil.saveBitmap(photo);
+            MediaType MEDIA_TYPE=MediaType.parse("image/*");
+            File image=new File(Environment.getExternalStorageDirectory().getPath()+"/UserHeader.jpg");
+            Log.e("meng","account:"+account);
+            RequestBody req = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("account",account)
+                    .addFormDataPart("head",image.getName(), RequestBody.create(MEDIA_TYPE, image)).build();
+            Okhttp.postOkHttpRequest("http://lovebus.top/lovebus/uploadhead.php", req, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(LoginActivity.this, "请检查网络连接是否顺畅", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String data = response.body().string();
+                    MyLog.d("IMAGE",data);
+                    parseJSONWithJSONObject_head(data);
+                    if (image_response.equals("true")) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(LoginActivity.this, "头像上传成功", Toast.LENGTH_SHORT).show();
+                                File image=new File(Environment.getExternalStorageDirectory().getPath()+"/UserHeader.jpg");
+                                image.delete();
+                                SharedPreferences_tools.saveImage(LoginActivity.this,photo,"UserHead","image");
+                                user.setHead_image("http://lovebus.top/lovebus/head"+user.getAccount());
+                                SharedPreferences_tools.save("User","info",LoginActivity.this,user);
+                                photo.recycle();
+                                photo=null;
+                            }
+                        });
+                    } else if (image_response.equals("false")) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(LoginActivity.this, "头像上传失败", Toast.LENGTH_SHORT).show();
+                                File image=new File(Environment.getExternalStorageDirectory().getPath()+"/UserHeader.jpg");
+                                image.delete();
+                                photo.recycle();
+                                photo=null;
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    /*上传头像后数据解析*/
+    private void parseJSONWithJSONObject_head(String response) {
+        /**这个部分是json的解析部分*/
+        try {
+            /**response可能需要接下来的一步改变编码*/
+            if(response != null && response.startsWith("\ufeff"))
+            {
+                response =  response.substring(1);
+            }
+            JSONObject json_data = new JSONObject(response);
+            image_response=json_data.getString("status");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Bitmap getBitmapByUrl(String urlString) {
+        Bitmap bitmap;
+        InputStream is = null;
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+            is = new BufferedInputStream(connection.getInputStream());
+            bitmap = BitmapFactory.decodeStream(is);
+            connection.disconnect();
+            return bitmap;
+        }catch (MalformedURLException e){
+            e.printStackTrace();;
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            try{
+                is.close();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

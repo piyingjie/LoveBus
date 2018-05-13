@@ -21,6 +21,7 @@ import com.amap.api.services.route.BusPath;
 import com.amap.api.services.route.BusRouteResult;
 import com.lovebus.function.BusRouteOverlay;
 import com.lovebus.function.LoveBusUtil;
+import com.lovebus.function.MyLog;
 
 import bus.android.com.lovebus.R;
 
@@ -30,9 +31,9 @@ public class BusRouteDetailActivity extends Activity implements OnMapLoadedListe
 	private MapView mapView;
 	private BusPath mBuspath;
 	private BusRouteResult mBusRouteResult;
-	private TextView mTitle, mTitleBusRoute, mDesBusRoute;
-	private ListView mBusSegmentList;
-	private BusSegmentListAdapter mBusSegmentListAdapter;
+	TextView mTitle, mTitleBusRoute, mDesBusRoute;
+	ListView mBusSegmentList;
+	BusSegmentListAdapter mBusSegmentListAdapter;
 	private LinearLayout mBusMap, mBuspathview;
 	private BusRouteOverlay mBusrouteOverlay;
 	@Override
@@ -92,8 +93,28 @@ public class BusRouteDetailActivity extends Activity implements OnMapLoadedListe
 	}
 	
 	public void onBackClick(View view) {
-		this.finish();
+		if(mBuspathview.getVisibility()==View.VISIBLE){
+			finish();
+		}
+		else {
+			mBuspathview.setVisibility(View.VISIBLE);
+			mBusMap.setVisibility(View.VISIBLE);
+			mapView.setVisibility(View.GONE);
+		}
 	}
+
+	@Override
+	public void onBackPressed() {
+		if(mBuspathview.getVisibility()==View.VISIBLE){
+			finish();
+		}
+		else {
+			mBuspathview.setVisibility(View.VISIBLE);
+			mBusMap.setVisibility(View.VISIBLE);
+			mapView.setVisibility(View.GONE);
+		}
+	}
+
 	
 	public void onMapClick(View view) {
 		mBuspathview.setVisibility(View.GONE);
@@ -106,6 +127,9 @@ public class BusRouteDetailActivity extends Activity implements OnMapLoadedListe
 		mBusrouteOverlay.removeFromMap();
 
 	}
+	public void onCollClick(View view){
+
+    }
 
 	@Override
 	public void onMapLoaded() {

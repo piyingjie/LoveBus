@@ -61,7 +61,7 @@ public class BusLineOverlay {
     public void addToMap() {
         try {
             List<LatLonPoint> pointList = mBusLineItem.getDirectionsCoordinates();
-            List<LatLng> listPolyline = AMapServicesUtil.convertArrList(pointList);
+            List<LatLng> listPolyline = LoveBusUtil.convertArrList(pointList);
             mBusLinePolyline = mAMap.addPolyline(new PolylineOptions()
                     .addAll(listPolyline).color(getBusColor())
                     .width(getBuslineWidth()));
