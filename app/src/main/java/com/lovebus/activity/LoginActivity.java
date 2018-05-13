@@ -178,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                                 parseJSONWithJSONObject(data);
                                 Log.e("meng","status:"+status);
                                 if (status.equals("1")||status.equals("-2")){
-                                    toast_login_1();
+                                    toast_qqlogin_1();
                                 }
                                 else {
                                     toast_login_2();
@@ -215,6 +215,26 @@ public class LoginActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    private void toast_qqlogin_1() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.e("yuan","qq登录");
+                Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                SharedPreferences_tools.save("User","info",LoginActivity.this,user);
+                if(user.getHead_image()!=null){
+                    editor = login_sp.edit();
+                    editor.putBoolean("first_login",true);
+                    editor.apply();
+                    finish();
+                }else{
+                    new NewAsynTask().execute(figureurl);
+                }
+
+            }
+        });
     }
 
 
@@ -269,17 +289,14 @@ public class LoginActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.e("yuan","qq登录");
                 Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                 SharedPreferences_tools.save("User","info",LoginActivity.this,user);
-                if(user.getHead_image()!=null){
+
                     editor = login_sp.edit();
                     editor.putBoolean("first_login",true);
                     editor.apply();
                     finish();
-                }else{
-                    new NewAsynTask().execute(figureurl);
-                }
+
 
             }
         });
