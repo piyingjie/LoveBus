@@ -37,6 +37,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.LinearLayout;
@@ -111,6 +112,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private AMap aMap;
     private DrawerLayout drawerLayout;
     ImageView leftMenu;
+    ImageButton openMapButton_1;
+    ImageButton openMapButton_2;
     ImageView search;
     de.hdodenhof.circleimageview.CircleImageView user_head_image;
     TextView username;
@@ -206,6 +209,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         NavigationView navigationView= (NavigationView) findViewById(R.id.leftView_1);
         leftMenu =(ImageView) findViewById(R.id.leftMenu);
+        openMapButton_1=(ImageButton) findViewById(R.id.open_map_button_1);
+        openMapButton_2=(ImageButton) findViewById(R.id.open_map_button_2);
         search=(ImageView) findViewById(R.id.search);
         mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
@@ -221,6 +226,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         search.setOnClickListener(this);
         user_head_image.setOnClickListener(this);
         route_button.setOnClickListener(this);
+        openMapButton_1.setOnClickListener(this);
+        openMapButton_2.setOnClickListener(this);
         if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
@@ -288,6 +295,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 endText.setText("");
                 searchText.setText("");
                 break;
+            case R.id.open_map_button_1:
+                Toast.makeText(Main_Activity.this,"111",Toast.LENGTH_SHORT).show();
+            case R.id.open_map_button_2:
+                Toast.makeText(Main_Activity.this,"111",Toast.LENGTH_SHORT).show();
             default:
         }
     }

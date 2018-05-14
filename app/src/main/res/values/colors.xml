@@ -12,6 +12,7 @@
     <color name="divider_color">#f0f0f0</color>
     <color name="transparent">#00000000</color>
     <color name="blue">#5a78ca</color>
+    <color name="listback">#7a9eff</color>
     <color name="text">#000000</color>
     <color name="common_bg">#ffffff</color>
     <color name="act_background">#efefef</color>

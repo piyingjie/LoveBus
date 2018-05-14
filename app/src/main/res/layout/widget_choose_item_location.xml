@@ -19,6 +19,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/choose_widget"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusable="true"
@@ -46,5 +47,20 @@
             android:maxLength="20"
             android:textSize="14sp"
             tools:ignore="LabelFor" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/open_map"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true">
+
+        <ImageButton
+            android:id="@+id/open_map_button"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@color/common_bg"
+            android:src="@drawable/open_map"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/todo" />
     </RelativeLayout>
 </merge>
