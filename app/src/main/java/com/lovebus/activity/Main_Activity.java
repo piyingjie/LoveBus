@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,6 +38,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.LinearLayout;
@@ -54,6 +56,7 @@ import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.maps.model.Poi;
 import com.amap.api.services.busline.BusLineItem;
 import com.amap.api.services.busline.BusLineQuery;
 import com.amap.api.services.busline.BusLineResult;
@@ -106,11 +109,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,Inputtips.InputtipsListener,
-        AMap.InfoWindowAdapter, AdapterView.OnItemClickListener{
+        AMap.InfoWindowAdapter, AdapterView.OnItemClickListener,AMap.OnPOIClickListener {
     MapView mMapView;
     private AMap aMap;
     private DrawerLayout drawerLayout;
     ImageView leftMenu;
+    ImageButton openMapButton_1;
+    ImageButton openMapButton_2;
     ImageView search;
     de.hdodenhof.circleimageview.CircleImageView user_head_image;
     TextView username;
@@ -131,6 +136,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private String start_text = "";//出发地点的输入
     private String end_text = "";//目的地的输入
     private String localCity;
+    private int clickPoi=0;
     LatLonPoint startLat;
     LatLonPoint endLat;
     private SharedPreferences sp;//获取当前城市
@@ -206,6 +212,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         drawerLayout=(DrawerLayout)findViewById(R.id.drawer_layout);
         NavigationView navigationView= (NavigationView) findViewById(R.id.leftView_1);
         leftMenu =(ImageView) findViewById(R.id.leftMenu);
+        openMapButton_1=(ImageButton) findViewById(R.id.open_map_button_1);
+        openMapButton_2=(ImageButton) findViewById(R.id.open_map_button_2);
         search=(ImageView) findViewById(R.id.search);
         mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
@@ -221,6 +229,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         search.setOnClickListener(this);
         user_head_image.setOnClickListener(this);
         route_button.setOnClickListener(this);
+        openMapButton_1.setOnClickListener(this);
+        openMapButton_2.setOnClickListener(this);
         if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
@@ -266,6 +276,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private void setUpMap() {
         aMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
         aMap.setInfoWindowAdapter((AMap.InfoWindowAdapter) this);
+        aMap.setOnPOIClickListener(this);
     }
 
     @Override
@@ -281,14 +292,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 onclick_userHeadImage();
                 break;
             case R.id.route_button:
-                MyLog.d("route","001");
-                main_title.setVisibility(View.GONE);
-                maplayout.setVisibility(View.GONE);
-                chooseLocationWidget.setVisibility(View.VISIBLE);
-                mBusResultLayout.setVisibility(View.VISIBLE);
-                startText.setText("");
-                endText.setText("");
-                searchText.setText("");
+                 onclick_route_button();
+                break;
+            case R.id.open_map_button_1:
+                onclick_open_map_button(1);
+                break;
+            case R.id.open_map_button_2:
+                onclick_open_map_button(2);
                 break;
             default:
         }
@@ -330,6 +340,24 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             getAlbumPhoto(Main_Activity.this);
         }
     }
+    private void onclick_route_button(){
+        MyLog.d("route","001");
+        main_title.setVisibility(View.GONE);
+        maplayout.setVisibility(View.GONE);
+        chooseLocationWidget.setVisibility(View.VISIBLE);
+        mBusResultLayout.setVisibility(View.VISIBLE);
+        startText.setText("");
+        endText.setText("");
+        searchText.setText("");
+    }
+    private void onclick_open_map_button(int click){
+        clickPoi=click;
+        maplayout.setVisibility(View.VISIBLE);
+        chooseLocationWidget.setVisibility(View.GONE);
+        mBusResultLayout.setVisibility(View.GONE);
+        route_button.setVisibility(View.GONE);
+        mBusResultList.setAdapter(null);
+    }
     private void menu_switch(){
         if(user.isIs_login())
         {
@@ -368,6 +396,30 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             Toast.makeText(Main_Activity.this,"您还未登陆",Toast.LENGTH_SHORT).show();
         }
     }
+
+    /*poi点击回调*/
+    @Override
+    public void onPOIClick(Poi poi) {
+        if(clickPoi==1){
+            showResult();
+            startText.setText(poi.getName());
+            start_search_bus_route();
+        }
+        else if (clickPoi==2){
+            showResult();
+            endText.setText(poi.getName());
+            start_search_bus_route();
+        }
+    }
+    private void showResult(){
+        maplayout.setVisibility(View.GONE);
+        chooseLocationWidget.setVisibility(View.VISIBLE);
+        mBusResultLayout.setVisibility(View.VISIBLE);
+        route_button.setVisibility(View.VISIBLE);
+        clickPoi=0;
+    }
+
+
     /*退出确认*/
     @Override
     public void onBackPressed() {
@@ -378,6 +430,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             chooseLocationWidget.setVisibility(View.GONE);
             mBusResultList.setAdapter(null);
 
+        }
+        else if(clickPoi==1||clickPoi==2){
+            showResult();
         }
         else {
             new AlertDialog.Builder(this)
@@ -393,6 +448,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     }).show();
         }
     }
+
+
+
     //地图显示
     private void showMap(Bundle savedInstanceState){
         //获取地图控件引用
@@ -436,6 +494,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
     }
 
+
+
     private void searchLine(String serchTest, final String cityName){
         com.lovebus.function.BusLineSearch.searchLine_byName(Main_Activity.this, serchTest,cityName);
         com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
@@ -472,7 +532,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
     /*最佳路线查询*/
     private void searchBusRoute(String searchTest,String cityName){
         /*位置转经纬度*/
@@ -490,10 +549,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         LatLonPoint startLat=new LatLonPoint(locationMsg.getLatitude(),locationMsg.getLongitude());
                         searchRoute(startLat,endLat,localCity);
                     } else {
-                        Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main_Activity.this,"无法查询到结果",Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main_Activity.this,"无法查询到结果",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -511,13 +570,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                             BusResultListAdapter mBusResultListAdapter = new BusResultListAdapter(Main_Activity.this, result);
                             mBusResultList.setAdapter(mBusResultListAdapter);
                         } else if (result != null && result.getPaths() == null) {
-                            Toast.makeText(Main_Activity.this,"路线查询失败-3",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(Main_Activity.this,"路线查询失败-2",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(Main_Activity.this,"路线查询失败-1",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main_Activity.this,"路线查询失败",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -898,13 +957,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        start_text = LoveBusUtil.checkEditText(startText);
-        end_text = LoveBusUtil.checkEditText(endText);
-        String obj = parent.getItemAtPosition(position).toString();
-        Log.d("CHOOSE", "onItemClick: "+"/"+start_text+"/"+end_text);
-        convert1();
-        convert2();
-
+        start_search_bus_route();
     }
     private void convert1(){
         Geocoder.getLatlon(start_text,localCity,this);
@@ -945,7 +998,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
+    private void start_search_bus_route(){
+        start_text = LoveBusUtil.checkEditText(startText);
+        end_text = LoveBusUtil.checkEditText(endText);
+        convert1();
+        convert2();
+    }
 
 
     class TextWatcher1 implements TextWatcher, Inputtips.InputtipsListener {
