@@ -36,13 +36,13 @@
                 android:layout_gravity="bottom|center_horizontal"
                 />
         </FrameLayout>
+
         <com.lovebus.view.ChooseLocationWidget
             android:id="@+id/choose_location_widget"
-            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            />
+            android:layout_margin="10dp"
+            android:visibility="gone" />
         <LinearLayout
             android:id="@+id/bus_result"
             android:layout_width="match_parent"
@@ -65,8 +65,6 @@
                 android:listSelector="#00000000" >
             </ListView>
         </LinearLayout>
-
-
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
