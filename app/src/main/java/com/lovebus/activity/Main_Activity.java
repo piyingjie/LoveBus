@@ -272,6 +272,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     case R.id.update_password:
                         menu_update_password();
                         break;
+                    case R.id.item5:
+                        startActivity(new Intent(Main_Activity.this,informActivity.class));
                     default:
                 }
                 return false;
@@ -336,6 +338,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         } else {
             showProgressDialog();
             selectKeyWord(keyWord,localCity);
+
         }
     }
     private void onclick_userHeadImage(){
