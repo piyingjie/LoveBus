@@ -481,6 +481,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         else if(clickPoi==1||clickPoi==2){
             showResult();
         }
+        else if(drawerLayout.isDrawerOpen(Gravity.START)){
+            drawerLayout.closeDrawer(Gravity.START);
+        }
         else {
             new AlertDialog.Builder(this)
                     .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
