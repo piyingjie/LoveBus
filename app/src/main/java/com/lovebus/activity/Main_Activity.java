@@ -272,8 +272,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     case R.id.update_password:
                         menu_update_password();
                         break;
-                    case R.id.item5:
+                    case R.id.notice:
                         startActivity(new Intent(Main_Activity.this,informActivity.class));
+                        break;
                     default:
                 }
                 return false;
