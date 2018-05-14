@@ -74,6 +74,7 @@ public class informActivity extends AppCompatActivity {
                         //detail = detail.substring(0,detail.length()*3/8);
                         //detail = detail.replace("阅读原文>>","");
                         title = title.replace("阅读原文>>","");
+                        detailUrl = "http://www.wuhanbus.com"+ detailUrl;
                         informBean news = new informBean(detailUrl,title,detail);
                         mdata.add(news);
                     }

@@ -59,6 +59,7 @@
         <activity android:name="com.lovebus.activity.OffLineMapActivity" />
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
         <activity android:name="com.lovebus.activity.NoticeActivity" />
+        <activity android:name="com.lovebus.activity.informActivity"/>
         <activity android:name="com.lovebus.activity.ThirdPartyBindActivity" />
         <activity android:name="com.lovebus.activity.CitySelectActivity" />
 
@@ -90,7 +91,7 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name="com.lovebus.activity.UpdatePasswordActivity"></activity>
+        <activity android:name="com.lovebus.activity.UpdatePasswordActivity"/>
     </application>
 
 </manifest>
