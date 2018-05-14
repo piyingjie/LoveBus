@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -70,10 +71,19 @@ public class InformAdapter extends BaseAdapter{
                         LoginActivity.class);
                 mContext.startActivity(intent);
                 */
-                String url ="http://www.wuhanbus.com"+newsList.get(position).getDetailUrl();
+
+                //String url ="http://www.wuhanbus.com"+newsList.get(position).getDetailUrl();
+
+                String url =newsList.get(position).getDetailUrl();
+
+
                 Uri uri= Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 mContext.startActivity(intent);
+
+
+
+                //WebView webView.loadUrl(url);
             }
         });
         return view;
