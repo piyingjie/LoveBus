@@ -35,6 +35,13 @@
                 android:text="@string/route"
                 android:layout_gravity="bottom|center_horizontal"
                 />
+            <com.lovebus.view.poi_message_view
+                android:id="@+id/poi_click_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:visibility="gone"
+                />
         </FrameLayout>
         <com.lovebus.view.ChooseLocationWidget
             android:id="@+id/choose_location_widget"

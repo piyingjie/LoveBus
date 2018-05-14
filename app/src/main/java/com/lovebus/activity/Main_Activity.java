@@ -124,7 +124,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     FrameLayout maplayout;
     Button route_button;
     ListView mBusResultList;
+    ImageButton to_poi;
+    TextView poiname;
     com.lovebus.view.top_title main_title;
+    com.lovebus.view.poi_message_view poi_message_view;
     Bitmap photo;
     com.lovebus.view.ChooseLocationWidget chooseLocationWidget;
     private String image_response;
@@ -136,6 +139,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private String start_text = "";//出发地点的输入
     private String end_text = "";//目的地的输入
     private String localCity;
+    private String poi_name_string="";
     private int clickPoi=0;
     LatLonPoint startLat;
     LatLonPoint endLat;
@@ -218,8 +222,11 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
         maplayout=(FrameLayout) findViewById(R.id.map_layout);
+        poiname=(TextView) findViewById(R.id.poi_name);
         route_button=(Button) findViewById(R.id.route_button);
+        to_poi=(ImageButton) findViewById(R.id.to_poi);
         main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
+        poi_message_view=(com.lovebus.view.poi_message_view)findViewById(R.id.poi_click_view);
         View user_header=navigationView.inflateHeaderView(R.layout.header_nav);
         user_head_image=(de.hdodenhof.circleimageview.CircleImageView)user_header.findViewById(R.id.userHeadImage);
         username=(TextView) user_header.findViewById(R.id.user_set_name);
@@ -231,6 +238,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         route_button.setOnClickListener(this);
         openMapButton_1.setOnClickListener(this);
         openMapButton_2.setOnClickListener(this);
+        to_poi.setOnClickListener(this);
         if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
@@ -298,6 +306,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             case R.id.open_map_button_2:
                 onclick_open_map_button(2);
                 break;
+            case R.id.to_poi:
+                onclick_to_poi();
+                break;
             default:
         }
     }
@@ -355,6 +366,18 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         route_button.setVisibility(View.GONE);
         mBusResultList.setAdapter(null);
     }
+    private void onclick_to_poi(){
+        main_title.setVisibility(View.GONE);
+        maplayout.setVisibility(View.GONE);
+        chooseLocationWidget.setVisibility(View.VISIBLE);
+        mBusResultLayout.setVisibility(View.VISIBLE);
+        poi_message_view.setVisibility(View.GONE);
+        route_button.setVisibility(View.VISIBLE);
+        startText.setText(locationMsg.getPoiName());
+        endText.setText(poi_name_string);
+        start_search_bus_route();
+        searchText.setText("");
+    }
     private void menu_switch(){
         if(user.isIs_login())
         {
@@ -396,16 +419,35 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
     /*poi点击回调*/
     @Override
-    public void onPOIClick(Poi poi) {
-        if(clickPoi==1){
-            showResult();
-            startText.setText(poi.getName());
-            start_search_bus_route();
+    public void onPOIClick(final Poi poi) {
+        aMap.clear();
+        if(clickPoi!=0){
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
+                    .setTitle("选择地点")
+                    .setMessage("确认选择"+poi.getName()+"吗?")
+                    .setNegativeButton("取消",null)
+                    .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(clickPoi==1){
+                                showResult();
+                                startText.setText(poi.getName());
+                                start_search_bus_route();
+                            }
+                            else if (clickPoi==2){
+                                showResult();
+                                endText.setText(poi.getName());
+                                start_search_bus_route();
+                            }
+                        }
+                    }).show();
         }
-        else if (clickPoi==2){
-            showResult();
-            endText.setText(poi.getName());
-            start_search_bus_route();
+        else {
+            poi_name_string=poi.getName();
+            poiname.setText(poi.getName());
+            route_button.setVisibility(View.GONE);
+            poi_message_view.setVisibility(View.VISIBLE);
         }
     }
     private void showResult(){
@@ -427,6 +469,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             chooseLocationWidget.setVisibility(View.GONE);
             mBusResultList.setAdapter(null);
 
+        }
+        else if(poi_message_view.getVisibility()==View.VISIBLE){
+            poi_message_view.setVisibility(View.GONE);
+            route_button.setVisibility(View.VISIBLE);
         }
         else if(clickPoi==1||clickPoi==2){
             showResult();
@@ -967,10 +1013,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         GeocodeAddress address = result.getGeocodeAddressList().get(0);
                         startLat=address.getLatLonPoint();
                     } else {
-                        Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main_Activity.this,"没有搜索结果",Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main_Activity.this,"没有搜索结果",Toast.LENGTH_SHORT).show();
                 }
             }
         });
