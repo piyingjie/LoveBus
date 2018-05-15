@@ -33,7 +33,7 @@ public class BusLineDetailDialog extends Dialog implements DialogInterface.OnCli
         this(context, android.R.style.Theme_NoTitleBar);
         this.busStationItemList = busStationItems;
         busStationAdapter = new BusStationAdapter(context, busStationItems);
-    }
+    }//commit
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

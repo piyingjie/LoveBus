@@ -454,6 +454,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                         public void onListItemClick(BusLineDialog dialog, BusLineItem item) {
                                             showProgressDialog();
                                             String lineId =item.getBusLineId();
+                                            //commit
                                              List<BusStationItem> busStationItem=item.getBusStations();
                                             BusLineDetailDialog busLineDetailDialog = new BusLineDetailDialog(Main_Activity.this,busStationItem);
                                             busLineDetailDialog.show();

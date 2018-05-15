@@ -48,7 +48,7 @@ public class BusLineAdapter extends BaseAdapter {
 			holder.busName = (TextView) convertView.findViewById(R.id.busname);
 			holder.busId = (TextView) convertView.findViewById(R.id.busid);
 			convertView.setTag(holder);
-
+//commit
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}

@@ -141,6 +141,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String city = jo.getString("city");
                                 figureurl = jo.getString("figureurl_2");
                                 qqlogIn();
+                                //commit
                                 //new NewAsynTask().execute(figureurl);
 
 
@@ -392,6 +393,7 @@ public class LoginActivity extends AppCompatActivity {
                                 image.delete();
                                 SharedPreferences_tools.saveImage(LoginActivity.this,photo,"UserHead","image");
                                 user.setHead_image("http://lovebus.top/lovebus/head"+user.getAccount());
+                                //commit
                                 SharedPreferences_tools.save("User","info",LoginActivity.this,user);
                                 photo.recycle();
                                 photo=null;
