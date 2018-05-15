@@ -10,6 +10,10 @@ import com.amap.api.services.busline.BusLineItem;
 import com.amap.api.services.busline.BusLineResult;
 import com.amap.api.services.busline.BusStationItem;
 import com.amap.api.services.busline.BusStationResult;
+import com.amap.api.services.core.LatLonPoint;
+import com.amap.api.services.route.BusRouteResult;
+import com.amap.api.services.route.BusStep;
+import com.amap.api.services.route.RouteBusLineItem;
 import com.lovebus.function.BusLineSearch;
 import com.lovebus.function.BusStationSearch;
 import com.amap.api.services.core.AMapException;
@@ -40,19 +44,58 @@ public class TestActivity extends AppCompatActivity {
                         ArrayList<BusStationItem> item = (ArrayList<BusStationItem>) result
                                 .getBusStations();
                         StringBuffer buf = new StringBuffer();
-                        for (int i = 0; i < item.size(); i++) {
+
+                        //Bus route initializes here !!!
+                        // BusRouteResult <- BusPath <- BusStep
+                        BusRouteResult busRouteResult = new BusRouteResult();
+
+                        for (int i = 0; i < item.size(); i++)
+                        {
+
                             BusStationItem stationItem = item.get(i);
                             List<BusLineItem> busLines = stationItem.getBusLineItems();
                             for (BusLineItem busLineItem :busLines)
                             {
                                 List<BusStationItem> busStations_of_a_line = busLineItem.getBusStations();
-                                for (BusStationItem target: busStations_of_a_line)
-                                {
-                                        if (target.getBusStationName().matches(destination))
-                                        {
+                                BusStep step = new BusStep();  //One step of a Bus path
 
-                                            break;
-                                        }
+                                //Using Cursor to denote the current node in the List
+                                int cursor = busStations_of_a_line.indexOf(stationItem);
+                                List<RouteBusLineItem> routeBusLineItems = new ArrayList<>();
+                                List<LatLonPoint> latLonSet = new ArrayList<>();
+                                List<BusStationItem> passedStation = new ArrayList<>();
+                                for (int j = 0 ; j < busStations_of_a_line.size(); j++)
+                                {
+                                    BusStationItem target = busStations_of_a_line.get(j);
+                                    if ( j < cursor)
+                                    {
+                                        break;
+                                    }
+                                    else if (target.getBusStationName().matches(destination))
+                                    {
+                                            RouteBusLineItem lineItem = (RouteBusLineItem)busLineItem;
+                                            lineItem.setArrivalBusStation(target);
+                                            lineItem.setDepartureBusStation(stationItem);
+//                                            lineItem.setCityCode(target.getCityCode());
+                                            lineItem.setPassStationNum(j - cursor + 1);
+                                            lineItem.setPolyline(latLonSet);
+                                            lineItem.setPassStations(passedStation);
+//                                            lineItem.setBasicPrice(busLineItem.getBasicPrice());
+//                                            lineItem.setPassStations();    ##### need to be solved
+//                                            lineItem.setBusLineId(busLineItem.getBusLineId());
+//                                            lineItem.setFirstBusTime(busLineItem.getFirstBusTime());
+//                                            lineItem.setLastBusTime(busLineItem.getLastBusTime());
+//                                            lineItem.setBusLineName(busLineItem.getBusLineName());
+
+                                            //add up BusLine information
+                                            routeBusLineItems.add(lineItem);
+
+                                            step.setBusLines(routeBusLineItems);
+
+                                            continue;
+                                    }
+                                    latLonSet.add(target.getLatLonPoint());
+                                    passedStation.add(target);
                                 }
 
                             }
