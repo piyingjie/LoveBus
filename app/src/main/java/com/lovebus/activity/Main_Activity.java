@@ -234,6 +234,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     /*左侧菜单点击事件在下方添加*/
                     case R.id.item1:
                         Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent(Main_Activity.this,TestActivity.class);
+                        startActivity(intent);
                         break;
                     case R.id.city_change:
                         startActivity(new Intent(Main_Activity.this,CitySelectActivity.class));
