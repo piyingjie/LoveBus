@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "bus.android.com.lovebus"
-        minSdkVersion 19
+        minSdkVersion 15
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -37,4 +37,5 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'liji.library.dev:citypickerview:3.1.6'
     implementation files('libs/open_sdk_r5990_lite.jar')
+    implementation 'org.jsoup:jsoup:1.9.2'
 }

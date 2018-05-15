@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.view.View;
@@ -99,6 +101,7 @@ public class ChooseLocationWidget extends LinearLayout implements View.OnClickLi
         private ImageView mTypeIV;
         private AutoCompleteTextView mInputET;
         private View mDivider;
+        private ImageButton openMap;
 
         private void init(){
             LayoutInflater.from(getContext()).inflate(R.layout.widget_choose_item_location,this);
@@ -106,6 +109,7 @@ public class ChooseLocationWidget extends LinearLayout implements View.OnClickLi
             mTypeIV =  findViewById(R.id.type_icon);
             mInputET= findViewById(R.id.keyword5);
             mDivider = findViewById(R.id.divider);
+            openMap=findViewById(R.id.open_map_button);
 
         }
     /*    public void setLocation(String location ){
@@ -121,11 +125,13 @@ public class ChooseLocationWidget extends LinearLayout implements View.OnClickLi
                 mInputET.setHint("你从哪里出发");
                 mInputET.setId(R.id.keyword5);
                 mDivider.setVisibility(View.VISIBLE);
+                openMap.setId(R.id.open_map_button_1);
             } else {
                 mTypeIV.setImageResource(R.drawable.dir_end);
                 mInputET.setHint("你要去哪儿");
                 mInputET.setId(R.id.keyword6);
                 mDivider.setVisibility(View.GONE);
+                openMap.setId(R.id.open_map_button_2);
 
             }
         }

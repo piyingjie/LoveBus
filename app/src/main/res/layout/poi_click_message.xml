@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/poi_click_message"
+    android:layout_width="240dp"
+    android:layout_height="100dp"
+    android:background="@color/search_white"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/poi_name"
+        android:layout_width="240dp"
+        android:layout_height="50dp"
+        android:text="@string/poiclick" />
+
+    <RelativeLayout
+        android:layout_width="240dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/poi_name">
+
+        <TextView
+            android:id="@+id/poi_distance"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/distance" />
+        <ImageButton
+            android:id="@+id/to_poi"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/search_white"
+            android:src="@drawable/skip"
+            android:layout_alignParentEnd="true"
+            />
+    </RelativeLayout>
+
+</RelativeLayout>

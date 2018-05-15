@@ -28,4 +28,7 @@
     <string name="no_result">对不起，没有搜索到相关数据！</string>
     <string name="collect">收藏</string>
     <string name="route">路线</string>
+    <string name="poiclick">兴趣点</string>
+    <string name="distance">距离</string>
+    <string name="notice">通知</string>
 </resources>

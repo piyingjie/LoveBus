@@ -35,6 +35,13 @@
                 android:text="@string/route"
                 android:layout_gravity="bottom|center_horizontal"
                 />
+            <com.lovebus.view.poi_message_view
+                android:id="@+id/poi_click_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:visibility="gone"
+                />
         </FrameLayout>
 
         <com.lovebus.view.ChooseLocationWidget
@@ -58,6 +65,7 @@
                 android:layout_height="match_parent"
                 android:cacheColorHint="#00000000"
                 android:divider="@null"
+                android:background="@drawable/listview_type"
                 android:fadingEdge="none"
                 android:fadingEdgeLength="0dp"
                 android:footerDividersEnabled="false"
