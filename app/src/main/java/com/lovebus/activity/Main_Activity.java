@@ -554,10 +554,15 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             public void result(BusLineResult result, final int rCode) {
                 dissmissProgressDialog();
                 if (rCode == AMapException.CODE_AMAP_SUCCESS){
-                    if (result!=null && result.getQuery()!=null && result.getQuery().equals(com.lovebus.function.BusLineSearch.getQuery())){
-                        if (result.getQuery().getCategory()== BusLineQuery.SearchType.BY_LINE_NAME){
-                            if (result.getPageCount()>0 &&result.getBusLines()!=null &&result.getBusLines().size()>0){
+                    if (result!=null && result.getQuery()!=null && result.getQuery()
+                            .equals(com.lovebus.function.BusLineSearch.getQuery())){
+                        if (result.getQuery().getCategory() == BusLineQuery.SearchType.BY_LINE_NAME){
+                            if (result.getPageCount()>0 && result.getBusLines()!=null
+                                    && result.getBusLines().size()>0){
                                 List<BusLineItem> lineItems = result.getBusLines();
+                                //for test-only!
+                                MyLog.d("type",lineItems.get(0).getBusLineType());
+                                MyLog.d("type",lineItems.get(1).getBusLineType());
                                 if (lineItems !=null){
                                     //showResultList(lineItems);
                                     BusLineDialog busLineDialog = new BusLineDialog(Main_Activity.this,lineItems);

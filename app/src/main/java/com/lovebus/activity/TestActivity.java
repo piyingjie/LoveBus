@@ -13,6 +13,7 @@ import com.amap.api.services.busline.BusStationResult;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.BusRouteResult;
 import com.amap.api.services.route.BusStep;
+import com.amap.api.services.route.Doorway;
 import com.amap.api.services.route.RouteBusLineItem;
 import com.lovebus.function.BusLineSearch;
 import com.lovebus.function.BusStationSearch;
@@ -64,14 +65,18 @@ public class TestActivity extends AppCompatActivity {
                                 List<RouteBusLineItem> routeBusLineItems = new ArrayList<>();
                                 List<LatLonPoint> latLonSet = new ArrayList<>();
                                 List<BusStationItem> passedStation = new ArrayList<>();
-                                for (int j = 0 ; j < busStations_of_a_line.size(); j++)
+                                //initialize and setup entrance and exit for Metro only
+                                //TO DO List: Check the type of the Transportation
+                                Doorway entrance = new Doorway();
+                                Doorway exit = new Doorway();
+                                entrance.setLatLonPoint(busStations_of_a_line.get(cursor).getLatLonPoint());
+                                entrance.setName(busStations_of_a_line.get(cursor).getBusStationName());
+                                step.setEntrance(entrance);
+                                for (int j = cursor ; j < busStations_of_a_line.size(); j++)
                                 {
                                     BusStationItem target = busStations_of_a_line.get(j);
-                                    if ( j < cursor)
-                                    {
-                                        break;
-                                    }
-                                    else if (target.getBusStationName().matches(destination))
+
+                                    if (target.getBusStationName().matches(destination))
                                     {
                                             RouteBusLineItem lineItem = (RouteBusLineItem)busLineItem;
                                             lineItem.setArrivalBusStation(target);
@@ -81,16 +86,20 @@ public class TestActivity extends AppCompatActivity {
                                             lineItem.setPolyline(latLonSet);
                                             lineItem.setPassStations(passedStation);
 //                                            lineItem.setBasicPrice(busLineItem.getBasicPrice());
-//                                            lineItem.setPassStations();    ##### need to be solved
 //                                            lineItem.setBusLineId(busLineItem.getBusLineId());
 //                                            lineItem.setFirstBusTime(busLineItem.getFirstBusTime());
 //                                            lineItem.setLastBusTime(busLineItem.getLastBusTime());
 //                                            lineItem.setBusLineName(busLineItem.getBusLineName());
 
+
                                             //add up BusLine information
                                             routeBusLineItems.add(lineItem);
 
-                                            step.setBusLines(routeBusLineItems);
+                                            //set up exit parameters(just for metro)
+//                                            exit.setLatLonPoint(target.getLatLonPoint());
+//                                            exit.setName(target.getBusStationName());
+//                                            step.setBusLines(routeBusLineItems);
+//                                            step.setExit(exit);
 
                                             continue;
                                     }
