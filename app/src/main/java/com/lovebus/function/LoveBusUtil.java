@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.widget.EditText;
 
+import com.amap.api.maps.AMapException;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.services.core.LatLonPoint;
 import com.amap.api.services.route.BusPath;
@@ -229,5 +230,54 @@ public class LoveBusUtil {
        }
        String str2=str.replaceAll("路","");
        return isNumber(str2);
+    }
+    public static String calculateLineDistance(LatLng var0, LatLng var1) {
+        if (var0 != null && var1 != null) {
+            try {
+                double var2 = 0.01745329251994329D;
+                double var4 = var0.longitude;
+                double var6 = var0.latitude;
+                double var8 = var1.longitude;
+                double var10 = var1.latitude;
+                var4 *= 0.01745329251994329D;
+                var6 *= 0.01745329251994329D;
+                var8 *= 0.01745329251994329D;
+                var10 *= 0.01745329251994329D;
+                double var12 = Math.sin(var4);
+                double var14 = Math.sin(var6);
+                double var16 = Math.cos(var4);
+                double var18 = Math.cos(var6);
+                double var20 = Math.sin(var8);
+                double var22 = Math.sin(var10);
+                double var24 = Math.cos(var8);
+                double var26 = Math.cos(var10);
+                double[] var28 = new double[3];
+                double[] var29 = new double[3];
+                var28[0] = var18 * var16;
+                var28[1] = var18 * var12;
+                var28[2] = var14;
+                var29[0] = var26 * var24;
+                var29[1] = var26 * var20;
+                var29[2] = var22;
+                double var30 = Math.sqrt((var28[0] - var29[0]) * (var28[0] - var29[0]) + (var28[1] - var29[1]) * (var28[1] - var29[1]) + (var28[2] - var29[2]) * (var28[2] - var29[2]));
+                float a=(float)(Math.asin(var30 / 2.0D) * 1.27420015798544E7D);
+                if(a>1000){
+                    return String.valueOf((float)(Math.round(a/10))/100)+"千";
+                }
+                else {
+                    return String.valueOf(Math.round(a));
+                }
+            } catch (Throwable var32) {
+                var32.printStackTrace();
+                return "0";
+            }
+        } else {
+            try {
+                throw new AMapException("非法坐标值");
+            } catch (AMapException var33) {
+                var33.printStackTrace();
+                return "0";
+            }
+        }
     }
 }

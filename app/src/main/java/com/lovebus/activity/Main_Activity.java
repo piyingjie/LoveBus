@@ -109,7 +109,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Main_Activity extends AppCompatActivity implements View.OnClickListener,TextWatcher,AMap.OnMarkerClickListener,Inputtips.InputtipsListener,
-        AMap.InfoWindowAdapter, AdapterView.OnItemClickListener,AMap.OnPOIClickListener {
+        AMap.InfoWindowAdapter, AdapterView.OnItemClickListener,AMap.OnPOIClickListener ,AMap.OnMapClickListener {
     MapView mMapView;
     private AMap aMap;
     private DrawerLayout drawerLayout;
@@ -126,6 +126,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     ListView mBusResultList;
     ImageButton to_poi;
     TextView poiname;
+    TextView distance;
     com.lovebus.view.top_title main_title;
     com.lovebus.view.poi_message_view poi_message_view;
     Bitmap photo;
@@ -223,6 +224,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
         maplayout=(FrameLayout) findViewById(R.id.map_layout);
         poiname=(TextView) findViewById(R.id.poi_name);
+        distance=(TextView) findViewById(R.id.poi_distance);
         route_button=(Button) findViewById(R.id.route_button);
         to_poi=(ImageButton) findViewById(R.id.to_poi);
         main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
@@ -286,6 +288,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         aMap.setOnMarkerClickListener(this);// 添加点击marker监听事件
         aMap.setInfoWindowAdapter((AMap.InfoWindowAdapter) this);
         aMap.setOnPOIClickListener(this);
+        aMap.setOnMapClickListener(this);// 对amap添加单击地图事件监听器
     }
 
     @Override
@@ -448,10 +451,22 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     }).show();
         }
         else {
+            LatLng local=new LatLng(locationMsg.getLatitude(),locationMsg.getLongitude());
+            LatLng to=poi.getCoordinate();
+            distance.setText("距你"+LoveBusUtil.calculateLineDistance(local,to)+"米");
             poi_name_string=poi.getName();
             poiname.setText(poi.getName());
             route_button.setVisibility(View.GONE);
             poi_message_view.setVisibility(View.VISIBLE);
+        }
+    }
+    /*单击地图回调*/
+    @Override
+    public void onMapClick(LatLng point) {
+        if(route_button.getVisibility()==View.GONE&&poi_message_view.getVisibility()==View.VISIBLE){
+            aMap.clear();
+            route_button.setVisibility(View.VISIBLE);
+            poi_message_view.setVisibility(View.GONE);
         }
     }
     private void showResult(){
