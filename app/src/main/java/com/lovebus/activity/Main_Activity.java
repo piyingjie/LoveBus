@@ -79,6 +79,7 @@ import com.amap.api.services.route.BusRouteResult;
 import com.lovebus.entity.Location;
 import com.lovebus.entity.User;
 
+import com.lovebus.function.BusLineDetailDialog;
 import com.lovebus.function.BusLineDialog;
 import com.lovebus.function.BusLineOverlay;
 
@@ -570,6 +571,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                         public void onListItemClick(BusLineDialog dialog, BusLineItem item) {
                                             showProgressDialog();
                                             String lineId =item.getBusLineId();
+                                            //commit
+                                             List<BusStationItem> busStationItem=item.getBusStations();
+                                            BusLineDetailDialog busLineDetailDialog = new BusLineDetailDialog(Main_Activity.this,busStationItem);
+                                            busLineDetailDialog.show();
                                            searchBusLineById(lineId,cityName);
                                         }
                                     });
@@ -893,11 +898,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private void handleImageOnKitkat(Intent data){
         String imagePath=null;
         Uri uri=data.getData();
+        //Log.e("yuan",uri.toString());
         if(DocumentsContract.isDocumentUri(this,uri)){
             String docId=DocumentsContract.getDocumentId(uri);
             if("com.android.providers.media.documents".equals(uri.getAuthority())){
                 String id=docId.split(":")[1];
                 String selection= MediaStore.Images.Media._ID+"="+id;
+                Log.e("yuan",selection);
                 imagePath=getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,selection);
             }
             else if("com.android.providers.downloads.documents".equals(uri.getAuthority())){
@@ -927,6 +934,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private void displayImage(String imagePath){
         if(imagePath!=null){
             photo= LoveBusUtil.compressImageFromFile(imagePath);
+            Log.e("yuan",imagePath);
             MyLog.d("IMAGE",imagePath);
             LoveBusUtil.saveBitmap(photo);
             MediaType MEDIA_TYPE=MediaType.parse("image/*");
