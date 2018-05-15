@@ -560,9 +560,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                             if (result.getPageCount()>0 && result.getBusLines()!=null
                                     && result.getBusLines().size()>0){
                                 List<BusLineItem> lineItems = result.getBusLines();
-                                //for test-only!
-                                MyLog.d("type",lineItems.get(0).getBusLineType());
-                                MyLog.d("type",lineItems.get(1).getBusLineType());
+                                
                                 if (lineItems !=null){
                                     //showResultList(lineItems);
                                     BusLineDialog busLineDialog = new BusLineDialog(Main_Activity.this,lineItems);
