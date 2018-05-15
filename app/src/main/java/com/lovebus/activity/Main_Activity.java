@@ -262,6 +262,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     /*左侧菜单点击事件在下方添加*/
                     case R.id.item1:
                         Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(Main_Activity.this,TestActivity.class));
                         break;
                     case R.id.city_change:
                         startActivity(new Intent(Main_Activity.this,CitySelectActivity.class));
@@ -553,7 +554,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             public void result(BusLineResult result, final int rCode) {
                 dissmissProgressDialog();
                 if (rCode == AMapException.CODE_AMAP_SUCCESS){
-                    if (result!=null&&result.getQuery()!=null &&result.getQuery().equals(com.lovebus.function.BusLineSearch.getQuery())){
+                    if (result!=null && result.getQuery()!=null && result.getQuery().equals(com.lovebus.function.BusLineSearch.getQuery())){
                         if (result.getQuery().getCategory()== BusLineQuery.SearchType.BY_LINE_NAME){
                             if (result.getPageCount()>0 &&result.getBusLines()!=null &&result.getBusLines().size()>0){
                                 List<BusLineItem> lineItems = result.getBusLines();

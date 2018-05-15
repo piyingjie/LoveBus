@@ -40,7 +40,8 @@
         android:supportsRtl="true">
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="eaec24b5099be716aadb4ce8833edee4" />
+            android:value="df3154392bda2edb2ac33236d0e80751" />
+
         <activity
             android:name="com.lovebus.activity.Main_Activity"
             android:launchMode="singleTask"
@@ -54,12 +55,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.lovebus.activity.BusRouteDetailActivity"
-            android:theme="@style/FullAppTheme"/>
+        <activity
+            android:name="com.lovebus.activity.BusRouteDetailActivity"
+            android:theme="@style/FullAppTheme" />
         <activity android:name="com.lovebus.activity.OffLineMapActivity" />
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
         <activity android:name="com.lovebus.activity.NoticeActivity" />
-        <activity android:name="com.lovebus.activity.informActivity"/>
+        <activity android:name="com.lovebus.activity.informActivity" />
         <activity android:name="com.lovebus.activity.ThirdPartyBindActivity" />
         <activity android:name="com.lovebus.activity.CitySelectActivity" />
 
@@ -91,7 +93,8 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name="com.lovebus.activity.UpdatePasswordActivity"/>
+        <activity android:name="com.lovebus.activity.UpdatePasswordActivity" />
+        <activity android:name="com.lovebus.activity.TestActivity"></activity>
     </application>
 
 </manifest>
