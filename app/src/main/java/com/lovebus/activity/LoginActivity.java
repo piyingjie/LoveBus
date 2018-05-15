@@ -234,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void dissmissProgressDialog() {
         if (progDialog != null) {
-            progDialog.dismiss();
+            progDialog.dismiss();//commit
         }
     }
     private void toast_qqlogin_1() {
