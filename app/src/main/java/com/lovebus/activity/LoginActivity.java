@@ -1,5 +1,6 @@
 package com.lovebus.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -62,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences login_sp;//获取登录状态
     private SharedPreferences.Editor editor;
 
+    private ProgressDialog progDialog = null;// 进度框
 
     EditText account_edit = null, passwordEdit = null;//帐号和密码编辑框
     Button signInBtn = null;//登录按钮
@@ -156,6 +158,7 @@ public class LoginActivity extends AppCompatActivity {
                     private void qqlogIn() {
                         Log.e("yuan","qqlogin");
                         Log.e("meng","ret:"+ret);
+                        showProgressDialog();
                         RequestBody requestBody = new FormBody.Builder().add("account", openID).add("ret",ret).
                                 add("nickname",nickname).build();
                         Okhttp.postOkHttpRequest("http://lovebus.top/lovebus/qqlogin.php", requestBody, new Callback() {
@@ -179,6 +182,7 @@ public class LoginActivity extends AppCompatActivity {
                                 parseJSONWithJSONObject(data);
                                 Log.e("meng","status:"+status);
                                 if (status.equals("1")||status.equals("-2")){
+
                                     toast_qqlogin_1();
                                 }
                                 else {
@@ -218,6 +222,21 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void showProgressDialog() {
+        if (progDialog == null)
+            progDialog = new ProgressDialog(this);
+        progDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progDialog.setIndeterminate(false);
+        progDialog.setCancelable(true);
+        progDialog.setMessage("正在登录:\n");
+        progDialog.show();
+    }
+
+    private void dissmissProgressDialog() {
+        if (progDialog != null) {
+            progDialog.dismiss();
+        }
+    }
     private void toast_qqlogin_1() {
         runOnUiThread(new Runnable() {
             @Override
@@ -233,6 +252,7 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
                     new NewAsynTask().execute(figureurl);
                 }
+
 
             }
         });
@@ -395,8 +415,10 @@ public class LoginActivity extends AppCompatActivity {
                                 user.setHead_image("http://lovebus.top/lovebus/head"+user.getAccount());
                                 //commit
                                 SharedPreferences_tools.save("User","info",LoginActivity.this,user);
+                                dissmissProgressDialog();
                                 photo.recycle();
                                 photo=null;
+                                finish();
                             }
                         });
                     } else if (image_response.equals("false")) {
