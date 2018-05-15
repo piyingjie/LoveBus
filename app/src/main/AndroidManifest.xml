@@ -41,6 +41,7 @@
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="43ad17e4595205cd704eb6af9ae48d4e" />
+            android:value="43ad17e4595205cd704eb6af9ae48d4e" />
 
         <activity
             android:name="com.lovebus.activity.Main_Activity"
