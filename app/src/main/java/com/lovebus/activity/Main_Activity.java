@@ -53,6 +53,7 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
@@ -127,11 +128,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     TextView userSetCity;
     LinearLayout mBusResultLayout;
     FrameLayout maplayout;
-    ImageButton route_button;
+    Button route_button;
     ListView mBusResultList;
     ImageButton to_poi;
     TextView distance;
     RadioTextView poiname;
+    LinearLayout bottom_menu;
+    Button near_step;
     com.lovebus.view.top_title main_title;
     com.lovebus.view.poi_message_view poi_message_view;
     Bitmap photo;
@@ -229,8 +232,11 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
         maplayout=(FrameLayout) findViewById(R.id.map_layout);
         poiname= findViewById(R.id.poi_name);
+
+        bottom_menu=(LinearLayout) findViewById(R.id.bottom_menu);
+        near_step=(Button) findViewById(R.id.near_step);
         distance=(TextView) findViewById(R.id.poi_distance);
-        route_button=(ImageButton) findViewById(R.id.route_button);
+        route_button=(Button) findViewById(R.id.route_button);
         to_poi=(ImageButton) findViewById(R.id.to_poi);
         main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
         poi_message_view=(com.lovebus.view.poi_message_view)findViewById(R.id.poi_click_view);
@@ -246,6 +252,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         openMapButton_1.setOnClickListener(this);
         openMapButton_2.setOnClickListener(this);
         to_poi.setOnClickListener(this);
+        near_step.setOnClickListener(this);
         if(SharedPreferences_tools.load("User","info",Main_Activity.this)!=null){
             user=(User)SharedPreferences_tools.load("User","info",Main_Activity.this);
         }
@@ -268,7 +275,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 switch (item.getItemId()){
                     /*左侧菜单点击事件在下方添加*/
                     case R.id.item1:
-                        Toast.makeText(Main_Activity.this,"item1",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main_Activity.this,"程序员正在努力开发中，可能会在近期上线哦",Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.city_change:
                         startActivity(new Intent(Main_Activity.this,CitySelectActivity.class));
@@ -281,6 +288,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         break;
                     case R.id.notice:
                         startActivity(new Intent(Main_Activity.this,informActivity.class));
+                        break;
+                    case R.id.itme8:
+                        Toast.makeText(Main_Activity.this,"程序员正在努力开发中，可能会在近期上线哦",Toast.LENGTH_SHORT).show();
                         break;
                     default:
                 }
@@ -319,6 +329,15 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.to_poi:
                 onclick_to_poi();
+                break;
+            case R.id.near_step:
+                if(clickPoi==0){
+                    onclick_near_step();
+                }
+                else if (clickPoi==4){
+                    aMap.clear();
+                    clickPoi=0;
+                }
                 break;
             default:
         }
@@ -375,7 +394,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         maplayout.setVisibility(View.VISIBLE);
         chooseLocationWidget.setVisibility(View.GONE);
         mBusResultLayout.setVisibility(View.GONE);
-        route_button.setVisibility(View.GONE);
+        bottom_menu.setVisibility(View.GONE);
         mBusResultList.setAdapter(null);
     }
     private void onclick_to_poi(){
@@ -384,11 +403,47 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         chooseLocationWidget.setVisibility(View.VISIBLE);
         mBusResultLayout.setVisibility(View.VISIBLE);
         poi_message_view.setVisibility(View.GONE);
-        route_button.setVisibility(View.VISIBLE);
+        bottom_menu.setVisibility(View.VISIBLE);
         startText.setText(locationMsg.getPoiName());
         endText.setText(poi_name_string);
         start_search_bus_route();
         searchText.setText("");
+    }
+    private void onclick_near_step(){
+        LatLonPoint near=new LatLonPoint(locationMsg.getLatitude(),locationMsg.getLongitude());
+        com.lovebus.function.PoiSearch.BusStationNear(near,Main_Activity.this,3000,localCity);
+        com.lovebus.function.PoiSearch.getPoiSearch(new com.lovebus.function.PoiSearch.PoiSearchListener() {
+            @Override
+            public void result(PoiResult result, int rCode) {
+                dissmissProgressDialog();
+                if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                    if (result != null && result.getQuery() != null) {// 搜索poi的结果
+                        if (result.getQuery().equals(com.lovebus.function.PoiSearch.getQuery())) {// 是否是同一条
+                            PoiResult poiResult = result;
+                            // 取得搜索到的poiitems有多少页
+                            List<PoiItem> poiItems = poiResult.getPois();// 取得第一页的poiitem数据，页数从数字0开始
+                            List<SuggestionCity> suggestionCities = poiResult
+                                    .getSearchSuggestionCitys();// 当搜索不到poiitem数据时，会返回含有搜索关键字的城市信息
+                            if (poiItems != null && poiItems.size() > 0) {
+                                PoiOverlay poiOverlay = new PoiOverlay(aMap, poiItems);
+                                poiOverlay.removeFromMap();
+                                poiOverlay.addToMap();
+                                clickPoi=4;
+                                poiOverlay.zoomToSpan();
+                            }
+                            else if (suggestionCities != null
+                                    && suggestionCities.size() > 0) {
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void item(PoiItem item, int rCode) {
+
+            }
+        });
     }
     private void menu_switch(){
         if(user.isIs_login())
@@ -432,8 +487,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     /*poi点击回调*/
     @Override
     public void onPOIClick(final Poi poi) {
-        aMap.clear();
-        if(clickPoi!=0){
+        if(clickPoi!=0&&clickPoi!=3&&clickPoi!=4){
+            aMap.clear();
             new AlertDialog.Builder(this)
                     .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
                     .setTitle("选择地点")
@@ -455,12 +510,14 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         }
                     }).show();
         }
-        else {
+        else if(clickPoi==0||clickPoi==4){
+            aMap.clear();
             LatLng local=new LatLng(locationMsg.getLatitude(),locationMsg.getLongitude());
             LatLng to=poi.getCoordinate();
             distance.setText("距你"+LoveBusUtil.calculateLineDistance(local,to)+"米");
             poi_name_string=poi.getName();
             poiname.setText(poi.getName());
+            bottom_menu.setVisibility(View.GONE);
             Log.d("dianji", "onPOIClick: "+poi.getName()+poiname.mTitleText);
             route_button.setVisibility(View.GONE);
             poi_message_view.setVisibility(View.VISIBLE);
@@ -469,9 +526,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     /*单击地图回调*/
     @Override
     public void onMapClick(LatLng point) {
-        if(route_button.getVisibility()==View.GONE&&poi_message_view.getVisibility()==View.VISIBLE){
+        if(bottom_menu.getVisibility()==View.GONE&&poi_message_view.getVisibility()==View.VISIBLE){
             aMap.clear();
-            route_button.setVisibility(View.VISIBLE);
+            bottom_menu.setVisibility(View.VISIBLE);
             poi_message_view.setVisibility(View.GONE);
         }
     }
@@ -479,7 +536,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         maplayout.setVisibility(View.GONE);
         chooseLocationWidget.setVisibility(View.VISIBLE);
         mBusResultLayout.setVisibility(View.VISIBLE);
-        route_button.setVisibility(View.VISIBLE);
+        bottom_menu.setVisibility(View.VISIBLE);
         clickPoi=0;
     }
 
@@ -497,13 +554,23 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         else if(poi_message_view.getVisibility()==View.VISIBLE){
             poi_message_view.setVisibility(View.GONE);
-            route_button.setVisibility(View.VISIBLE);
+            bottom_menu.setVisibility(View.VISIBLE);
+        }
+        else if(drawerLayout.isDrawerOpen(Gravity.START)){
+            drawerLayout.closeDrawer(Gravity.START);
         }
         else if(clickPoi==1||clickPoi==2){
             showResult();
         }
-        else if(drawerLayout.isDrawerOpen(Gravity.START)){
-            drawerLayout.closeDrawer(Gravity.START);
+        else if(clickPoi==3){
+            aMap.clear();
+            clickPoi=0;
+            main_title.setVisibility(View.VISIBLE);
+            bottom_menu.setVisibility(View.VISIBLE);
+        }
+        else if(clickPoi==4){
+            aMap.clear();
+            clickPoi=0;
         }
         else {
             new AlertDialog.Builder(this)
@@ -548,13 +615,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         MyLocationStyle myLocationStyle;
         myLocationStyle = new MyLocationStyle();
         //初始化定位蓝点样式类
-        /*myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);*/
-         myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_FOLLOW_NO_CENTER);
+        /* myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);*/
         //连续定位、蓝点不会移动到地图中心点，地图依照设备方向旋转，并且蓝点会跟随设备移动
-        myLocationStyle.interval(2000);
+        myLocationStyle.interval(1000);
         //设置连续定位模式下的定位间隔，只在连续定位模式下生效，单次定位模式下不会生效。单位为毫秒。
         aMap.setMyLocationStyle(myLocationStyle);
-
         myLocationStyle.strokeWidth(0);//设置定位蓝点精度圈的边框宽度的方法。
         myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));// 设置圆形的边框颜色
         myLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));// 设置圆形的填充颜色
@@ -587,10 +653,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                         public void onListItemClick(BusLineDialog dialog, BusLineItem item) {
                                             showProgressDialog();
                                             String lineId =item.getBusLineId();
-                                            //commit
-                                             List<BusStationItem> busStationItem=item.getBusStations();
-                                            BusLineDetailDialog busLineDetailDialog = new BusLineDetailDialog(Main_Activity.this,busStationItem);
-                                            busLineDetailDialog.show();
                                            searchBusLineById(lineId,cityName);
                                         }
                                     });
@@ -744,6 +806,12 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                 busLineOverlay.removeFromMap();
                                 busLineOverlay.addToMap();
                                 busLineOverlay.zoomToSpan();
+                                clickPoi=3;
+                                if(poi_message_view.getVisibility()==View.VISIBLE){
+                                    poi_message_view.setVisibility(View.GONE);
+                                }
+                                bottom_menu.setVisibility(View.GONE);
+                                main_title.setVisibility(View.GONE);
                             }
                         }
                     }
@@ -776,6 +844,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                 }
                 MyLog.d("yang",localCity);
                 MyLog.d("yang","sb");
+                LatLng lng=new LatLng(locationMsg.getLatitude(),locationMsg.getLongitude());
+                aMap.moveCamera( CameraUpdateFactory.newCameraPosition(new CameraPosition(lng, 15, 0, 0)));
 
             }
         });
@@ -1076,8 +1146,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     private void start_search_bus_route(){
         start_text = LoveBusUtil.checkEditText(startText);
         end_text = LoveBusUtil.checkEditText(endText);
-        convert1();
-        convert2();
+        if((!start_text.equals(""))&&(!end_text.equals(""))){
+            convert1();
+            convert2();
+        }
     }
 
 

@@ -10,9 +10,6 @@
             android:id="@+id/city_change"
             android:title="@string/city_change"/>
         <item
-            android:id="@+id/item3"
-            android:title="我的收藏"/>
-        <item
             android:id="@+id/notice"
             android:title="@string/notice"/>
     </group>
