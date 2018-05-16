@@ -660,7 +660,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                            searchBusLineById(lineId,cityName);
                                         }
                                     });
-                                    busLineDialog.show();
                                 }
                             }
                         }
@@ -769,20 +768,27 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                             && result.getBusStations().size() > 0) {
                         ArrayList<BusStationItem> item = (ArrayList<BusStationItem>) result
                                 .getBusStations();
-                        StringBuffer buf = new StringBuffer();
                         for (int i = 0; i < item.size(); i++) {
                             BusStationItem stationItem = item.get(i);
-
-
-                            buf.append(" station: ").append(i).append(" name: ")
-                                    .append(stationItem.getBusStationName());
-                            Log.d("LG", "stationName:"
-                                    + stationItem.getBusStationName() + "stationpos:"
-                                    + stationItem.getLatLonPoint().toString());
+                            Geocoder.getLatlon(stationItem.getBusStationName(),localCity,Main_Activity.this);
+                            Geocoder.getLatlonResult(new Geocoder.GeocodeSearchListener() {
+                                @Override
+                                public void result(GeocodeResult result, int rCode) {
+                                    if (rCode == AMapException.CODE_AMAP_SUCCESS) {
+                                        if (result != null && result.getGeocodeAddressList() != null
+                                                && result.getGeocodeAddressList().size() > 0) {
+                                            GeocodeAddress address = result.getGeocodeAddressList().get(0);
+                                            LatLng step=new LatLng(address.getLatLonPoint().getLatitude(),address.getLatLonPoint().getLongitude());
+                                            aMap.moveCamera( CameraUpdateFactory.newCameraPosition(new CameraPosition(step, 15, 0, 0)));
+                                        } else {
+                                            Toast.makeText(Main_Activity.this,"没有搜索结果",Toast.LENGTH_SHORT).show();
+                                        }
+                                    } else {
+                                        Toast.makeText(Main_Activity.this,"没有搜索结果",Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                         }
-                        String text = buf.toString();
-                        Toast.makeText(Main_Activity.this, text,
-                                Toast.LENGTH_SHORT).show();
                     } else {
                         ToastUtil.show(Main_Activity.this, R.string.no_result);
                     }
