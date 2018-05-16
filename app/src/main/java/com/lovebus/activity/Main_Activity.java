@@ -524,7 +524,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
     /*单击地图回调*/
     @Override
-    public void onMapClick(LatLng point) {onBackPressed();
+    public void onMapClick(LatLng point) {
         if(bottom_menu.getVisibility()==View.GONE&&poi_message_view.getVisibility()==View.VISIBLE){
             aMap.clear();
             bottom_menu.setVisibility(View.VISIBLE);
