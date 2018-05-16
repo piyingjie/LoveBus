@@ -7,20 +7,18 @@
     android:background="#ffffff"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-
-
     >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:background="@color/blue"
+        android:background="#ff40c2fc"
         android:visibility="visible">
 
         <ImageView
             android:id="@+id/imgBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:background="@drawable/bar_back"
@@ -167,7 +165,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:divider="@color/split_line_color"
-            android:dividerHeight="1px"/>
+            android:dividerHeight="1px" />
 
         <TextView
             android:id="@+id/dialog"

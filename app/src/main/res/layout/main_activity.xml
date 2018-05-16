@@ -34,17 +34,32 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="bottom|center_horizontal">
-                <Button
+               <!-- <Button
                 android:id="@+id/route_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/route"
-                />
+                />-->
+                <ImageButton
+                    android:id="@+id/route_button"
+                    android:background="@color/search_white"
+                    android:scaleType="fitCenter"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@mipmap/route"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    />
                 <Button
                     android:id="@+id/near_step"
+                    android:background="@drawable/route_style"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="45dp"
                     android:text="@string/near"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="7.5dp"
+                    android:layout_marginLeft="10dp"
+
                     />
             </LinearLayout>
             <com.lovebus.view.poi_message_view

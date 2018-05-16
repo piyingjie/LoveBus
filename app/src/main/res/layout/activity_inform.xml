@@ -4,13 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
    >
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center"
-    android:text="通知"
-    android:textSize="30dp"
-    android:background="@color/blue"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/blue">
+        <ImageView
+            android:id="@+id/imgBack2"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/bar_back"
+            android:visibility="visible" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="通知"
+            android:textSize="25dp"
+            android:textColor="@color/white"
+            />
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/newslist"
@@ -22,7 +36,7 @@
         android:fadingEdgeLength="0dp"
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false"
-        android:listSelector="#00000000" >
+        android:listSelector="#00000000">
 
     </ListView>
 

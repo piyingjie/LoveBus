@@ -128,7 +128,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     TextView userSetCity;
     LinearLayout mBusResultLayout;
     FrameLayout maplayout;
-    Button route_button;
+    ImageButton route_button;
     ListView mBusResultList;
     ImageButton to_poi;
     TextView distance;
@@ -236,7 +236,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         bottom_menu=(LinearLayout) findViewById(R.id.bottom_menu);
         near_step=(Button) findViewById(R.id.near_step);
         distance=(TextView) findViewById(R.id.poi_distance);
-        route_button=(Button) findViewById(R.id.route_button);
+        route_button= findViewById(R.id.route_button);
         to_poi=(ImageButton) findViewById(R.id.to_poi);
         main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
         poi_message_view=(com.lovebus.view.poi_message_view)findViewById(R.id.poi_click_view);
@@ -524,7 +524,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     }
     /*单击地图回调*/
     @Override
-    public void onMapClick(LatLng point) {onBackPressed();
+    public void onMapClick(LatLng point) {
+
         if(bottom_menu.getVisibility()==View.GONE&&poi_message_view.getVisibility()==View.VISIBLE){
             aMap.clear();
             bottom_menu.setVisibility(View.VISIBLE);
@@ -1139,10 +1140,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         endLat=address.getLatLonPoint();
                         searchRoute(startLat,endLat,localCity);
                     } else {
-                        Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main_Activity.this,"对不起，没有搜索信息",Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main_Activity.this,"对不起，没有搜索信息",Toast.LENGTH_SHORT).show();
                 }
             }
         });
