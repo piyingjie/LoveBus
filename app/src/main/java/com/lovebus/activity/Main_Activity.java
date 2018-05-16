@@ -95,6 +95,7 @@ import com.lovebus.function.PoiOverlay;
 import com.lovebus.function.PoiSearch;
 import com.lovebus.function.SharedPreferences_tools;
 import com.lovebus.function.ToastUtil;
+import com.lovebus.view.RadioTextView;
 
 import org.json.JSONObject;
 
@@ -129,7 +130,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     Button route_button;
     ListView mBusResultList;
     ImageButton to_poi;
-    TextView poiname;
+    RadioTextView poiname;
     com.lovebus.view.top_title main_title;
     com.lovebus.view.poi_message_view poi_message_view;
     Bitmap photo;
@@ -226,7 +227,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
         maplayout=(FrameLayout) findViewById(R.id.map_layout);
-        poiname=(TextView) findViewById(R.id.poi_name);
+        poiname= findViewById(R.id.poi_name);
         route_button=(Button) findViewById(R.id.route_button);
         to_poi=(ImageButton) findViewById(R.id.to_poi);
         main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
@@ -454,7 +455,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         else {
             poi_name_string=poi.getName();
+
+            Log.d("dianji", "onPOIClick: "+poi.getName()+poiname.mTitleText);
             poiname.setText(poi.getName());
+            Log.d("dianji", "onPOIClick: "+poi.getName()+poiname.mTitleText);
             route_button.setVisibility(View.GONE);
             poi_message_view.setVisibility(View.VISIBLE);
         }

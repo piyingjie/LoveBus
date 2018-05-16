@@ -3,7 +3,7 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="search_white">#FCFCFC</color>
+    <color name="search_white">#00000000</color>
     <color name="colorWhite">#ffffff</color>
     <color name="lightpink">#ffb6c1</color><!--亮粉红色 -->
     <color name="orangered">#ff4500</color><!--红橙色 -->

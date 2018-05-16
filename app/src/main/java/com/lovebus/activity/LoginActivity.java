@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onComplete(Object response) {
             Toast.makeText(LoginActivity.this, "授权成功", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "response:" + response);
+            Log.e("yuan", "response:" + response);
             JSONObject obj = (JSONObject) response;
             try {
                 final String openID = obj.getString("openid");
@@ -244,14 +244,21 @@ public class LoginActivity extends AppCompatActivity {
                 Log.e("yuan","qq登录");
                 Toast.makeText(LoginActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                 SharedPreferences_tools.save("User","info",LoginActivity.this,user);
-                if(user.getHead_image()!=null){
+                //如果服务器端有，直接设置
+               /* if(user.getHead_image()!=null){
                     editor = login_sp.edit();
                     editor.putBoolean("first_login",true);
                     editor.apply();
                     finish();
                 }else{
                     new NewAsynTask().execute(figureurl);
-                }
+                }*/
+               //每次获取qq头像
+                editor = login_sp.edit();
+                editor = login_sp.edit();
+                editor.putBoolean("first_login",true);
+                editor.apply();
+                new NewAsynTask().execute(figureurl);
 
 
             }
@@ -410,6 +417,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void run() {
                                 Toast.makeText(LoginActivity.this, "头像上传成功", Toast.LENGTH_SHORT).show();
                                 File image=new File(Environment.getExternalStorageDirectory().getPath()+"/UserHeader.jpg");
+                                //Log.d("dizhi", "run: "+image.toString());
                                 image.delete();
                                 SharedPreferences_tools.saveImage(LoginActivity.this,photo,"UserHead","image");
                                 user.setHead_image("http://lovebus.top/lovebus/head"+user.getAccount());

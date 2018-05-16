@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RoundBGRelativeout">
+        <attr name="custom_background" format="reference" />
+        <attr name="corner_radius" format="dimension" />
+    </declare-styleable>
+</resources>

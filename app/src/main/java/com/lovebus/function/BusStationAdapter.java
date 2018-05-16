@@ -44,17 +44,17 @@ public class BusStationAdapter extends BaseAdapter{
             convertView = layoutInflater.inflate(R.layout.busline_detail_layout,null);
             holder =new ViewHolder();
             holder.stationName = (TextView)convertView.findViewById(R.id.stationName);
-            holder.stationId=(TextView)convertView.findViewById(R.id.station_id);
+            //holder.stationId=(TextView)convertView.findViewById(R.id.station_id);
             convertView.setTag(holder);
         }else {
             holder = (ViewHolder)convertView.getTag();
         }
         holder.stationName.setText("站点名："+busStationItems.get(position).getBusStationName());
-        holder.stationId.setText("站点经纬度："+busStationItems.get(position).getLatLonPoint());
+        //holder.stationId.setText("站点经纬度："+busStationItems.get(position).getLatLonPoint());
         return convertView;
     }
     class ViewHolder {
         public TextView stationName;
-        public TextView stationId;
+       // public TextView stationId;
     }
 }
