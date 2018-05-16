@@ -67,11 +67,14 @@ public class TestActivity extends AppCompatActivity {
                                 List<BusStationItem> passedStation = new ArrayList<>();
                                 //initialize and setup entrance and exit for Metro only
                                 //TO DO List: Check the type of the Transportation
-                                Doorway entrance = new Doorway();
+                                String  transType = busLineItem.getBusLineType();
                                 Doorway exit = new Doorway();
-                                entrance.setLatLonPoint(busStations_of_a_line.get(cursor).getLatLonPoint());
-                                entrance.setName(busStations_of_a_line.get(cursor).getBusStationName());
-                                step.setEntrance(entrance);
+                                if ( transType.matches("地铁") || transType.matches("轻轨")) {
+                                    Doorway entrance = new Doorway();
+                                    entrance.setLatLonPoint(busStations_of_a_line.get(cursor).getLatLonPoint());
+                                    entrance.setName(busStations_of_a_line.get(cursor).getBusStationName());
+                                    step.setEntrance(entrance);
+                                }
                                 for (int j = cursor ; j < busStations_of_a_line.size(); j++)
                                 {
                                     BusStationItem target = busStations_of_a_line.get(j);
@@ -94,12 +97,13 @@ public class TestActivity extends AppCompatActivity {
 
                                             //add up BusLine information
                                             routeBusLineItems.add(lineItem);
-
+                                        if ( transType.matches("地铁") || transType.matches("轻轨")) {
                                             //set up exit parameters(just for metro)
-//                                            exit.setLatLonPoint(target.getLatLonPoint());
-//                                            exit.setName(target.getBusStationName());
-//                                            step.setBusLines(routeBusLineItems);
-//                                            step.setExit(exit);
+                                            exit.setLatLonPoint(target.getLatLonPoint());
+                                            exit.setName(target.getBusStationName());
+                                            step.setBusLines(routeBusLineItems);
+                                            step.setExit(exit);
+                                        }
 
                                             continue;
                                     }
