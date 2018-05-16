@@ -31,4 +31,5 @@
     <string name="poiclick">兴趣点</string>
     <string name="distance">距离</string>
     <string name="notice">通知</string>
+    <string name="near">附近站点</string>
 </resources>
