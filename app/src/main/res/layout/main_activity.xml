@@ -28,12 +28,15 @@
                 android:id="@+id/map"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-            <Button
+            <ImageButton
                 android:id="@+id/route_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/route"
+                android:background="@color/search_white"
+                android:scaleType="fitCenter"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@mipmap/route"
                 android:layout_gravity="bottom|center_horizontal"
+                android:paddingBottom="10dp"
                 />
             <com.lovebus.view.poi_message_view
                 android:id="@+id/poi_click_view"
@@ -82,6 +85,16 @@
         android:fitsSystemWindows="true"
         android:layout_gravity="start"
         app:menu="@menu/left_menu_nav">
-
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
+<!--
+<ImageButton
+android:id="@+id/route_button"
+android:background="@color/search_white"
+android:scaleType="fitCenter"
+android:layout_width="60dp"
+android:layout_height="60dp"
+android:src="@mipmap/route"
+android:layout_gravity="bottom|center_horizontal"
+android:paddingBottom="10dp"
+    />-->

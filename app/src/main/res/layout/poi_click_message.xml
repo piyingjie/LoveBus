@@ -11,16 +11,14 @@
         android:id="@+id/poi_name"
         android:layout_width="240dp"
         android:layout_height="50dp"
-        android:gravity="center_vertical"
+        android:gravity="center"
         radiostyle:titleText = "兴趣点"
         radiostyle:titleTextColor = "#9e9898"
         radiostyle:titleTextSize = "18sp"
-        radiostyle:backgrounds ="#00ffff"
+        radiostyle:backgrounds ="#e9efef"
         radiostyle:mCornerSize = "28"
         />
 
-   <!-- android:textSize="18sp"
-    android:text="@string/poiclick"-->
     <RelativeLayout
         android:layout_width="240dp"
         android:layout_height="50dp"

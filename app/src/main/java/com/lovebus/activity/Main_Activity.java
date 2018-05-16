@@ -127,7 +127,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     TextView userSetCity;
     LinearLayout mBusResultLayout;
     FrameLayout maplayout;
-    Button route_button;
+    ImageButton route_button;
     ListView mBusResultList;
     ImageButton to_poi;
     TextView distance;
@@ -230,7 +230,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         maplayout=(FrameLayout) findViewById(R.id.map_layout);
         poiname= findViewById(R.id.poi_name);
         distance=(TextView) findViewById(R.id.poi_distance);
-        route_button=(Button) findViewById(R.id.route_button);
+        route_button=(ImageButton) findViewById(R.id.route_button);
         to_poi=(ImageButton) findViewById(R.id.to_poi);
         main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
         poi_message_view=(com.lovebus.view.poi_message_view)findViewById(R.id.poi_click_view);

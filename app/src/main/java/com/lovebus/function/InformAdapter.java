@@ -52,7 +52,6 @@ public class InformAdapter extends BaseAdapter{
             viewHolder = new ViewHolder();
             viewHolder.Title = (TextView) view.findViewById(R.id.item1);
             viewHolder.Detail = (TextView)view.findViewById(R.id.item2);
-            viewHolder.Url = (TextView)view.findViewById(R.id.item3);
             view.setTag(viewHolder);
         } else {
             view = convertView;
@@ -60,7 +59,6 @@ public class InformAdapter extends BaseAdapter{
         }
         viewHolder.Title.setText(newsList.get(position).getTitle());
         viewHolder.Detail.setText(newsList.get(position).getDetail());
-        viewHolder.Url.setText(newsList.get(position).getDetailUrl());
 
         view.setOnClickListener(new View.OnClickListener() {
 

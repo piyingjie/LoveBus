@@ -2,6 +2,7 @@
 
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:radiostyle="http://schemas.android.com/apk/res-auto"
     android:id="@+id/online_user_list_item_textview"
     android:lineSpacingMultiplier="1.5"
     android:layout_width="match_parent"
@@ -12,5 +13,5 @@
     android:textSize="18sp"
     android:gravity="center_vertical"
     android:background="@drawable/a2"
-    >
+    radiostyle:mCornerSize="28">
 </TextView>
