@@ -561,6 +561,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             main_title.setVisibility(View.VISIBLE);
             bottom_menu.setVisibility(View.VISIBLE);
         }
+        else if(clickPoi==4){
+            aMap.clear();
+            clickPoi=0;
+        }
         else {
             new AlertDialog.Builder(this)
                     .setIcon(R.drawable.account)//这里是显示提示框的图片信息，我这里使用的默认androidApp的图标
