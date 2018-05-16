@@ -21,7 +21,7 @@ public class BusResultListAdapter extends BaseAdapter {
 	private List<BusPath> mBusPathList;
 	private BusRouteResult mBusRouteResult;
 
-	public BusResultListAdapter(Context context, BusRouteResult busrouteresult) {
+	BusResultListAdapter(Context context, BusRouteResult busrouteresult) {
 		mContext = context;
 		mBusRouteResult = busrouteresult;
 		mBusPathList = busrouteresult.getPaths();

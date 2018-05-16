@@ -42,6 +42,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,6 +101,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import bus.android.com.lovebus.R;
@@ -240,6 +242,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         username=(TextView) user_header.findViewById(R.id.user_set_name);
         userSetCity=(TextView)user_header.findViewById(R.id.user_set_city);
         chooseLocationWidget=(com.lovebus.view.ChooseLocationWidget)findViewById(R.id.choose_location_widget);
+
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
         user_head_image.setOnClickListener(this);
@@ -1166,6 +1169,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void afterTextChanged(Editable s) {
+            Log.d("CHOOSE", "afterTextChanged: "+ s);
 
         }
 
@@ -1246,6 +1250,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             inputTips.requestInputtipsAsyn();
         }
     }
+
+
     @Override
     public void onGetInputtips(List<Tip> tipList, int rCode) {
         if (rCode == AMapException.CODE_AMAP_SUCCESS) {// 正确返回
