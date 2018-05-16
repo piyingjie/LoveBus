@@ -80,6 +80,7 @@ import com.amap.api.services.route.BusRouteResult;
 import com.lovebus.entity.Location;
 import com.lovebus.entity.User;
 
+import com.lovebus.function.BusLineDetailDialog;
 import com.lovebus.function.BusLineDialog;
 import com.lovebus.function.BusLineOverlay;
 
@@ -95,6 +96,7 @@ import com.lovebus.function.PoiOverlay;
 import com.lovebus.function.PoiSearch;
 import com.lovebus.function.SharedPreferences_tools;
 import com.lovebus.function.ToastUtil;
+import com.lovebus.view.RadioTextView;
 
 import org.json.JSONObject;
 
@@ -129,8 +131,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     Button route_button;
     ListView mBusResultList;
     ImageButton to_poi;
-    TextView poiname;
     TextView distance;
+    RadioTextView poiname;
     LinearLayout bottom_menu;
     Button near_step;
     com.lovebus.view.top_title main_title;
@@ -229,7 +231,8 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         mBusResultLayout = (LinearLayout) findViewById(R.id.bus_result);
         mBusResultList = (ListView) findViewById(R.id.bus_result_list);
         maplayout=(FrameLayout) findViewById(R.id.map_layout);
-        poiname=(TextView) findViewById(R.id.poi_name);
+        poiname= findViewById(R.id.poi_name);
+
         bottom_menu=(LinearLayout) findViewById(R.id.bottom_menu);
         near_step=(Button) findViewById(R.id.near_step);
         distance=(TextView) findViewById(R.id.poi_distance);
@@ -242,7 +245,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         username=(TextView) user_header.findViewById(R.id.user_set_name);
         userSetCity=(TextView)user_header.findViewById(R.id.user_set_city);
         chooseLocationWidget=(com.lovebus.view.ChooseLocationWidget)findViewById(R.id.choose_location_widget);
-
         leftMenu.setOnClickListener(this);
         search.setOnClickListener(this);
         user_head_image.setOnClickListener(this);
@@ -364,7 +366,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         } else {
             showProgressDialog();
             selectKeyWord(keyWord,localCity);
-
         }
     }
     private void onclick_userHeadImage(){
@@ -516,12 +517,14 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             poi_name_string=poi.getName();
             poiname.setText(poi.getName());
             bottom_menu.setVisibility(View.GONE);
+            Log.d("dianji", "onPOIClick: "+poi.getName()+poiname.mTitleText);
+            //route_button.setVisibility(View.GONE);
             poi_message_view.setVisibility(View.VISIBLE);
         }
     }
     /*单击地图回调*/
     @Override
-    public void onMapClick(LatLng point) {
+    public void onMapClick(LatLng point) {onBackPressed();
         if(bottom_menu.getVisibility()==View.GONE&&poi_message_view.getVisibility()==View.VISIBLE){
             aMap.clear();
             bottom_menu.setVisibility(View.VISIBLE);
@@ -552,6 +555,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             poi_message_view.setVisibility(View.GONE);
             bottom_menu.setVisibility(View.VISIBLE);
         }
+        //左边是开的时候
         else if(drawerLayout.isDrawerOpen(Gravity.START)){
             drawerLayout.closeDrawer(Gravity.START);
         }
@@ -629,6 +633,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
 
 
+
     private void searchLine(String serchTest, final String cityName){
         com.lovebus.function.BusLineSearch.searchLine_byName(Main_Activity.this, serchTest,cityName);
         com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
@@ -649,6 +654,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                         public void onListItemClick(BusLineDialog dialog, BusLineItem item) {
                                             showProgressDialog();
                                             String lineId =item.getBusLineId();
+                                            List<BusStationItem> busStationItem=item.getBusStations();
+                                            BusLineDetailDialog busLineDetailDialog = new BusLineDetailDialog(Main_Activity.this,busStationItem);
+                                            busLineDetailDialog.show();
                                            searchBusLineById(lineId,cityName);
                                         }
                                     });
@@ -1169,7 +1177,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
         @Override
         public void afterTextChanged(Editable s) {
-            Log.d("CHOOSE", "afterTextChanged: "+ s);
 
         }
 
@@ -1250,8 +1257,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             inputTips.requestInputtipsAsyn();
         }
     }
-
-
     @Override
     public void onGetInputtips(List<Tip> tipList, int rCode) {
         if (rCode == AMapException.CODE_AMAP_SUCCESS) {// 正确返回

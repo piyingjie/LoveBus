@@ -55,13 +55,13 @@
                 android:visibility="gone"
                 />
         </FrameLayout>
-
         <com.lovebus.view.ChooseLocationWidget
             android:id="@+id/choose_location_widget"
+            android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            />
         <LinearLayout
             android:id="@+id/bus_result"
             android:layout_width="match_parent"
@@ -85,6 +85,8 @@
                 android:listSelector="#00000000" >
             </ListView>
         </LinearLayout>
+
+
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
@@ -97,3 +99,14 @@
 
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
+<!--
+<ImageButton
+android:id="@+id/route_button"
+android:background="@color/search_white"
+android:scaleType="fitCenter"
+android:layout_width="60dp"
+android:layout_height="60dp"
+android:src="@mipmap/route"
+android:layout_gravity="bottom|center_horizontal"
+android:paddingBottom="10dp"
+    />-->

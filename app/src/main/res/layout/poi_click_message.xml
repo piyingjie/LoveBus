@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:readiostyle="http://schemas.android.com/tools"
+    xmlns:radiostyle="http://schemas.android.com/apk/res-auto"
     android:id="@+id/poi_click_message"
     android:layout_width="240dp"
     android:layout_height="100dp"
     android:background="@color/search_white"
     android:orientation="vertical">
-    <TextView
+    <com.lovebus.view.RadioTextView
         android:id="@+id/poi_name"
         android:layout_width="240dp"
         android:layout_height="50dp"
-        android:text="@string/poiclick" />
+        radiostyle:gravity="center"
+        radiostyle:titleText = "兴趣点"
+        radiostyle:titleTextColor = "#837f7f"
+        radiostyle:titleTextSize = "18sp"
+        radiostyle:backgrounds ="#e9efef"
+        radiostyle:mCornerSize = "28"
+        />
 
     <RelativeLayout
         android:layout_width="240dp"
@@ -20,15 +28,17 @@
             android:id="@+id/poi_distance"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:gravity="center_vertical"
             android:text="@string/distance" />
         <ImageButton
             android:id="@+id/to_poi"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="100dp"
+            android:layout_height="30dp"
             android:background="@color/search_white"
-            android:src="@drawable/skip"
+            android:src="@drawable/skip5"
+            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
-            />
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 
 </RelativeLayout>
