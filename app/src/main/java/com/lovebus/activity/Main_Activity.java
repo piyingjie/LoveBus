@@ -570,6 +570,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         }
         else if(clickPoi==4){
             aMap.clear();
+
             clickPoi=0;
         }
         else {
@@ -815,8 +816,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                 BusLineOverlay busLineOverlay = new BusLineOverlay(Main_Activity.this,aMap,lineItems.get(0));
                                 busLineOverlay.removeFromMap();
                                 busLineOverlay.addToMap();
-                                busLineOverlay.zoomToSpan();
                                 clickPoi=3;
+                                busLineOverlay.zoomToSpan();
+                                //clickPoi=3;
                                 if(poi_message_view.getVisibility()==View.VISIBLE){
                                     poi_message_view.setVisibility(View.GONE);
                                 }
