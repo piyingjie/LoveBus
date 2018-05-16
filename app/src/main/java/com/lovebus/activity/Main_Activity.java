@@ -366,7 +366,6 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         } else {
             showProgressDialog();
             selectKeyWord(keyWord,localCity);
-
         }
     }
     private void onclick_userHeadImage(){
@@ -519,13 +518,13 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             poiname.setText(poi.getName());
             bottom_menu.setVisibility(View.GONE);
             Log.d("dianji", "onPOIClick: "+poi.getName()+poiname.mTitleText);
-            route_button.setVisibility(View.GONE);
+            //route_button.setVisibility(View.GONE);
             poi_message_view.setVisibility(View.VISIBLE);
         }
     }
     /*单击地图回调*/
     @Override
-    public void onMapClick(LatLng point) {
+    public void onMapClick(LatLng point) {onBackPressed();
         if(bottom_menu.getVisibility()==View.GONE&&poi_message_view.getVisibility()==View.VISIBLE){
             aMap.clear();
             bottom_menu.setVisibility(View.VISIBLE);
@@ -556,6 +555,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
             poi_message_view.setVisibility(View.GONE);
             bottom_menu.setVisibility(View.VISIBLE);
         }
+        //左边是开的时候
         else if(drawerLayout.isDrawerOpen(Gravity.START)){
             drawerLayout.closeDrawer(Gravity.START);
         }
@@ -633,6 +633,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
 
 
 
+
     private void searchLine(String serchTest, final String cityName){
         com.lovebus.function.BusLineSearch.searchLine_byName(Main_Activity.this, serchTest,cityName);
         com.lovebus.function.BusLineSearch.getBusLine(new BusLineSearch.BusLineListener() {
@@ -653,6 +654,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                         public void onListItemClick(BusLineDialog dialog, BusLineItem item) {
                                             showProgressDialog();
                                             String lineId =item.getBusLineId();
+                                            List<BusStationItem> busStationItem=item.getBusStations();
+                                            BusLineDetailDialog busLineDetailDialog = new BusLineDetailDialog(Main_Activity.this,busStationItem);
+                                            busLineDetailDialog.show();
                                            searchBusLineById(lineId,cityName);
                                         }
                                     });

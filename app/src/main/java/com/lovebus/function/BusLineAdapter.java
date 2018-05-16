@@ -46,7 +46,7 @@ public class BusLineAdapter extends BaseAdapter {
 			convertView = layoutInflater.inflate(R.layout.busline_item, null);
 			holder = new ViewHolder();
 			holder.busName = (TextView) convertView.findViewById(R.id.busname);
-			holder.busId = (TextView) convertView.findViewById(R.id.busid);
+		//	holder.busId = (TextView) convertView.findViewById(R.id.busid);
 			convertView.setTag(holder);
 //commit
 		} else {
@@ -55,8 +55,8 @@ public class BusLineAdapter extends BaseAdapter {
 
 		holder.busName.setText("公交名 :"
 				+ busLineItems.get(position).getBusLineName());
-		holder.busId.setText("公交ID:"
-				+ busLineItems.get(position).getBusLineId());
+		/*holder.busId.setText("公交ID:"
+				+ busLineItems.get(position).getBusLineId());*/
 
 		return convertView;
 

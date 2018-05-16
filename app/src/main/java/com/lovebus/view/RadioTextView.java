@@ -133,6 +133,7 @@ public class RadioTextView extends View {
         Paint.FontMetricsInt fontMetrics = mtitlePaint.getFontMetricsInt();
         int baseline = (getMeasuredHeight() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
         canvas.drawText(mTitleText,getPaddingLeft(), baseline, mtitlePaint);
+       // canvas.drawText(mTitleText,getWidth()/2-mtitleBound.width()/2,getHeight()/2+mtitleBound.height()/2,mtitlePaint);
     }
 
     public void setText(String name) {

@@ -6,13 +6,14 @@
 
     <TextView
         android:id="@+id/busname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_height="50dp" />
 
-    <TextView
+   <!-- <TextView
         android:id="@+id/busid"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" />-->
 
 
 </LinearLayout>

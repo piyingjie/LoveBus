@@ -20,4 +20,5 @@
     <color name="phone_bg">#f6f6f6</color>
     <color name="black"> #000000</color>
     <color name="search_auto">#9af5dd</color>
+    <color name="header">#363838</color>
 </resources>
