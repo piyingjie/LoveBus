@@ -1132,10 +1132,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         GeocodeAddress address = result.getGeocodeAddressList().get(0);
                         startLat=address.getLatLonPoint();
                     } else {
-                        Toast.makeText(Main_Activity.this,"没有搜索结果",Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(Main_Activity.this,"没有搜索结果",Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(Main_Activity.this,"没有搜索结果",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Main_Activity.this,"没有搜索结果",Toast.LENGTH_SHORT).show();
                 }
             }
         });
