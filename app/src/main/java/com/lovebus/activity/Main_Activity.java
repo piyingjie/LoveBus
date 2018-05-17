@@ -268,6 +268,14 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         startText.addTextChangedListener(this);// 添加文本输入框监听事件
         endText.addTextChangedListener(textWatcher2);// 添加文本输入框监听事件
         endText.setOnItemClickListener(this);
+        startText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                convert1();
+            }
+        });
+
+
         locate_main();
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -1108,6 +1116,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     public View getInfoWindow(Marker marker) {
         return null;
     }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         start_search_bus_route();
@@ -1141,7 +1150,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                             && result.getGeocodeAddressList().size() > 0) {
                         GeocodeAddress address = result.getGeocodeAddressList().get(0);
                         endLat=address.getLatLonPoint();
-                        searchRoute(startLat,endLat,localCity);
+
                     } else {
                         Toast.makeText(Main_Activity.this,"对不起，没有搜索信息",Toast.LENGTH_SHORT).show();
                     }
@@ -1157,6 +1166,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         if((!start_text.equals(""))&&(!end_text.equals(""))){
             convert1();
             convert2();
+            searchRoute(startLat,endLat,localCity);
         }
     }
 
