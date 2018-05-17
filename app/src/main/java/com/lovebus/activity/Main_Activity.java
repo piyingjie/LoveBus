@@ -128,7 +128,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
     TextView userSetCity;
     LinearLayout mBusResultLayout;
     FrameLayout maplayout;
-    Button route_button;
+    ImageButton route_button;
     ListView mBusResultList;
     ImageButton to_poi;
     TextView distance;
@@ -236,7 +236,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
         bottom_menu=(LinearLayout) findViewById(R.id.bottom_menu);
         near_step=(Button) findViewById(R.id.near_step);
         distance=(TextView) findViewById(R.id.poi_distance);
-        route_button=(Button) findViewById(R.id.route_button);
+        route_button= findViewById(R.id.route_button);
         to_poi=(ImageButton) findViewById(R.id.to_poi);
         main_title=(com.lovebus.view.top_title)findViewById(R.id.main_title);
         poi_message_view=(com.lovebus.view.poi_message_view)findViewById(R.id.poi_click_view);
@@ -288,6 +288,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         break;
                     case R.id.notice:
                         startActivity(new Intent(Main_Activity.this,informActivity.class));
+                        break;
+                    case  R.id.user_put:
+                        startActivity(new Intent(Main_Activity.this,UserPutActivity.class));
                         break;
                     case R.id.itme8:
                         Toast.makeText(Main_Activity.this,"程序员正在努力开发中，可能会在近期上线哦",Toast.LENGTH_SHORT).show();
@@ -660,6 +663,7 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                                            searchBusLineById(lineId,cityName);
                                         }
                                     });
+                                    busLineDialog.show();
                                 }
                             }
                         }
@@ -1145,10 +1149,10 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                         endLat=address.getLatLonPoint();
                         searchRoute(startLat,endLat,localCity);
                     } else {
-                        Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Main_Activity.this,"对不起，没有搜索信息",Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(Main_Activity.this,"没有经纬度信息",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Main_Activity.this,"对不起，没有搜索信息",Toast.LENGTH_SHORT).show();
                 }
             }
         });

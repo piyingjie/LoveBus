@@ -1,11 +1,15 @@
 package com.lovebus.activity;
 
 
+import android.content.Intent;
+import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +31,7 @@ public class informActivity extends AppCompatActivity {
     private Handler handler;
     private List<informBean> mdata ;
     public int i = 0;
+    private ImageView imgBack;
 
 
     @Override
@@ -45,6 +50,14 @@ public class informActivity extends AppCompatActivity {
                 }
             }
         };
+        imgBack = (ImageView) findViewById(R.id.imgBack2);
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(informActivity.this, Main_Activity.class));
+                finish();
+            }
+        });
 
     }
 

@@ -7,17 +7,22 @@
     <LinearLayout
         android:background="@color/blue"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="50dp" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_gravity="center_vertical"
             android:text="线路详细" />
 
         <Button
             android:id="@+id/lineView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:background="@drawable/route_style_head"
+            android:layout_marginLeft="10dp"
+            android:layout_width="100dp"
+            android:layout_height="42dp"
+            android:layout_gravity="center_vertical"
             android:text="线路地图显示"/>
 
         <!--<Button
