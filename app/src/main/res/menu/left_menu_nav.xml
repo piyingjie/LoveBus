@@ -12,6 +12,9 @@
         <item
             android:id="@+id/notice"
             android:title="@string/notice"/>
+        <item
+            android:id="@+id/user_put"
+            android:title="@string/user_put"/>
     </group>
 
     <item android:title="账号与安全">
@@ -25,6 +28,7 @@
             <item
                 android:id="@+id/logout"
                 android:title="@string/logout"/>
+
         </menu>
     </item>
 </menu>

@@ -61,7 +61,7 @@
         <activity android:name="com.lovebus.activity.OffLineMapActivity" />
         <activity android:name="com.lovebus.activity.FrequentRouteActivity" />
         <activity android:name="com.lovebus.activity.NoticeActivity" />
-        <activity android:name="com.lovebus.activity.informActivity"/>
+        <activity android:name="com.lovebus.activity.informActivity" />
         <activity android:name="com.lovebus.activity.ThirdPartyBindActivity" />
         <activity android:name="com.lovebus.activity.CitySelectActivity" />
 
@@ -94,6 +94,7 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name="com.lovebus.activity.UpdatePasswordActivity" />
+        <activity android:name="com.lovebus.activity.UserPutActivity"></activity>
     </application>
 
 </manifest>

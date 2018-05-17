@@ -289,6 +289,9 @@ public class Main_Activity extends AppCompatActivity implements View.OnClickList
                     case R.id.notice:
                         startActivity(new Intent(Main_Activity.this,informActivity.class));
                         break;
+                    case  R.id.user_put:
+                        startActivity(new Intent(Main_Activity.this,UserPutActivity.class));
+                        break;
                     case R.id.itme8:
                         Toast.makeText(Main_Activity.this,"程序员正在努力开发中，可能会在近期上线哦",Toast.LENGTH_SHORT).show();
                         break;
